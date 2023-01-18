@@ -1,0 +1,27 @@
+node_modules
+package-lock.json
+.vscode
+.idea
+.env
+/.DS_Store
+
+#Hardhat files
+cache
+artifacts
+bin
+deployments
+
+#Coverage
+coverage
+coverage.json
+
+# openzeppelin dev files
+.openzeppelin/unknown-*.json
+.openzeppelin/unknown-31337.json
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
