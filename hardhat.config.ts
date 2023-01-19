@@ -7,10 +7,14 @@ import '@nomiclabs/hardhat-waffle';
 import '@nomiclabs/hardhat-ethers';
 import '@tenderly/hardhat-tenderly';
 import '@typechain/hardhat';
+import 'hardhat-deploy';
 import 'hardhat-gas-reporter';
 import 'solidity-coverage';
 
-dotenv.config();
+import { resolve } from 'path';
+import { config as dotenvConfig } from 'dotenv';
+
+dotenvConfig({ path: resolve(__dirname, './.env') });
 
 // Select the network you want to deploy to here:
 const defaultNetwork = process.env.HARDHAT_NETWORK;
@@ -36,11 +40,21 @@ const config: HardhatUserConfig = {
         version: '0.8.4',
         settings: { optimizer: { enabled: true, runs: 200 } },
       },
+      {
+        version: '0.8.11',
+        settings: { optimizer: { enabled: true, runs: 200 } },
+      },
     ],
   },
   networks: {
-    rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
+    hardhat: {
+      allowUnlimitedContractSize: true,
+    },
+    local: {
+      url: 'http://localhost:8545',
+    },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
     ropsten: {
@@ -58,6 +72,12 @@ const config: HardhatUserConfig = {
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
     currency: 'USD',
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+      mainnet: '',
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
