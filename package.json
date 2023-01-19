@@ -74,7 +74,7 @@
     "@imtbl/imlogging": "^1.0.37",
     "@imtbl/imx-contracts": "^1.0.1",
     "@imtbl/imx-sdk": "^1.39.1",
-    "@nomiclabs/hardhat-ethers": "^2.2.2",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
     "hardhat-abi-exporter": "^2.10.1",
     "hardhat-deploy": "^0.11.22",
     "husky": "^8.0.3",
