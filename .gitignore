@@ -1,4 +1,5 @@
 node_modules
+typechain
 package-lock.json
 .vscode
 .idea
@@ -9,7 +10,6 @@ package-lock.json
 cache
 artifacts
 bin
-deployments
 
 #Coverage
 coverage
