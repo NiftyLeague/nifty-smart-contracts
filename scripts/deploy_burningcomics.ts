@@ -50,7 +50,7 @@ const abiEncodeArgs = (deployed: Contract, contractArgs: unknown[], contractType
   if (contractType == 0) {
     encoded = ethers.utils.defaultAbiCoder.encode(deployed.interface.deploy.inputs, contractArgs);
   } else {
-    encoded = ethers.utils.defaultAbiCoder.encode(deployed.interface.functions["initialize"].inputs, contractArgs);
+    encoded = ethers.utils.defaultAbiCoder.encode(deployed.interface.functions['initialize'].inputs, contractArgs);
   }
   return encoded;
 };
@@ -76,8 +76,8 @@ const deploy = async (contractName: string, _args: unknown[] = [], contractType:
     await deployedContract.deployTransaction.wait(2);
     const gasUsed = deployedContract.deployTransaction.gasLimit.mul(
       deployedContract.deployTransaction.gasPrice as BigNumber,
-      );
-      extraGasInfo = `${ethers.utils.formatEther(gasUsed)} ETH, tx hash ${deployedContract.deployTransaction.hash}`;
+    );
+    extraGasInfo = `${ethers.utils.formatEther(gasUsed)} ETH, tx hash ${deployedContract.deployTransaction.hash}`;
   }
   fs.writeFileSync(`${config.paths.artifacts}/${contractName}.address`, deployedContract.address);
 
@@ -114,7 +114,7 @@ async function main() {
 
   // We get the contract to deploy
   const comicsAddress = process.env.COMICS_ADDRESS;
-  const comicsBurningStartAt = process.env.COMICS_BURNING_STARTAT
+  const comicsBurningStartAt = process.env.COMICS_BURNING_STARTAT;
 
   const uriForNiftyItems = `https://api.nifty-league.com/${targetNetwork}/items/{id}`;
   const items = await deploy('NiftyEquipment', ['Nifty Items', 'NLT', uriForNiftyItems], 0);
@@ -122,7 +122,11 @@ async function main() {
   const uriForNiftyKeys = `https://api.nifty-league.com/${targetNetwork}/keys/{id}`;
   const keys = await deploy('NiftyEquipment', ['Nifty Keys', 'NLK', uriForNiftyKeys], 0);
 
-  const burningComics = await deploy('NiftyBurningComics', [comicsAddress, keys.address, items.address, comicsBurningStartAt], 1);
+  const burningComics = await deploy(
+    'NiftyBurningComics',
+    [comicsAddress, keys.address, items.address, comicsBurningStartAt],
+    1,
+  );
 
   // Verify the contracts
   await tenderlyVerify({
@@ -130,7 +134,11 @@ async function main() {
     contractAddress: items.address,
   });
   console.log(chalk.blue(` 📁 Attempting etherscan verification of ${items.address} on ${targetNetwork}`));
-  await run('verify:verify', { address: items.address, constructorArguments: ['Nifty Items', 'NLT', uriForNiftyItems], contract: "contracts/NiftyEquipment.sol:NiftyEquipment" });
+  await run('verify:verify', {
+    address: items.address,
+    constructorArguments: ['Nifty Items', 'NLT', uriForNiftyItems],
+    contract: 'contracts/NiftyEquipment.sol:NiftyEquipment',
+  });
 
   // await tenderlyVerify({
   //   contractName: 'NiftyKeys',
@@ -145,7 +153,11 @@ async function main() {
     contractAddress: burningComicsImpl,
   });
   console.log(chalk.blue(` 📁 Attempting etherscan verification of ${burningComicsImpl} on ${targetNetwork}`));
-  await run('verify:verify', { address: burningComicsImpl, constructorArguments: [], contract: "contracts/NiftyBurningComics.sol:NiftyBurningComics" });
+  await run('verify:verify', {
+    address: burningComicsImpl,
+    constructorArguments: [],
+    contract: 'contracts/NiftyBurningComics.sol:NiftyBurningComics',
+  });
 }
 
 // We recommend this pattern to be able to use async/await everywhere

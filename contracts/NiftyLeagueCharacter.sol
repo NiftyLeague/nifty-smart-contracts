@@ -71,11 +71,7 @@ contract NiftyLeagueCharacter is ERC721, Ownable, Pausable {
      * @notice Construct the Nifty League NFTs
      * @param nftlAddress Address of verified Nifty League NFTL contract
      */
-    constructor(
-        address nftlAddress,
-        string memory name,
-        string memory symbol
-    ) ERC721(name, symbol) {
+    constructor(address nftlAddress, string memory name, string memory symbol) ERC721(name, symbol) {
         _nftlAddress = nftlAddress;
     }
 

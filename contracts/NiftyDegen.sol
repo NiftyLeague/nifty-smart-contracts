@@ -297,11 +297,7 @@ contract NiftyDegen is NameableCharacter {
      * @param upper upper range-bound
      * @return True if in range
      */
-    function _isTraitInRange(
-        uint256 trait,
-        uint256 lower,
-        uint256 upper
-    ) private pure returns (bool) {
+    function _isTraitInRange(uint256 trait, uint256 lower, uint256 upper) private pure returns (bool) {
         return trait == EMPTY_TRAIT || (trait >= lower && trait <= upper);
     }
 }

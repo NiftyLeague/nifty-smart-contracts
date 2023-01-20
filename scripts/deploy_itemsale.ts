@@ -50,7 +50,7 @@ const abiEncodeArgs = (deployed: Contract, contractArgs: unknown[], contractType
   if (contractType == 0) {
     encoded = ethers.utils.defaultAbiCoder.encode(deployed.interface.deploy.inputs, contractArgs);
   } else {
-    encoded = ethers.utils.defaultAbiCoder.encode(deployed.interface.functions["initialize"].inputs, contractArgs);
+    encoded = ethers.utils.defaultAbiCoder.encode(deployed.interface.functions['initialize'].inputs, contractArgs);
   }
   return encoded;
 };
@@ -76,8 +76,8 @@ const deploy = async (contractName: string, _args: unknown[] = [], contractType:
     await deployedContract.deployTransaction.wait(5);
     const gasUsed = deployedContract.deployTransaction.gasLimit.mul(
       deployedContract.deployTransaction.gasPrice as BigNumber,
-      );
-      extraGasInfo = `${ethers.utils.formatEther(gasUsed)} ETH, tx hash ${deployedContract.deployTransaction.hash}`;
+    );
+    extraGasInfo = `${ethers.utils.formatEther(gasUsed)} ETH, tx hash ${deployedContract.deployTransaction.hash}`;
   }
   fs.writeFileSync(`${config.paths.artifacts}/${contractName}.address`, deployedContract.address);
 
@@ -121,7 +121,11 @@ async function main() {
   const daoPercentage = process.env.DAO_PERCENTAGE;
   const treasuryPercentage = process.env.TREASURY_PERCENTAGE;
 
-  const itemSale = await deploy('NiftyItemSale', [items, nftl, treasury, dao, burnPercentage, treasuryPercentage, daoPercentage], 1);
+  const itemSale = await deploy(
+    'NiftyItemSale',
+    [items, nftl, treasury, dao, burnPercentage, treasuryPercentage, daoPercentage],
+    1,
+  );
 
   // Verify the contracts
   await tenderlyVerify({
@@ -129,7 +133,11 @@ async function main() {
     contractAddress: itemSale.address,
   });
   console.log(chalk.blue(` 📁 Attempting etherscan verification of ${itemSale.address} on ${targetNetwork}`));
-  await run('verify:verify', { address: itemSale.address, constructorArguments: [items, nftl, treasury, dao, burnPercentage, treasuryPercentage, daoPercentage], contract: "contracts/NiftyItemSale.sol:NiftyItemSale" });
+  await run('verify:verify', {
+    address: itemSale.address,
+    constructorArguments: [items, nftl, treasury, dao, burnPercentage, treasuryPercentage, daoPercentage],
+    contract: 'contracts/NiftyItemSale.sol:NiftyItemSale',
+  });
 }
 
 // We recommend this pattern to be able to use async/await everywhere

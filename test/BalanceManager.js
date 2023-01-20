@@ -1,10 +1,10 @@
-const { expect } = require("chai");
-const { BigNumber } = require("ethers");
-const { ethers } = require("hardhat");
+const { expect } = require('chai');
+const { BigNumber } = require('ethers');
+const { ethers } = require('hardhat');
 
 const getSignature = async (signer, beneficiary, amount, nonce, expireAt) => {
   let message = ethers.utils.solidityKeccak256(
-    ["address", "uint256", "uint256", "uint256"],
+    ['address', 'uint256', 'uint256', 'uint256'],
     [beneficiary, amount, nonce, expireAt],
   );
   let signature = await signer.signMessage(ethers.utils.arrayify(message));
@@ -16,7 +16,7 @@ const getCurrentTime = async () => {
   return (await ethers.provider.getBlock(blockNumber)).timestamp;
 };
 
-describe("BalanceManager", function () {
+describe('BalanceManager', function () {
   let balanceManager, nftl;
 
   const INIT_BALANCE = 10000;
@@ -28,11 +28,11 @@ describe("BalanceManager", function () {
     [deployer, maintainer, alice, bob, dao] = await ethers.getSigners();
 
     // Deploy NFTL token
-    const NFTL = await ethers.getContractFactory("MockERC20");
+    const NFTL = await ethers.getContractFactory('MockERC20');
     nftl = await NFTL.deploy();
 
     // Deploy BalanceManager
-    const BalanceManager = await ethers.getContractFactory("BalanceManager");
+    const BalanceManager = await ethers.getContractFactory('BalanceManager');
     balanceManager = await upgrades.deployProxy(BalanceManager, [nftl.address, maintainer.address]);
 
     // Mint NFTL tokens to users
@@ -40,8 +40,8 @@ describe("BalanceManager", function () {
     nftl.mint(bob.address, INIT_BALANCE);
   });
 
-  describe("deposit", function () {
-    it("should be able to deposit NFTL tokens", async () => {
+  describe('deposit', function () {
+    it('should be able to deposit NFTL tokens', async () => {
       expect(await nftl.balanceOf(alice.address)).to.equal(INIT_BALANCE);
 
       // deposit
@@ -52,7 +52,7 @@ describe("BalanceManager", function () {
     });
   });
 
-  describe("withdraw", function () {
+  describe('withdraw', function () {
     beforeEach(async () => {
       // deposit
       await nftl.connect(alice).approve(balanceManager.address, DEPOSIT_AMOUNT);
@@ -62,7 +62,7 @@ describe("BalanceManager", function () {
       await balanceManager.connect(bob).deposit(DEPOSIT_AMOUNT);
     });
 
-    it("should be able to withdraw NFTL tokens", async () => {
+    it('should be able to withdraw NFTL tokens', async () => {
       // withdraw
       let nonceForAlice = await balanceManager.nonce(alice.address);
       let expireAtForAlice = (await getCurrentTime()) + parseInt(ONE_DAY);
@@ -78,7 +78,7 @@ describe("BalanceManager", function () {
       expect(await nftl.balanceOf(alice.address)).to.equal(INIT_BALANCE - DEPOSIT_AMOUNT + WITHDRAW_AMOUNT);
     });
 
-    it("revert if the nonce is invalid", async () => {
+    it('revert if the nonce is invalid', async () => {
       // withdraw
       let nonceForAlice = await balanceManager.nonce(alice.address);
       let expireAtForAlice = (await getCurrentTime()) + ONE_DAY;
@@ -92,10 +92,10 @@ describe("BalanceManager", function () {
 
       await expect(
         balanceManager.connect(alice).withdraw(WITHDRAW_AMOUNT, nonceForAlice + 1, expireAtForAlice, signatureForAlice),
-      ).to.be.revertedWith("mismatched nonce");
+      ).to.be.revertedWith('mismatched nonce');
     });
 
-    it("revert if the request was expired", async () => {
+    it('revert if the request was expired', async () => {
       // withdraw
       let nonceForAlice = await balanceManager.nonce(alice.address);
       let expireAtForAlice = (await getCurrentTime()) - ONE_DAY;
@@ -109,10 +109,10 @@ describe("BalanceManager", function () {
 
       await expect(
         balanceManager.connect(alice).withdraw(WITHDRAW_AMOUNT, nonceForAlice, expireAtForAlice, signatureForAlice),
-      ).to.be.revertedWith("expired withdrawal request");
+      ).to.be.revertedWith('expired withdrawal request');
     });
 
-    it("revert if the signature is used twice", async () => {
+    it('revert if the signature is used twice', async () => {
       // withdraw
       let nonceForAlice = await balanceManager.nonce(alice.address);
       let expireAtForAlice = (await getCurrentTime()) + ONE_DAY;
@@ -128,10 +128,10 @@ describe("BalanceManager", function () {
       // witdraw again with the same signature
       await expect(
         balanceManager.connect(alice).withdraw(WITHDRAW_AMOUNT, nonceForAlice + 1, expireAtForAlice, signatureForAlice),
-      ).to.be.revertedWith("used signature");
+      ).to.be.revertedWith('used signature');
     });
 
-    it("revert if the amount is wrong", async () => {
+    it('revert if the amount is wrong', async () => {
       // withdraw
       let nonceForAlice = await balanceManager.nonce(alice.address);
       let expireAtForAlice = (await getCurrentTime()) + ONE_DAY;
@@ -145,10 +145,10 @@ describe("BalanceManager", function () {
 
       await expect(
         balanceManager.connect(bob).withdraw(WITHDRAW_AMOUNT, nonceForAlice, expireAtForAlice, signatureForAlice),
-      ).to.be.revertedWith("wrong signer");
+      ).to.be.revertedWith('wrong signer');
     });
 
-    it("revert if the amount is wrong", async () => {
+    it('revert if the amount is wrong', async () => {
       // withdraw
       let nonceForAlice = await balanceManager.nonce(alice.address);
       let expireAtForAlice = (await getCurrentTime()) + ONE_DAY;
@@ -162,12 +162,12 @@ describe("BalanceManager", function () {
 
       await expect(
         balanceManager.connect(alice).withdraw(WITHDRAW_AMOUNT + 1, nonceForAlice, expireAtForAlice, signatureForAlice),
-      ).to.be.revertedWith("wrong signer");
+      ).to.be.revertedWith('wrong signer');
     });
   });
 
-  describe("updateMaintainer", function () {
-    it("should be able to update the maintainer address", async () => {
+  describe('updateMaintainer', function () {
+    it('should be able to update the maintainer address', async () => {
       expect(await balanceManager.maintainer()).to.equal(maintainer.address);
 
       // update maintainer address
@@ -176,13 +176,13 @@ describe("BalanceManager", function () {
       expect(await balanceManager.maintainer()).to.equal(deployer.address);
     });
 
-    it("revert if msg.sender is not a owner", async () => {
+    it('revert if msg.sender is not a owner', async () => {
       // update maintainer address
       await expect(balanceManager.connect(alice).updateMaintainer(deployer.address)).to.be.reverted;
     });
   });
 
-  describe("withdrawByDAO", function () {
+  describe('withdrawByDAO', function () {
     beforeEach(async () => {
       // deposit
       await nftl.connect(alice).approve(balanceManager.address, DEPOSIT_AMOUNT);
@@ -192,7 +192,7 @@ describe("BalanceManager", function () {
       await balanceManager.connect(bob).deposit(DEPOSIT_AMOUNT);
     });
 
-    it("should be able to withdraw NFTL tokens", async () => {
+    it('should be able to withdraw NFTL tokens', async () => {
       expect(await nftl.balanceOf(balanceManager.address)).to.equal(2 * DEPOSIT_AMOUNT);
       expect(await nftl.balanceOf(dao.address)).to.equal(0);
 
@@ -203,7 +203,7 @@ describe("BalanceManager", function () {
       expect(await nftl.balanceOf(dao.address)).to.equal(WITHDRAW_AMOUNT);
     });
 
-    it("revert if msg.sender is not a owner", async () => {
+    it('revert if msg.sender is not a owner', async () => {
       // update maintainer address
       await expect(balanceManager.connect(alice).withdrawByDAO(dao.address, WITHDRAW_AMOUNT)).to.be.reverted;
     });

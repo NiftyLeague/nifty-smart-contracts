@@ -15,15 +15,15 @@
   },
   "scripts": {
     "lint:sol": "solhint \"contracts/**/*.sol\"",
-    "prettier": "prettier --write \"contracts/**/*.sol\" \"test/**/*.js\"",
+    "lint": "eslint --ignore-path .eslintignore . --ext .ts,.js",
+    "format": "prettier --ignore-path .prettierignore --write .",
     "build": "npm run compile",
     "compile": "npx hardhat compile",
     "coverage": "npx hardhat coverage --network hardhat",
     "deploy:hardhat": "hardhat deploy --deploy-scripts ./deploy/hardhat",
     "deploy:remote": "hardhat deploy --deploy-scripts ./deploy/remote --network",
     "deploy:ledger": "hardhat deploy --deploy-scripts ./deploy/ledger --network",
-    "test": "npx hardhat test",
-    "prepare": "husky install"
+    "test": "npx hardhat test"
   },
   "devDependencies": {
     "@ethersproject/bignumber": "^5.4.2",
@@ -46,7 +46,7 @@
     "chalk": "^4.1.2",
     "dotenv": "^10.0.0",
     "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-prettier": "^8.6.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-node": "^11.1.0",
@@ -58,7 +58,8 @@
     "fs": "0.0.1-security",
     "hardhat": "^2.6.5",
     "hardhat-gas-reporter": "^1.0.9",
-    "prettier": "^2.4.1",
+    "lint-staged": "^13.1.0",
+    "prettier": "^2.8.3",
     "prettier-plugin-solidity": "^1.0.0-beta.18",
     "ramda": "^0.27.1",
     "solhint": "^3.3.6",
@@ -82,5 +83,9 @@
     "ts-command-line-args": "^2.3.1",
     "ts-generator": "^0.1.1",
     "tsconfig-paths": "^4.1.2"
+  },
+  "engines": {
+    "node": ">=16.18.1",
+    "npm": ">=8.0.0"
   }
 }

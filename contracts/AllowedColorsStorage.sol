@@ -20,11 +20,7 @@ contract AllowedColorsStorage is Ownable {
      * @param colors List of colors to set for tribe
      * @param allowed Bool if the color list should be made allowed or not
      */
-    function setAllowedColorsOnTribe(
-        uint256 tribe,
-        uint256[] memory colors,
-        bool allowed
-    ) external onlyOwner {
+    function setAllowedColorsOnTribe(uint256 tribe, uint256[] memory colors, bool allowed) external onlyOwner {
         require(tribe > 0 && tribe < 10, "Invalid tribe provided");
         for (uint256 i = 0; i < colors.length; i++) {
             _toggleColorAllowed(tribe, colors[i], allowed);
@@ -38,11 +34,7 @@ contract AllowedColorsStorage is Ownable {
      * @param allowed Bool if the color should be made allowed or not
      * @dev Defaults to false if never set
      */
-    function _toggleColorAllowed(
-        uint256 tribe,
-        uint256 color,
-        bool allowed
-    ) private {
+    function _toggleColorAllowed(uint256 tribe, uint256 color, bool allowed) private {
         _tribeColorAllowed[tribe][color] = allowed;
     }
 

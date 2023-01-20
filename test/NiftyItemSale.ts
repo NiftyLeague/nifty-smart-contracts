@@ -16,7 +16,7 @@ describe('NiftySale', function () {
   let items: NiftyEquipment;
   let nftl: MockERC20;
 
-  const ONE_ETHER = ethers.utils.parseEther("1");
+  const ONE_ETHER = ethers.utils.parseEther('1');
 
   const BURN_PERCENTAGE = 200;
   const TREASURY_PERCENTAGE = 300;
@@ -47,7 +47,7 @@ describe('NiftySale', function () {
       dao.address,
       BURN_PERCENTAGE,
       TREASURY_PERCENTAGE,
-      DAO_PERCENTAGE
+      DAO_PERCENTAGE,
     ])) as NiftyItemSale;
 
     // grant "MINTER_ROLE" of "NiftyItems" contracts to "NiftyItemSale" contract
@@ -67,16 +67,18 @@ describe('NiftySale', function () {
 
       // deploy NiftySale contract
       const NiftyItemSale = await ethers.getContractFactory('NiftyItemSale');
-      await expect(upgrades.deployProxy(NiftyItemSale, [
-        items.address,
-        nftl.address,
-        treasury.address,
-        dao.address,
-        newBurnPercentage,
-        newTreasuryPercentage,
-        newDAOPercentage
-      ])).to.be.revertedWith('Invalid percentages');
-    })
+      await expect(
+        upgrades.deployProxy(NiftyItemSale, [
+          items.address,
+          nftl.address,
+          treasury.address,
+          dao.address,
+          newBurnPercentage,
+          newTreasuryPercentage,
+          newDAOPercentage,
+        ]),
+      ).to.be.revertedWith('Invalid percentages');
+    });
   });
 
   describe('setItemPrices', () => {
@@ -164,7 +166,9 @@ describe('NiftySale', function () {
       await items.mintBatch(alice.address, tokenIds, [10, 20, 30], constants.HashZero);
 
       // set item prices
-      await expect(itemSale.setItemMaxCounts(tokenIds, tokenMaxCount)).to.be.revertedWith('Max count less than total supply');
+      await expect(itemSale.setItemMaxCounts(tokenIds, tokenMaxCount)).to.be.revertedWith(
+        'Max count less than total supply',
+      );
     });
   });
 
@@ -191,7 +195,7 @@ describe('NiftySale', function () {
 
       // get the old NFTL balance
       const aliceNFTLBalanceBefore = await nftl.balanceOf(alice.address);
-      
+
       // purchase items
       await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
       await itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts);
@@ -199,9 +203,7 @@ describe('NiftySale', function () {
       // get the total price
       let totalPrice = ONE_ETHER.mul('0');
       for (let i = 0; i < tokenIds.length; i++) {
-        totalPrice = totalPrice.add(
-          (await itemSale.itemPrices(tokenIds[i])).mul(tokenAmounts[i])
-        );
+        totalPrice = totalPrice.add((await itemSale.itemPrices(tokenIds[i])).mul(tokenAmounts[i]));
       }
 
       // check balances
@@ -221,7 +223,9 @@ describe('NiftySale', function () {
 
       // purchase items
       await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
-      await expect(itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts)).to.be.revertedWith('Mismatched params');
+      await expect(itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts)).to.be.revertedWith(
+        'Mismatched params',
+      );
     });
 
     it('Reverts if token price is 0, no item limit', async () => {
@@ -245,7 +249,9 @@ describe('NiftySale', function () {
 
       // purchase items
       await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
-      await expect(itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts)).to.be.revertedWith('Remaining count overflow');
+      await expect(itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts)).to.be.revertedWith(
+        'Remaining count overflow',
+      );
     });
 
     it('Reverts if the item price was set, the item max count wasn not set, and token amount to purcahse is exceeded, no item limit', async () => {
@@ -260,7 +266,9 @@ describe('NiftySale', function () {
 
       // purchase items
       await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
-      await expect(itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts)).to.be.revertedWith('Remaining count overflow');
+      await expect(itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts)).to.be.revertedWith(
+        'Remaining count overflow',
+      );
     });
 
     it('Should be able to purcahse items if item limit > 0 and the item count to purcahse is valid', async () => {
@@ -279,7 +287,7 @@ describe('NiftySale', function () {
 
       // get the old NFTL balance
       const aliceNFTLBalanceBefore = await nftl.balanceOf(alice.address);
-      
+
       // purchase items
       await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
       await itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts);
@@ -287,9 +295,7 @@ describe('NiftySale', function () {
       // get the total price
       let totalPrice = ONE_ETHER.mul('0');
       for (let i = 0; i < tokenIds.length; i++) {
-        totalPrice = totalPrice.add(
-          (await itemSale.itemPrices(tokenIds[i])).mul(tokenAmounts[i])
-        );
+        totalPrice = totalPrice.add((await itemSale.itemPrices(tokenIds[i])).mul(tokenAmounts[i]));
       }
 
       // check balances
@@ -316,10 +322,12 @@ describe('NiftySale', function () {
 
       // get the old NFTL balance
       const aliceNFTLBalanceBefore = await nftl.balanceOf(alice.address);
-      
+
       // purchase items
       await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
-      await expect(itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts)).to.be.revertedWith('Item limit overflow');
+      await expect(itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts)).to.be.revertedWith(
+        'Item limit overflow',
+      );
     });
   });
 
@@ -348,7 +356,9 @@ describe('NiftySale', function () {
       const newDAOPercentage = 100;
 
       // update percentages
-      await expect(itemSale.updateTokenPercentages(newBurnPercentage, newTreasuryPercentage, newDAOPercentage)).to.be.revertedWith('Invalid percentages');
+      await expect(
+        itemSale.updateTokenPercentages(newBurnPercentage, newTreasuryPercentage, newDAOPercentage),
+      ).to.be.revertedWith('Invalid percentages');
     });
   });
 
@@ -376,7 +386,7 @@ describe('NiftySale', function () {
 
       // get the old NFTL balance
       const aliceNFTLBalanceBefore = await nftl.balanceOf(alice.address);
-      
+
       // purchase items
       await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
       await itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts);
@@ -395,7 +405,7 @@ describe('NiftySale', function () {
 
       // check old item limit
       expect(await itemSale.itemLimitPerAdress(tokenId)).to.equal(0);
-      
+
       // set the item limit
       await itemSale.setItemLimit(tokenId, limitCount);
 
@@ -436,11 +446,9 @@ describe('NiftySale', function () {
       // get the total price
       let totalPrice = ONE_ETHER.mul('0');
       for (let i = 0; i < tokenIds.length; i++) {
-        totalPrice = totalPrice.add(
-          (await itemSale.itemPrices(tokenIds[i])).mul(tokenAmounts[i])
-        );
+        totalPrice = totalPrice.add((await itemSale.itemPrices(tokenIds[i])).mul(tokenAmounts[i]));
       }
-      
+
       // withdraw NFTL tokens
       await itemSale.withdraw();
 
@@ -449,10 +457,8 @@ describe('NiftySale', function () {
       expect(await nftl.balanceOf(treasury.address)).to.equal(totalPrice.mul(TREASURY_PERCENTAGE).div(1000));
       expect(await nftl.balanceOf(dao.address)).to.equal(totalPrice.mul(DAO_PERCENTAGE).div(1000));
     });
-    
-    it('Reverts if the params are mismatched', async () => {
 
-    });
+    it('Reverts if the params are mismatched', async () => {});
   });
 
   describe('pause/unpause', () => {
