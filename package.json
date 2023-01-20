@@ -52,7 +52,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-promise": "^5.1.0",
-    "eth-provider": "^0.9.4",
+    "eth-provider": "^0.13.6",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.4.7",
     "fs": "0.0.1-security",
