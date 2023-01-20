@@ -62,11 +62,7 @@ contract NiftyLaunchComics is Context, AccessControl, ERC1155, Pausable {
      *
      * - burning must not be paused.
      */
-    function burn(
-        address account,
-        uint256 id,
-        uint256 value
-    ) public whenNotPaused {
+    function burn(address account, uint256 id, uint256 value) public whenNotPaused {
         require(account == _msgSender() || isApprovedForAll(account, _msgSender()), "Caller is not owner nor approved");
 
         _burn(account, id, value);
@@ -75,11 +71,7 @@ contract NiftyLaunchComics is Context, AccessControl, ERC1155, Pausable {
     /**
      * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] variant of {burn}.
      */
-    function burnBatch(
-        address account,
-        uint256[] memory ids,
-        uint256[] memory values
-    ) public whenNotPaused {
+    function burnBatch(address account, uint256[] memory ids, uint256[] memory values) public whenNotPaused {
         require(account == _msgSender() || isApprovedForAll(account, _msgSender()), "Caller is not owner nor approved");
 
         _burnBatch(account, ids, values);
@@ -94,12 +86,7 @@ contract NiftyLaunchComics is Context, AccessControl, ERC1155, Pausable {
      *
      * - the caller must have the `MINTER_ROLE`.
      */
-    function mint(
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes memory data
-    ) public onlyRole(MINTER_ROLE) {
+    function mint(address to, uint256 id, uint256 amount, bytes memory data) public onlyRole(MINTER_ROLE) {
         _mint(to, id, amount, data);
     }
 

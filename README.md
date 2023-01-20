@@ -5,15 +5,19 @@ This project demonstrates an advanced Hardhat use case, integrating other tools 
 ## Developer instructions
 
 #### Install dependencies
+
 `yarn install`
 
 #### Compile code
+
 - `yarn run compile` (Compiles the entire project, building all artifacts)
 
 #### Run tests
+
 - `yarn run test ./test/{desired_test_script}`
 
-#### Deploy code 
+#### Deploy code
+
 - `npx hardhat node` (Starts a JSON-RPC server on top of Hardhat Network)
 - `yarn run deploy:hardhat` (Deploy the contracts on Harhdat Network)
 - `yarn run deploy:remote {network}` (Deploy the contracts on the Mainnet or Testnet)
@@ -56,6 +60,7 @@ npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
 ```
 
 #### Etherscan verification script
+
 - `npx hardhat --network {network} etherscan-verify --api-key {etherscan_api_key}`
 
 ## Performance optimizations
@@ -64,8 +69,8 @@ For faster runs of your tests and scripts, consider skipping ts-node's type chec
 
 ## Support
 
-Email [andy@niftyleague.com](mailto:andy@niftyleague.com)  
+Email [andy@niftyleague.com](mailto:andy@niftyleague.com)
 
-or  
+or
 
 Join the [Nifty League Discord Server](https://discord.gg/niftyleague) and message a admin

@@ -8,5 +8,14 @@
     "declaration": true
   },
   "files": ["./hardhat.config.ts"],
-  "include": ["deploy/**/*.ts", "scripts/**/*.ts", "tasks/**/*.ts", "test/**/*.ts", "typechain/**/*.d.ts", "typechain/**/*.ts", "./modules.d.ts", "test/BalanceManager.js"],
+  "include": [
+    "deploy/**/*.ts",
+    "scripts/**/*.ts",
+    "tasks/**/*.ts",
+    "test/**/*.ts",
+    "typechain/**/*.d.ts",
+    "typechain/**/*.ts",
+    "./modules.d.ts",
+    "test/BalanceManager.js"
+  ]
 }
