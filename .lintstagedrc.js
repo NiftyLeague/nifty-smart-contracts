@@ -13,9 +13,5 @@ module.exports = {
   '**/*.(md|json)': filenames => `yarn prettier --write ${filenames.join(' ')}`,
 
   // Lint then formatSolidity
-  '**/*.sol': filenames => [
-    // TODO: fix solidity compiler issues and enable
-    // `yarn solhint ${filenames.join(' ')}`,
-    `yarn prettier --write ${filenames.join(' ')}`,
-  ],
+  '**/*.sol': filenames => [`yarn solhint ${filenames.join(' ')}`, `yarn prettier --write ${filenames.join(' ')}`],
 };

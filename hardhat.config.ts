@@ -1,15 +1,7 @@
-import * as dotenv from 'dotenv';
-
 import { HardhatUserConfig, task } from 'hardhat/config';
+import '@nomicfoundation/hardhat-toolbox';
 import '@openzeppelin/hardhat-upgrades';
-import '@nomiclabs/hardhat-etherscan';
-import '@nomiclabs/hardhat-waffle';
-import '@nomiclabs/hardhat-ethers';
 import '@tenderly/hardhat-tenderly';
-import '@typechain/hardhat';
-import 'hardhat-deploy';
-import 'hardhat-gas-reporter';
-import 'solidity-coverage';
 
 import { resolve } from 'path';
 import { config as dotenvConfig } from 'dotenv';
@@ -37,10 +29,6 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.8.4',
-        settings: { optimizer: { enabled: true, runs: 200 } },
-      },
-      {
         version: '0.8.11',
         settings: { optimizer: { enabled: true, runs: 200 } },
       },
@@ -57,10 +45,6 @@ const config: HardhatUserConfig = {
       url: `https://goerli.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
-      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
@@ -68,16 +52,6 @@ const config: HardhatUserConfig = {
   },
   mocha: {
     timeout: 100000000,
-  },
-  gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
-    currency: 'USD',
-  },
-  namedAccounts: {
-    deployer: {
-      default: 0,
-      mainnet: '',
-    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
