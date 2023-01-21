@@ -45,4 +45,4 @@ jobs:
         continue-on-error: false
         run: |
           npx hardhat node --network hardhat
-          npx hardhat run --network hardhat scripts/test-deploy.ts
+          npx hardhat run --network hardhat scripts/deploy_test.ts
