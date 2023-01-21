@@ -23,6 +23,4 @@ const ALIEN = [
   116, 117, 118,
 ];
 
-const ALLOWED_COLORS = [APE, HUMAN, DOGE, FROG, CAT, ALIEN];
-
-module.exports = { ALLOWED_COLORS };
+export const ALLOWED_COLORS = [APE, HUMAN, DOGE, FROG, CAT, ALIEN];
