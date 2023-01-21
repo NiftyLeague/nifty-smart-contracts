@@ -1,7 +1,6 @@
 import { config, ethers } from 'hardhat';
 import fs from 'fs';
 import { Contract } from 'ethers';
-// import { getLedgerSigner } from './ledger';
 
 const airdropData: { [address: string]: { [page: string]: number } } = JSON.parse(
   fs.readFileSync('data/mintAirdrop.json', { encoding: 'utf8' }),
