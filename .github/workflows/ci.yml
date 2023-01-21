@@ -14,9 +14,11 @@ jobs:
           node-version: 16.18.1
           cache: 'yarn'
       - name: Install dependencies
-        run: yarn install --immutable
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
       - name: Hardhat compile
-        uses: borales/actions-yarn@v3.0.0
+        uses: borales/actions-yarn@v4
         with:
           cmd: build
   lint:
@@ -24,15 +26,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run prettier
-        uses: borales/actions-yarn@v3.0.0
+        uses: borales/actions-yarn@v4
         with:
           cmd: format
       - name: Lint JS files
-        uses: borales/actions-yarn@v3.0.0
+        uses: borales/actions-yarn@v4
         with:
           cmd: lint
       - name: Lint Solidity files
-        uses: borales/actions-yarn@v3.0.0
+        uses: borales/actions-yarn@v4
         with:
           cmd: lint:sol
   test:
@@ -40,11 +42,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Hardhat tests
-        uses: borales/actions-yarn@v3.0.0
+        uses: borales/actions-yarn@v4
         with:
           cmd: test
       - name: Check Solidity coverage
-        uses: borales/actions-yarn@v3.0.0
+        uses: borales/actions-yarn@v4
         with:
           cmd: coverage
   deploy:
