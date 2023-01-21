@@ -21,10 +21,6 @@ jobs:
         uses: borales/actions-yarn@v4
         with:
           cmd: build
-  lint:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Run prettier
         uses: borales/actions-yarn@v4
         with:
@@ -37,10 +33,6 @@ jobs:
         uses: borales/actions-yarn@v4
         with:
           cmd: lint:sol
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Run Hardhat tests
         uses: borales/actions-yarn@v4
         with:
@@ -49,10 +41,6 @@ jobs:
         uses: borales/actions-yarn@v4
         with:
           cmd: coverage
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Test contract deployment
         continue-on-error: false
         run: npx hardhat node --network hardhat
