@@ -1,23 +1,22 @@
 node_modules
-typechain
 package-lock.json
 .vscode
 .idea
 .env
 /.DS_Store
 
-#Hardhat files
+# Hardhat files
 cache
 artifacts
-bin
+typechain
+typechain-types
 
 #Coverage
 coverage
 coverage.json
 
 # openzeppelin dev files
-.openzeppelin/unknown-*.json
-.openzeppelin/unknown-31337.json
+.openzeppelin
 
 # Logs
 logs

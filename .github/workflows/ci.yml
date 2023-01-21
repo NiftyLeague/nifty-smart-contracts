@@ -43,4 +43,6 @@ jobs:
           cmd: coverage
       - name: Test contract deployment
         continue-on-error: false
-        run: npx hardhat node --network hardhat
+        run: |
+          npx hardhat node --network hardhat
+          npx hardhat run --network hardhat scripts/test-deploy.ts
