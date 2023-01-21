@@ -14,9 +14,7 @@ jobs:
           node-version: 16.18.1
           cache: 'yarn'
       - name: Install dependencies
-        uses: borales/actions-yarn@v3.0.0
-        with:
-          cmd: install
+        run: yarn install --immutable
       - name: Hardhat compile
         uses: borales/actions-yarn@v3.0.0
         with:
