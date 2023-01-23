@@ -32,7 +32,7 @@ describe('NiftySale', function () {
 
     // Deploy NiftyLaunchComics contracts
     const MockERC20 = await ethers.getContractFactory('MockERC20');
-    nftl = await MockERC20.deploy('Mock NFTL', 'Mock NFTL');
+    nftl = await MockERC20.deploy();
 
     // Deploy NiftyItems contract
     const NiftyItems = await ethers.getContractFactory('NiftyEquipment');
@@ -55,6 +55,7 @@ describe('NiftySale', function () {
     await items.grantRole(MINTER_ROLE, itemSale.address);
 
     // transfer NFTL tokens to the users
+    await nftl.mint(deployer.address, ONE_ETHER.mul(10000000));
     await nftl.transfer(alice.address, ONE_ETHER.mul(1000000)); // 1_000_000 NFTL
     await nftl.transfer(bob.address, ONE_ETHER.mul(1000000)); // 1_000_000 NFTL
   });
