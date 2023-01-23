@@ -2,7 +2,7 @@ const { config: dotenvConfig } = require('dotenv');
 const path = require('path');
 const ethProvider = require('eth-provider');
 
-dotenvConfig({ path: path.resolve(__dirname, '../.env') });
+dotenvConfig({ path: path.resolve(__dirname, '../../.env') });
 
 const getLedgerSigner = async () => {
   const frame = ethProvider('frame');
@@ -27,7 +27,7 @@ const deployBalanceManager = async hre => {
       execute: {
         init: {
           methodName: 'initialize',
-          args: [process.env.NFTL_ADDRESS, process.env.MAINTAINER_ADDRESS],
+          args: [process.env.NFTL_TOKEN_ADDRESS, process.env.MAINTAINER_ADDRESS],
         },
       },
     },
