@@ -1,7 +1,7 @@
 const { config: dotenvConfig } = require('dotenv');
 const path = require('path');
 
-dotenvConfig({ path: path.resolve(__dirname, '../.env') });
+dotenvConfig({ path: path.resolve(__dirname, '../../.env') });
 
 const deployBalanceManager = async hre => {
   const { deploy } = hre.deployments;
