@@ -3,6 +3,7 @@ import { ethers, upgrades } from 'hardhat';
 import { constants } from 'ethers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
+import { BURN_PERCENTAGE, DAO_PERCENTAGE, TREASURY_PERCENTAGE } from '../constants/itemsSale';
 import type { NiftyItemSale, NiftyEquipment, MockERC20 } from '../typechain-types';
 
 describe('NiftySale', function () {
@@ -17,10 +18,6 @@ describe('NiftySale', function () {
   let nftl: MockERC20;
 
   const ONE_ETHER = ethers.utils.parseEther('1');
-
-  const BURN_PERCENTAGE = 200;
-  const TREASURY_PERCENTAGE = 300;
-  const DAO_PERCENTAGE = 500;
 
   const toRole = (role: string) => {
     return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(role));

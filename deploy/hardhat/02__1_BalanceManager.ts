@@ -1,9 +1,6 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { config as dotenvConfig } from 'dotenv';
-import path from 'path';
-
-dotenvConfig({ path: path.resolve(__dirname, '../../.env') });
+import { NIFTY_LEDGER_DEPLOYER } from '../../constants/addresses';
 
 const deployBalanceManager: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
@@ -22,7 +19,7 @@ const deployBalanceManager: DeployFunction = async (hre: HardhatRuntimeEnvironme
       execute: {
         init: {
           methodName: 'initialize',
-          args: [MockERC20.address, process.env.MAINTAINER_ADDRESS],
+          args: [MockERC20.address, NIFTY_LEDGER_DEPLOYER],
         },
       },
     },

@@ -11,16 +11,18 @@ import fs from 'fs';
 import { BigNumber } from '@ethersproject/bignumber';
 import { abiEncodeArgs, tenderlyVerify } from './utils';
 import { getLedgerSigner } from './ledger';
+import { NetworkName } from '../types';
+import { COMICS_ADDRESS } from '../constants/addresses';
 
 dotenv.config();
 
-const targetNetwork = network.name;
+const targetNetwork = network.name as NetworkName;
 
 const deploy = async (contractName: string, _args: unknown[] = [], contractType: number, overrides = {}) => {
   console.log(` 🛰  Deploying: ${contractName} to ${targetNetwork}`);
 
   const contractArgs = _args || [];
-  const useSigner = targetNetwork === 'ropsten' || targetNetwork === 'mainnet';
+  const useSigner = targetNetwork === 'goerli' || targetNetwork === 'mainnet';
   const args = useSigner ? { signer: await getLedgerSigner() } : {};
   const contractFactory = await ethers.getContractFactory(contractName, args);
 
@@ -74,8 +76,8 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const comicsAddress = process.env.COMICS_ADDRESS;
-  const comicsBurningStartAt = process.env.COMICS_BURNING_STARTAT;
+  const comicsAddress = COMICS_ADDRESS[network.name as NetworkName];
+  const comicsBurningStartAt = Math.floor(Date.now() / 1000);
 
   const uriForNiftyItems = `https://api.nifty-league.com/${targetNetwork}/items/{id}`;
   const items = await deploy('NiftyEquipment', ['Nifty Items', 'NLT', uriForNiftyItems], 0);
