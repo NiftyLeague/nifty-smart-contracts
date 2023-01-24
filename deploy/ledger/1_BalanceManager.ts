@@ -1,24 +1,16 @@
-const { config: dotenvConfig } = require('dotenv');
-const path = require('path');
-const ethProvider = require('eth-provider');
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { config as dotenvConfig } from 'dotenv';
+import path from 'path';
+import { getLedgerSigner } from '../../scripts/utils';
 
 dotenvConfig({ path: path.resolve(__dirname, '../../.env') });
 
-const getLedgerSigner = async () => {
-  const frame = ethProvider('frame');
-  const ledgerSigner = (await frame.request({ method: 'eth_requestAccounts' }))[0];
-  const { Web3Provider } = hre.ethers.providers;
-  const provider = new Web3Provider(frame);
-
-  return provider.getSigner(ledgerSigner);
-};
-
-const deployBalanceManager = async hre => {
+const deployBalanceManager = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
   const deployer = await getLedgerSigner();
 
   await deploy('BalanceManager', {
-    from: deployer,
+    from: await deployer.getAddress(),
     args: [],
     log: true,
     proxy: {
