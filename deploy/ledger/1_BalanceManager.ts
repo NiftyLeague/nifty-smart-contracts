@@ -1,7 +1,7 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { config as dotenvConfig } from 'dotenv';
 import path from 'path';
-import { getLedgerSigner } from '../../scripts/utils';
+import { getLedgerSigner } from '../../scripts/ledger';
 
 dotenvConfig({ path: path.resolve(__dirname, '../../.env') });
 
