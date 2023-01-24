@@ -5,23 +5,27 @@ import { NetworkName } from '../../types';
 
 const deployBalanceManager = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
-  const deployer = await getLedgerSigner();
+  try {
+    const deployer = await getLedgerSigner();
 
-  await deploy('BalanceManager', {
-    from: await deployer.getAddress(),
-    args: [],
-    log: true,
-    proxy: {
-      proxyContract: 'OpenZeppelinTransparentProxy',
-      viaAdminContract: 'DefaultProxyAdmin',
-      execute: {
-        init: {
-          methodName: 'initialize',
-          args: [NFTL_TOKEN_ADDRESS[hre.network.name as NetworkName], NIFTY_LEDGER_DEPLOYER],
+    await deploy('BalanceManager', {
+      from: await deployer.getAddress(),
+      args: [],
+      log: true,
+      proxy: {
+        proxyContract: 'OpenZeppelinTransparentProxy',
+        viaAdminContract: 'DefaultProxyAdmin',
+        execute: {
+          init: {
+            methodName: 'initialize',
+            args: [NFTL_TOKEN_ADDRESS[hre.network.name as NetworkName], NIFTY_LEDGER_DEPLOYER],
+          },
         },
       },
-    },
-  });
+    });
+  } catch (err) {
+    console.log('\nFailed in the BalanceManager contract deployment using the ledger\n');
+  }
 };
 module.exports = deployBalanceManager;
 deployBalanceManager.tags = ['BalanceManager'];
