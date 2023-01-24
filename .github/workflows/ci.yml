@@ -33,6 +33,10 @@ jobs:
         uses: borales/actions-yarn@v4
         with:
           cmd: lint:sol
+      - name: Check TypeScript
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: tsc --noEmit
       - name: Run Hardhat tests
         uses: borales/actions-yarn@v4
         with:

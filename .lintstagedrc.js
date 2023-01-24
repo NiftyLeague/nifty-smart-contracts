@@ -1,7 +1,7 @@
 module.exports = {
   // Type check TypeScript files
   // TODO: fix typescript issues and enable
-  // '**/*.ts': () => 'yarn tsc --noEmit',
+  '**/*.ts': () => 'yarn tsc --noEmit',
 
   // Lint then format TypeScript and JavaScript files
   '**/*.(ts|js)': filenames => [
