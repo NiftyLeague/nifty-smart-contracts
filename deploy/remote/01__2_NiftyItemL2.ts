@@ -1,10 +1,7 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-
-const { config: dotenvConfig } = require('dotenv');
-const path = require('path');
-
-dotenvConfig({ path: path.resolve(__dirname, '../.env') });
+import { STARK_CONTRACT_ADDRESS } from '../../constants/addresses';
+import { NetworkName } from '../../types';
 
 const NiftyItemL2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
@@ -20,7 +17,7 @@ const NiftyItemL2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
       execute: {
         init: {
           methodName: 'initialize',
-          args: [process.env.STARK_CONTRACT_ADDRESS],
+          args: [STARK_CONTRACT_ADDRESS[hre.network.name as NetworkName]],
         },
       },
     },

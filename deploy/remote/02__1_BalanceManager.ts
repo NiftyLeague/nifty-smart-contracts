@@ -1,14 +1,10 @@
-const { config: dotenvConfig } = require('dotenv');
-const path = require('path');
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { NFTL_TOKEN_ADDRESS, NIFTY_LEDGER_DEPLOYER } from '../../constants/addresses';
+import { NetworkName } from '../../types';
 
-dotenvConfig({ path: path.resolve(__dirname, '../.env') });
-
-const deployBalanceManager = async hre => {
+const deployBalanceManager = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
-
-  // get contracts
-  const MockERC20 = await hre.deployments.get('MockERC20');
 
   await deploy('BalanceManager', {
     from: deployer,
@@ -20,7 +16,7 @@ const deployBalanceManager = async hre => {
       execute: {
         init: {
           methodName: 'initialize',
-          args: [MockERC20.address, process.env.MAINTAINER_ADDRESS],
+          args: [NFTL_TOKEN_ADDRESS[hre.network.name as NetworkName], NIFTY_LEDGER_DEPLOYER],
         },
       },
     },

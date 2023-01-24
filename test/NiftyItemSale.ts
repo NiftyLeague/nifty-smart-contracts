@@ -3,7 +3,8 @@ import { ethers, upgrades } from 'hardhat';
 import { constants } from 'ethers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
-import type { NiftyItemSale, NiftyEquipment, MockERC20 } from '../typechain';
+import { BURN_PERCENTAGE, DAO_PERCENTAGE, TREASURY_PERCENTAGE } from '../constants/itemsSale';
+import type { NiftyItemSale, NiftyEquipment, MockERC20 } from '../typechain-types';
 
 describe('NiftySale', function () {
   let accounts: SignerWithAddress[];
@@ -18,10 +19,6 @@ describe('NiftySale', function () {
 
   const ONE_ETHER = ethers.utils.parseEther('1');
 
-  const BURN_PERCENTAGE = 200;
-  const TREASURY_PERCENTAGE = 300;
-  const DAO_PERCENTAGE = 500;
-
   const toRole = (role: string) => {
     return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(role));
   };
@@ -32,7 +29,7 @@ describe('NiftySale', function () {
 
     // Deploy NiftyLaunchComics contracts
     const MockERC20 = await ethers.getContractFactory('MockERC20');
-    nftl = await MockERC20.deploy('Mock NFTL', 'Mock NFTL');
+    nftl = await MockERC20.deploy();
 
     // Deploy NiftyItems contract
     const NiftyItems = await ethers.getContractFactory('NiftyEquipment');
@@ -55,6 +52,7 @@ describe('NiftySale', function () {
     await items.grantRole(MINTER_ROLE, itemSale.address);
 
     // transfer NFTL tokens to the users
+    await nftl.mint(deployer.address, ONE_ETHER.mul(10000000));
     await nftl.transfer(alice.address, ONE_ETHER.mul(1000000)); // 1_000_000 NFTL
     await nftl.transfer(bob.address, ONE_ETHER.mul(1000000)); // 1_000_000 NFTL
   });

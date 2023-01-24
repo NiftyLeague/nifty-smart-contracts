@@ -1,14 +1,11 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-const { config: dotenvConfig } = require('dotenv');
-const path = require('path');
-
-dotenvConfig({ path: path.resolve(__dirname, '../../.env') });
-
 const NiftyBurningComicsL2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
+
+  const MockERC1155 = await hre.deployments.get('MockERC1155');
 
   await deploy('NiftyBurningComicsL2', {
     from: deployer,
@@ -20,7 +17,7 @@ const NiftyBurningComicsL2: DeployFunction = async (hre: HardhatRuntimeEnvironme
       execute: {
         init: {
           methodName: 'initialize',
-          args: [process.env.COMICS_ADDRESS],
+          args: [MockERC1155.address],
         },
       },
     },
