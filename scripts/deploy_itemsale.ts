@@ -9,7 +9,8 @@ import { config, ethers, network, tenderly, run, upgrades } from 'hardhat';
 import chalk from 'chalk';
 import fs from 'fs';
 import { BigNumber } from '@ethersproject/bignumber';
-import { abiEncodeArgs, getLedgerSigner, tenderlyVerify } from './utils';
+import { abiEncodeArgs, tenderlyVerify } from './utils';
+import { getLedgerSigner } from './ledger';
 
 dotenv.config();
 

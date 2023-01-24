@@ -1,8 +1,5 @@
 import { ethers, network, tenderly } from 'hardhat';
-import { ExternalProvider } from '@ethersproject/providers';
 import { Contract } from '@ethersproject/contracts';
-import { Address } from 'hardhat-deploy/types';
-import ethProvider from 'eth-provider';
 import chalk from 'chalk';
 import R from 'ramda';
 
@@ -50,14 +47,4 @@ export const abiEncodeArgs = (deployed: Contract, contractArgs: unknown[], contr
     encoded = ethers.utils.defaultAbiCoder.encode(deployed.interface.functions['initialize'].inputs, contractArgs);
   }
   return encoded;
-};
-
-// Sign transactions with a Ledger using Frame
-// download wallet at https://frame.sh/
-export const getLedgerSigner = async () => {
-  const frame = ethProvider('frame');
-  const ledgerSigner: Address = ((await frame.request({ method: 'eth_requestAccounts' })) as Address[])[0];
-  const { Web3Provider } = ethers.providers;
-  const provider = new Web3Provider(frame as unknown as ExternalProvider);
-  return provider.getSigner(ledgerSigner);
 };

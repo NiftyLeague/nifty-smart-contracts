@@ -7,7 +7,8 @@ import { config, ethers, network, tenderly, run } from 'hardhat';
 import chalk from 'chalk';
 import fs from 'fs';
 import { BigNumber } from '@ethersproject/bignumber';
-import { abiEncodeArgs, getLedgerSigner, tenderlyVerify } from './utils';
+import { abiEncodeArgs, tenderlyVerify } from './utils';
+import { getLedgerSigner } from './ledger';
 
 const targetNetwork = network.name;
 

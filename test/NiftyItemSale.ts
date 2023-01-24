@@ -3,7 +3,7 @@ import { ethers, upgrades } from 'hardhat';
 import { constants } from 'ethers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
-import type { NiftyItemSale, NiftyEquipment, MockERC20 } from '../typechain';
+import type { NiftyItemSale, NiftyEquipment, MockERC20 } from '../typechain-types';
 
 describe('NiftySale', function () {
   let accounts: SignerWithAddress[];
