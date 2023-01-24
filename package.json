@@ -30,7 +30,7 @@
     "@ethersproject/providers": "^5.7.2",
     "@imtbl/imlogging": "^1.0.37",
     "@imtbl/imx-contracts": "^1.0.1",
-    "@imtbl/imx-sdk": "^1.39.1",
+    "@imtbl/imx-sdk": "^1.40.0",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.5",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.7",
     "@nomicfoundation/hardhat-toolbox": "^2.0.1",
