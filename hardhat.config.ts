@@ -1,7 +1,7 @@
 import { HardhatUserConfig, task } from 'hardhat/config';
 import '@nomicfoundation/hardhat-toolbox';
 import '@openzeppelin/hardhat-upgrades';
-import '@tenderly/hardhat-tenderly';
+// import '@tenderly/hardhat-tenderly';
 import 'hardhat-deploy';
 
 import { resolve } from 'path';
@@ -38,17 +38,21 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true,
+      deploy: ['deploy/hardhat/'],
     },
     local: {
       url: 'http://localhost:8545',
+      deploy: ['deploy/hardhat/'],
     },
     goerli: {
       url: `https://goerli.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      deploy: ['deploy/remote/'],
     },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      deploy: ['deploy/remote/'],
     },
   },
   mocha: {
