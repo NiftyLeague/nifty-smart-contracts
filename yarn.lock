@@ -663,10 +663,10 @@
     "@openzeppelin/contracts" "^4.1.0"
     dotenv "^10.0.0"
 
-"@imtbl/imx-sdk@^1.39.1":
-  version "1.39.1"
-  resolved "https://registry.yarnpkg.com/@imtbl/imx-sdk/-/imx-sdk-1.39.1.tgz#5f828413e391508d8b26ff59f4995868f1d03024"
-  integrity sha512-lZToRjC5nwlObrJJHVbyNi4kCiFHJelioOpEHczOn4/BNmv3KvmxHmWcToaH3VdQQDVO3hsDBlSAsZjHrWMpvg==
+"@imtbl/imx-sdk@^1.40.0":
+  version "1.40.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/imx-sdk/-/imx-sdk-1.40.0.tgz#3166c859f82333881ce5036e44ccc5b2c84560d1"
+  integrity sha512-30RJO9zgW6MCrQ/VAkFk3FgPTgArTZbLuaZpACIeMQVixLv+vq3GtXeN/UWJBAKZ4u5L9sUrRCLFd8D9eML6tg==
   dependencies:
     "@ethersproject/abstract-signer" "^5.6.0"
     "@ethersproject/address" "^5.6.0"
