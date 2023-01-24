@@ -1,24 +1,14 @@
-const { config: dotenvConfig } = require('dotenv');
-const path = require('path');
-const ethProvider = require('eth-provider');
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { getLedgerSigner } from '../../scripts/ledger';
+import { NFTL_TOKEN_ADDRESS, NIFTY_LEDGER_DEPLOYER } from '../../constants/addresses';
+import { NetworkName } from '../../types';
 
-dotenvConfig({ path: path.resolve(__dirname, '../.env') });
-
-const getLedgerSigner = async () => {
-  const frame = ethProvider('frame');
-  const ledgerSigner = (await frame.request({ method: 'eth_requestAccounts' }))[0];
-  const { Web3Provider } = hre.ethers.providers;
-  const provider = new Web3Provider(frame);
-
-  return provider.getSigner(ledgerSigner);
-};
-
-const deployBalanceManager = async hre => {
+const deployBalanceManager = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
   const deployer = await getLedgerSigner();
 
   await deploy('BalanceManager', {
-    from: deployer,
+    from: await deployer.getAddress(),
     args: [],
     log: true,
     proxy: {
@@ -27,7 +17,7 @@ const deployBalanceManager = async hre => {
       execute: {
         init: {
           methodName: 'initialize',
-          args: [process.env.NFTL_ADDRESS, process.env.MAINTAINER_ADDRESS],
+          args: [NFTL_TOKEN_ADDRESS[hre.network.name as NetworkName], NIFTY_LEDGER_DEPLOYER],
         },
       },
     },

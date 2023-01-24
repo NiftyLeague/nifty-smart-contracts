@@ -7,15 +7,17 @@ import { config, ethers, network, tenderly, run } from 'hardhat';
 import chalk from 'chalk';
 import fs from 'fs';
 import { BigNumber } from '@ethersproject/bignumber';
-import { abiEncodeArgs, getLedgerSigner, tenderlyVerify } from './utils';
+import { abiEncodeArgs, tenderlyVerify } from './utils';
+import { getLedgerSigner } from './ledger';
+import { NetworkName } from '../types';
 
-const targetNetwork = network.name;
+const targetNetwork = network.name as NetworkName;
 
 const deploy = async (contractName: string, _args: unknown[] = [], overrides = {}) => {
   console.log(` 🛰  Deploying: ${contractName} to ${targetNetwork}`);
 
   const contractArgs = _args || [];
-  const useSigner = targetNetwork === 'ropsten' || targetNetwork === 'mainnet';
+  const useSigner = targetNetwork === 'goerli' || targetNetwork === 'mainnet';
   const args = useSigner ? { signer: await getLedgerSigner() } : {};
   const contractFactory = await ethers.getContractFactory(contractName, args);
   const deployedContract = await contractFactory.deploy(...contractArgs, overrides);
