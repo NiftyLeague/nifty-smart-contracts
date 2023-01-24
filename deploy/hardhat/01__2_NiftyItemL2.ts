@@ -1,8 +1,7 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-
-const { config: dotenvConfig } = require('dotenv');
-const path = require('path');
+import { config as dotenvConfig } from 'dotenv';
+import path from 'path';
 
 dotenvConfig({ path: path.resolve(__dirname, '../../.env') });
 

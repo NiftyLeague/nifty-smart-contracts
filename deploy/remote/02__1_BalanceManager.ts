@@ -1,9 +1,10 @@
-const { config: dotenvConfig } = require('dotenv');
-const path = require('path');
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { config as dotenvConfig } from 'dotenv';
+import path from 'path';
 
 dotenvConfig({ path: path.resolve(__dirname, '../../.env') });
 
-const deployBalanceManager = async hre => {
+const deployBalanceManager = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
