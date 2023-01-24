@@ -2,8 +2,9 @@ import { ethers, network, tenderly } from 'hardhat';
 import { Contract } from '@ethersproject/contracts';
 import chalk from 'chalk';
 import R from 'ramda';
+import { NetworkName } from '../types';
 
-const targetNetwork = network.name;
+const targetNetwork = network.name as NetworkName;
 
 // If you want to verify on https://tenderly.co/
 // eslint-disable-next-line consistent-return

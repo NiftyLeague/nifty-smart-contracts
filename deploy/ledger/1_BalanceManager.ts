@@ -1,9 +1,7 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { config as dotenvConfig } from 'dotenv';
-import path from 'path';
 import { getLedgerSigner } from '../../scripts/ledger';
-
-dotenvConfig({ path: path.resolve(__dirname, '../../.env') });
+import { NFTL_TOKEN_ADDRESS, NIFTY_LEDGER_DEPLOYER } from '../../constants/addresses';
+import { NetworkName } from '../../types';
 
 const deployBalanceManager = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
@@ -19,7 +17,7 @@ const deployBalanceManager = async (hre: HardhatRuntimeEnvironment) => {
       execute: {
         init: {
           methodName: 'initialize',
-          args: [process.env.NFTL_TOKEN_ADDRESS, process.env.MAINTAINER_ADDRESS],
+          args: [NFTL_TOKEN_ADDRESS[hre.network.name as NetworkName], NIFTY_LEDGER_DEPLOYER],
         },
       },
     },

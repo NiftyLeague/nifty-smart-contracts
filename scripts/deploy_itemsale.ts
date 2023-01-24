@@ -11,16 +11,19 @@ import fs from 'fs';
 import { BigNumber } from '@ethersproject/bignumber';
 import { abiEncodeArgs, tenderlyVerify } from './utils';
 import { getLedgerSigner } from './ledger';
+import { NFTL_TOKEN_ADDRESS, NIFTY_DAO_SAFE, NIFTY_ITEMS_ADDRESS, NIFTY_TEAM_SAFE } from '../constants/addresses';
+import { BURN_PERCENTAGE, DAO_PERCENTAGE, TREASURY_PERCENTAGE } from '../constants/itemsSale';
+import { NetworkName } from '../types';
 
 dotenv.config();
 
-const targetNetwork = network.name;
+const targetNetwork = network.name as NetworkName;
 
 const deploy = async (contractName: string, _args: unknown[] = [], contractType: number, overrides = {}) => {
   console.log(` 🛰  Deploying: ${contractName} to ${targetNetwork}`);
 
   const contractArgs = _args || [];
-  const useSigner = targetNetwork === 'ropsten' || targetNetwork === 'mainnet';
+  const useSigner = targetNetwork === 'goerli' || targetNetwork === 'mainnet';
   const args = useSigner ? { signer: await getLedgerSigner() } : {};
   const contractFactory = await ethers.getContractFactory(contractName, args);
 
@@ -74,13 +77,13 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const items = process.env.NIFTY_ITEMS_ADDRESS;
-  const nftl = process.env.NFTL_TOKEN_ADDRESS;
-  const treasury = process.env.TREASURY_ADDRESS;
-  const dao = process.env.DAO_ADDRESS;
-  const burnPercentage = process.env.BURN_PERCENTAGE;
-  const daoPercentage = process.env.DAO_PERCENTAGE;
-  const treasuryPercentage = process.env.TREASURY_PERCENTAGE;
+  const items = NIFTY_ITEMS_ADDRESS[network.name as NetworkName];
+  const nftl = NFTL_TOKEN_ADDRESS[network.name as NetworkName];
+  const treasury = NIFTY_TEAM_SAFE;
+  const dao = NIFTY_DAO_SAFE;
+  const burnPercentage = BURN_PERCENTAGE;
+  const daoPercentage = DAO_PERCENTAGE;
+  const treasuryPercentage = TREASURY_PERCENTAGE;
 
   const itemSale = await deploy(
     'NiftyItemSale',
