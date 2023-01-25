@@ -48,18 +48,30 @@ contract NiftyRareDegenDistribution is
         niftyWallet = _niftyWallet;
     }
 
+    /**
+     * @notice Update the NiftyDegen NFT address
+     * @param _niftyDegen NiftyDegen NFT address
+     */
     function updateNiftyDegen(address _niftyDegen) external onlyOwner {
         niftyDegen = IERC721Upgradeable(_niftyDegen);
 
         emit NiftyDegenSet(_niftyDegen);
     }
 
+    /**
+     * @notice Update the NiftyLeague wallet address
+     * @param _niftyWallet NiftyLeague wallet address
+     */
     function updateNiftyWallet(address _niftyWallet) external onlyOwner {
         niftyWallet = _niftyWallet;
 
         emit NiftyWalletSet(_niftyWallet);
     }
 
+    /**
+     * @notice Deposit the rare degens
+     * @param _rareDegenTokenIdList Token Ids of the rare degens to deposit
+     */
     function depositRareDegens(uint256[] calldata _rareDegenTokenIdList) external onlyOwner {
         for (uint256 i; i < _rareDegenTokenIdList.length; ) {
             uint256 tokenId = _rareDegenTokenIdList[i];
@@ -71,6 +83,13 @@ contract NiftyRareDegenDistribution is
         }
     }
 
+    /**
+     * @notice Claim the random rare degen
+     * @dev The users must transfer 8 normal degens to claim 1 random rare degen
+     * @dev NiftyWallet must transfer 12 normal degens to claim 1 random rare degen
+     * @dev All the trasnferred the normal degens are burned
+     * @param _degenTokenIdList Token Ids of the normal degen to burn
+     */
     function claimRandomRareDegen(uint256[] calldata _degenTokenIdList) external nonReentrant whenNotPaused {
         uint256 degenCountToBurn = _degenTokenIdList.length;
 
@@ -111,6 +130,10 @@ contract NiftyRareDegenDistribution is
         emit RareDegenClaimed(msg.sender, _degenTokenIdList, rareDegenTokenId);
     }
 
+    /**
+     * @notice Withdraw all rare degens
+     * @param _to Address to receive the rare degens
+     */
     function withdrawAllRareDegens(address _to) external onlyOwner {
         for (uint256 i; i < _rareDegenTokenIds.length; ) {
             uint256 tokenId = _rareDegenTokenIds[i];
