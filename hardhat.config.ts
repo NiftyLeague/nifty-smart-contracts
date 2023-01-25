@@ -1,7 +1,7 @@
 import { HardhatUserConfig, task } from 'hardhat/config';
 import '@nomicfoundation/hardhat-toolbox';
 import '@openzeppelin/hardhat-upgrades';
-// import '@tenderly/hardhat-tenderly';
+import '@tenderly/hardhat-tenderly';
 import 'hardhat-deploy';
 
 import { resolve } from 'path';
