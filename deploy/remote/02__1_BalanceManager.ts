@@ -1,5 +1,5 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { NFTL_TOKEN_ADDRESS, NIFTY_LEDGER_DEPLOYER } from '../../constants/addresses';
+import { NFTL_TOKEN_ADDRESS, BALANCE_MANAGER_MAINTAINER } from '../../constants/addresses';
 import { NetworkName } from '../../types';
 
 const deployBalanceManager = async (hre: HardhatRuntimeEnvironment) => {
@@ -16,7 +16,7 @@ const deployBalanceManager = async (hre: HardhatRuntimeEnvironment) => {
       execute: {
         init: {
           methodName: 'initialize',
-          args: [NFTL_TOKEN_ADDRESS[hre.network.name as NetworkName], NIFTY_LEDGER_DEPLOYER],
+          args: [NFTL_TOKEN_ADDRESS[hre.network.name as NetworkName], BALANCE_MANAGER_MAINTAINER],
         },
       },
     },
