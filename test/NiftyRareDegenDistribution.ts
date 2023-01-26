@@ -14,12 +14,6 @@ describe('NiftyRareDegenDistribution', function () {
   let niftyRareDegenDistribution: NiftyRareDegenDistribution;
   let niftyDegen: MockERC721;
 
-  const ONE_ETHER = ethers.utils.parseEther('1');
-
-  const toRole = (role: string) => {
-    return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(role));
-  };
-
   beforeEach(async () => {
     accounts = await ethers.getSigners();
     [deployer, alice, bob, niftyWallet] = accounts;
