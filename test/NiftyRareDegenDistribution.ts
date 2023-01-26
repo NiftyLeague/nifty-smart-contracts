@@ -119,17 +119,18 @@ describe('NiftyRareDegenDistribution', function () {
     it('Pause', async () => {
       expect(await niftyRareDegenDistribution.paused()).to.be.false;
 
-      // Pause item sale
+      // Pause the distribution
       await niftyRareDegenDistribution.pause();
 
       // check pause status
       expect(await niftyRareDegenDistribution.paused()).to.be.true;
     });
+
     it('Unpause', async () => {
-      // Pause item sale
+      // Pause the distribution
       await niftyRareDegenDistribution.pause();
 
-      // Unpause burnComics
+      // Unpause the distribution
       await niftyRareDegenDistribution.unpause();
 
       // check pause status
