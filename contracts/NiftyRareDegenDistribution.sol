@@ -129,10 +129,6 @@ contract NiftyRareDegenDistribution is
         emit RareDegenClaimed(msg.sender, _degenTokenIdList, rareDegenTokenId);
     }
 
-    function getRareDegenTokenIds() external view returns (uint256[] memory) {
-        return rareDegenTokenIds;
-    }
-
     /**
      * @notice Returns the number of the rare degens in the contract
      * @return rareDegenCount Number of rare degens in the contract
