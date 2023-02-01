@@ -65,6 +65,8 @@ contract NiftyRareDegenDistribution is
      * @param _niftyWallet NiftyLeague wallet address
      */
     function updateNiftyWallet(address _niftyWallet) external onlyOwner {
+        require(_niftyWallet != address(0), "Zero address");
+
         niftyWallet = _niftyWallet;
 
         emit NiftyWalletSet(_niftyWallet);
@@ -78,8 +80,8 @@ contract NiftyRareDegenDistribution is
         for (uint256 i = 0; i < _rareDegenTokenIdList.length; ) {
             uint256 tokenId = _rareDegenTokenIdList[i];
 
-            niftyDegen.safeTransferFrom(msg.sender, address(this), tokenId, bytes(""));
             rareDegenTokenIds.push(tokenId);
+            niftyDegen.safeTransferFrom(msg.sender, address(this), tokenId, bytes(""));
 
             unchecked {
                 ++i;
