@@ -70,11 +70,11 @@ contract NiftyRareDegenDistribution is
      * @param _rareDegenTokenIdList Token Ids of the rare degens to deposit
      */
     function depositRareDegens(uint256[] calldata _rareDegenTokenIdList) external onlyOwner {
-        for (uint256 i; i < _rareDegenTokenIdList.length; ) {
+        for (uint256 i = 0; i < _rareDegenTokenIdList.length; ) {
             uint256 tokenId = _rareDegenTokenIdList[i];
 
-            niftyDegen.safeTransferFrom(msg.sender, address(this), tokenId, bytes(""));
             rareDegenTokenIds.push(tokenId);
+            niftyDegen.safeTransferFrom(msg.sender, address(this), tokenId, bytes(""));
 
             unchecked {
                 ++i;
@@ -98,26 +98,21 @@ contract NiftyRareDegenDistribution is
             require(degenCountToBurn == 8, "Need 8 degens");
         }
 
-        // burn user's degens
+        // get the random rare degen tokenId
         uint256 randomValue = 1;
-        for (uint256 i; i < degenCountToBurn; ) {
-            niftyDegen.safeTransferFrom(msg.sender, address(1), _degenTokenIdList[i], bytes(""));
-
+        for (uint256 i = 0; i < degenCountToBurn; ) {
             unchecked {
                 randomValue *= _degenTokenIdList[i]; // generate the random value, ignore overflow
                 ++i;
             }
         }
 
-        uint256 rareDegenCount = rareDegenTokenIds.length;
         bytes32 randomHash = keccak256(
             abi.encodePacked(_prevHash, randomValue, msg.sender, block.timestamp, block.difficulty)
         );
+        uint256 rareDegenCount = rareDegenTokenIds.length;
         uint256 rareDegenIndex = uint256(randomHash) % rareDegenCount;
         uint256 rareDegenTokenId = rareDegenTokenIds[rareDegenIndex];
-
-        // transfer the random rare degen to the user
-        niftyDegen.safeTransferFrom(address(this), msg.sender, rareDegenTokenId, bytes(""));
 
         // remove the claimed rare degen Id from the list
         rareDegenTokenIds[rareDegenIndex] = rareDegenTokenIds[rareDegenCount - 1];
@@ -125,6 +120,18 @@ contract NiftyRareDegenDistribution is
 
         // set the prevHash
         _prevHash = randomHash;
+
+        // burn user's degens
+        for (uint256 i = 0; i < degenCountToBurn; ) {
+            niftyDegen.safeTransferFrom(msg.sender, address(1), _degenTokenIdList[i], bytes(""));
+
+            unchecked {
+                ++i;
+            }
+        }
+
+        // transfer the random rare degen to the user
+        niftyDegen.safeTransferFrom(address(this), msg.sender, rareDegenTokenId, bytes(""));
 
         emit RareDegenClaimed(msg.sender, _degenTokenIdList, rareDegenTokenId);
     }
@@ -142,7 +149,7 @@ contract NiftyRareDegenDistribution is
      * @param _to Address to receive the rare degens
      */
     function withdrawAllRareDegens(address _to) external onlyOwner {
-        for (uint256 i; i < rareDegenTokenIds.length; ) {
+        for (uint256 i = 0; i < rareDegenTokenIds.length; ) {
             uint256 tokenId = rareDegenTokenIds[i];
 
             niftyDegen.safeTransferFrom(address(this), _to, tokenId, bytes(""));
