@@ -80,13 +80,21 @@ contract NiftyRareDegenDistribution is
         for (uint256 i = 0; i < _rareDegenTokenIdList.length; ) {
             uint256 tokenId = _rareDegenTokenIdList[i];
 
+            niftyDegen.safeTransferFrom(msg.sender, address(this), tokenId, bytes(""));
+
+            unchecked {
+                ++i;
+            }
+        }
+
+        for (uint256 i = 0; i < _rareDegenTokenIdList.length; ) {
+            uint256 tokenId = _rareDegenTokenIdList[i];
+
             rareDegenTokenIds.push(tokenId);
 
             unchecked {
                 ++i;
             }
-
-            niftyDegen.safeTransferFrom(msg.sender, address(this), tokenId, bytes(""));
         }
     }
 
