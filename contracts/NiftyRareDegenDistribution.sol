@@ -53,6 +53,8 @@ contract NiftyRareDegenDistribution is
      * @param _niftyDegen NiftyDegen NFT address
      */
     function updateNiftyDegen(address _niftyDegen) external onlyOwner {
+        require(_niftyDegen != address(0), "Zero address");
+
         niftyDegen = IERC721Upgradeable(_niftyDegen);
 
         emit NiftyDegenSet(_niftyDegen);
@@ -76,8 +78,8 @@ contract NiftyRareDegenDistribution is
         for (uint256 i = 0; i < _rareDegenTokenIdList.length; ) {
             uint256 tokenId = _rareDegenTokenIdList[i];
 
-            rareDegenTokenIds.push(tokenId);
             niftyDegen.safeTransferFrom(msg.sender, address(this), tokenId, bytes(""));
+            rareDegenTokenIds.push(tokenId);
 
             unchecked {
                 ++i;
