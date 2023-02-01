@@ -41,6 +41,9 @@ contract NiftyRareDegenDistribution is
         __Pausable_init();
         __ReentrancyGuard_init();
 
+        require(_niftyDegen != address(0), "Zero address");
+        require(_niftyWallet != address(0), "Zero address");
+
         niftyDegen = IERC721Upgradeable(_niftyDegen);
         niftyWallet = _niftyWallet;
     }
@@ -130,10 +133,10 @@ contract NiftyRareDegenDistribution is
             }
         }
 
+        emit RareDegenClaimed(msg.sender, _degenTokenIdList, rareDegenTokenId);
+
         // transfer the random rare degen to the user
         niftyDegen.safeTransferFrom(address(this), msg.sender, rareDegenTokenId, bytes(""));
-
-        emit RareDegenClaimed(msg.sender, _degenTokenIdList, rareDegenTokenId);
     }
 
     /**
