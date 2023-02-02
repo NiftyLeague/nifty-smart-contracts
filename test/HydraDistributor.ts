@@ -118,7 +118,7 @@ describe('HydraDistributor', function () {
       await hydraDistributor.depositHydra(hydraTokenIds);
     });
 
-    it.only('Should be able to claim the Hydra', async () => {
+    it('Should be able to claim the Hydra', async () => {
       // Alice claims the random Hydra, burn 8 normal degens to claim 1 Hydra
       let degenTokenIdList = [0, 1, 2, 3, 4, 5, 6, 7];
 
