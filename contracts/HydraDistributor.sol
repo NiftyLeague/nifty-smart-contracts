@@ -8,7 +8,11 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 
-contract NiftyRareDegenDistribution is
+/**
+ * @title HydraDistributor
+ * @notice Hydra is the 7th tribe of NiftyDegen.
+ */
+contract HydraDistributor is
     Initializable,
     OwnableUpgradeable,
     PausableUpgradeable,
@@ -18,8 +22,8 @@ contract NiftyRareDegenDistribution is
     /// @dev NiftyDegen NFT address
     IERC721Upgradeable public niftyDegen;
 
-    /// @dev Rare Degen Token Id list
-    uint256[] public rareDegenTokenIds;
+    /// @dev Hydra Token Id list
+    uint256[] public hydraTokenIds;
 
     /// @dev NiftyLeague Wallet Address
     address public niftyWallet;
@@ -29,7 +33,7 @@ contract NiftyRareDegenDistribution is
 
     event NiftyDegenSet(address indexed niftyDegen);
     event NiftyWalletSet(address indexed niftyWallet);
-    event RareDegenClaimed(address indexed user, uint256[] tokenIdsBurned, uint256 rareDegenTokenId);
+    event HydraClaimed(address indexed user, uint256[] tokenIdsBurned, uint256 hydraTokenId);
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -73,22 +77,22 @@ contract NiftyRareDegenDistribution is
     }
 
     /**
-     * @notice Deposit the rare degens
-     * @param _rareDegenTokenIdList Token Ids of the rare degens to deposit
+     * @notice Deposit the Hydra
+     * @param _hydraTokenIdList Token Ids of the Hydra to deposit
      */
-    function depositRareDegens(uint256[] calldata _rareDegenTokenIdList) external onlyOwner {
-        for (uint256 i = 0; i < _rareDegenTokenIdList.length; ) {
-            uint256 tokenId = _rareDegenTokenIdList[i];
+    function depositHydra(uint256[] calldata _hydraTokenIdList) external onlyOwner {
+        for (uint256 i = 0; i < _hydraTokenIdList.length; ) {
+            uint256 tokenId = _hydraTokenIdList[i];
 
-            rareDegenTokenIds.push(tokenId);
+            hydraTokenIds.push(tokenId);
 
             unchecked {
                 ++i;
             }
         }
 
-        for (uint256 i = 0; i < _rareDegenTokenIdList.length; ) {
-            uint256 tokenId = _rareDegenTokenIdList[i];
+        for (uint256 i = 0; i < _hydraTokenIdList.length; ) {
+            uint256 tokenId = _hydraTokenIdList[i];
 
             niftyDegen.safeTransferFrom(msg.sender, address(this), tokenId, bytes(""));
 
@@ -99,13 +103,13 @@ contract NiftyRareDegenDistribution is
     }
 
     /**
-     * @notice Claim the random rare degen
-     * @dev The users must transfer 8 normal degens to claim 1 random rare degen
-     * @dev NiftyWallet must transfer 12 normal degens to claim 1 random rare degen
+     * @notice Claim the random Hydra
+     * @dev The users must transfer 8 normal degens to claim 1 random Hydra
+     * @dev NiftyWallet must transfer 12 normal degens to claim 1 random Hydra
      * @dev All the trasnferred the normal degens are burned
-     * @param _degenTokenIdList Token Ids of the normal degen to burn
+     * @param _degenTokenIdList Token Ids of the normal degens to burn
      */
-    function claimRandomRareDegen(uint256[] calldata _degenTokenIdList) external nonReentrant whenNotPaused {
+    function claimRandomHydra(uint256[] calldata _degenTokenIdList) external nonReentrant whenNotPaused {
         uint256 degenCountToBurn = _degenTokenIdList.length;
 
         if (msg.sender == niftyWallet) {
@@ -114,7 +118,7 @@ contract NiftyRareDegenDistribution is
             require(degenCountToBurn == 8, "Need 8 degens");
         }
 
-        // get the random rare degen tokenId
+        // get the random Hydra tokenId
         uint256 randomValue = 1;
         for (uint256 i = 0; i < degenCountToBurn; ) {
             unchecked {
@@ -126,13 +130,13 @@ contract NiftyRareDegenDistribution is
         bytes32 randomHash = keccak256(
             abi.encodePacked(_prevHash, randomValue, msg.sender, block.timestamp, block.difficulty)
         );
-        uint256 rareDegenCount = rareDegenTokenIds.length;
-        uint256 rareDegenIndex = uint256(randomHash) % rareDegenCount;
-        uint256 rareDegenTokenId = rareDegenTokenIds[rareDegenIndex];
+        uint256 hydraCount = hydraTokenIds.length;
+        uint256 hydraIndex = uint256(randomHash) % hydraCount;
+        uint256 hydraTokenId = hydraTokenIds[hydraIndex];
 
         // remove the claimed rare degen Id from the list
-        rareDegenTokenIds[rareDegenIndex] = rareDegenTokenIds[rareDegenCount - 1];
-        rareDegenTokenIds.pop();
+        hydraTokenIds[hydraIndex] = hydraTokenIds[hydraCount - 1];
+        hydraTokenIds.pop();
 
         // set the prevHash
         _prevHash = randomHash;
@@ -146,27 +150,27 @@ contract NiftyRareDegenDistribution is
             }
         }
 
-        emit RareDegenClaimed(msg.sender, _degenTokenIdList, rareDegenTokenId);
+        emit HydraClaimed(msg.sender, _degenTokenIdList, hydraTokenId);
 
-        // transfer the random rare degen to the user
-        niftyDegen.safeTransferFrom(address(this), msg.sender, rareDegenTokenId, bytes(""));
+        // transfer the random Hydra to the user
+        niftyDegen.safeTransferFrom(address(this), msg.sender, hydraTokenId, bytes(""));
     }
 
     /**
-     * @notice Returns the number of the rare degens in the contract
-     * @return rareDegenCount Number of rare degens in the contract
+     * @notice Returns the number of the Hydra in the contract
+     * @return hydraCount Number of Hydra in the contract
      */
-    function getRareDegensCount() external view returns (uint256 rareDegenCount) {
-        rareDegenCount = rareDegenTokenIds.length;
+    function getHydraCount() external view returns (uint256 hydraCount) {
+        hydraCount = hydraTokenIds.length;
     }
 
     /**
-     * @notice Withdraw all rare degens
-     * @param _to Address to receive the rare degens
+     * @notice Withdraw all Hydra
+     * @param _to Address to receive the Hydra
      */
-    function withdrawAllRareDegens(address _to) external onlyOwner {
-        for (uint256 i = 0; i < rareDegenTokenIds.length; ) {
-            uint256 tokenId = rareDegenTokenIds[i];
+    function withdrawAllHydra(address _to) external onlyOwner {
+        for (uint256 i = 0; i < hydraTokenIds.length; ) {
+            uint256 tokenId = hydraTokenIds[i];
 
             niftyDegen.safeTransferFrom(address(this), _to, tokenId, bytes(""));
 
@@ -188,5 +192,9 @@ contract NiftyRareDegenDistribution is
      */
     function unpause() external onlyOwner {
         _unpause();
+    }
+
+    function getHydraTokenIds() external view returns (uint256[] memory) {
+        return hydraTokenIds;
     }
 }
