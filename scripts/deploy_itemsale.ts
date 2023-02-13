@@ -11,7 +11,7 @@ import fs from 'fs';
 import { BigNumber } from '@ethersproject/bignumber';
 import { abiEncodeArgs, tenderlyVerify } from './utils';
 import { getLedgerSigner } from './ledger';
-import { NFTL_TOKEN_ADDRESS, NIFTY_DAO_SAFE, NIFTY_ITEMS_ADDRESS, NIFTY_TEAM_SAFE } from '../constants/addresses';
+import { NFTL_TOKEN_ADDRESS, NIFTY_DAO_SAFE, NIFTY_ITEM_L2_ADDRESS, NIFTY_TEAM_SAFE } from '../constants/addresses';
 import { BURN_PERCENTAGE, DAO_PERCENTAGE, TREASURY_PERCENTAGE } from '../constants/itemsSale';
 import { NetworkName } from '../types';
 
@@ -77,7 +77,7 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const items = NIFTY_ITEMS_ADDRESS[network.name as NetworkName];
+  const items = NIFTY_ITEM_L2_ADDRESS[network.name as NetworkName];
   const nftl = NFTL_TOKEN_ADDRESS[network.name as NetworkName];
   const treasury = NIFTY_TEAM_SAFE;
   const dao = NIFTY_DAO_SAFE;
