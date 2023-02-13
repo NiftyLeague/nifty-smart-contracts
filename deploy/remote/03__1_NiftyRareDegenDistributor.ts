@@ -3,11 +3,11 @@ import { DeployFunction } from 'hardhat-deploy/types';
 import { DEGEN_ADDRESS, NIFTY_TEAM_SAFE } from '../../constants/addresses';
 import { NetworkName } from '../../types';
 
-const deployNiftyRareDegenDistribution: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
-  await deploy('NiftyRareDegenDistribution', {
+  await deploy('HydraDistributor', {
     from: deployer,
     args: [],
     log: true,
@@ -23,5 +23,5 @@ const deployNiftyRareDegenDistribution: DeployFunction = async (hre: HardhatRunt
     },
   });
 };
-module.exports = deployNiftyRareDegenDistribution;
-deployNiftyRareDegenDistribution.tags = ['NiftyRareDegenDistribution'];
+module.exports = deployHydraDistributor;
+deployHydraDistributor.tags = ['HydraDistributor'];
