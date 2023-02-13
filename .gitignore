@@ -11,6 +11,7 @@ artifacts
 typechain
 typechain-types
 deployments/localhost
+deployments.json
 
 #Coverage
 coverage
