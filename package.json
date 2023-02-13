@@ -22,7 +22,8 @@
     "deploy:hardhat": "hardhat deploy --deploy-scripts ./deploy/hardhat",
     "deploy:remote": "hardhat deploy --deploy-scripts ./deploy/remote --network",
     "deploy:ledger": "hardhat deploy --deploy-scripts ./deploy/ledger --network",
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "export": "hardhat deploy --export ./deployments.json"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
