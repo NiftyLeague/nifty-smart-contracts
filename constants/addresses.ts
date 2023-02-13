@@ -28,14 +28,14 @@ export const DEGEN_ADDRESS: ContractAddressRecord = {
   goerli: '0x08d49340c8d3bfe1cead341d8597bd07b959eaab',
 };
 
-export const COMICS_ADDRESS: ContractAddressRecord = {
+export const NIFTY_LAUNCH_COMICS_ADDRESS: ContractAddressRecord = {
   mainnet: '0xBc8542e65ab801f7c9e3edd23238d37a2e3972d6',
   goerli: '0xabd074430d0b06366bbc72f5cb62d965eae1881d',
 };
 
-export const NIFTY_ITEMS_ADDRESS: ContractAddressRecord = {
+export const NIFTY_ITEM_L2_ADDRESS: ContractAddressRecord = {
   mainnet: '0xc21909b7E596000C01318668293A7DFB4B37A578',
-  goerli: '0xc21909b7E596000C01318668293A7DFB4B37A578',
+  goerli: '0xbf1238C6aF46C19169c921e6058E330a97040CFD',
 };
 
 export const STARK_CONTRACT_ADDRESS: ContractAddressRecord = {
