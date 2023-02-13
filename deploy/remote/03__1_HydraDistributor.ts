@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { DEGEN_ADDRESS, NIFTY_TEAM_SAFE } from '../../constants/addresses';
+import { DEGEN_ADDRESS, NIFTY_DAO_LEDGER } from '../../constants/addresses';
 import { NetworkName } from '../../types';
 
 const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
@@ -17,7 +17,7 @@ const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnviron
       execute: {
         init: {
           methodName: 'initialize',
-          args: [DEGEN_ADDRESS[hre.network.name as NetworkName], NIFTY_TEAM_SAFE],
+          args: [DEGEN_ADDRESS[hre.network.name as NetworkName], NIFTY_DAO_LEDGER],
         },
       },
     },
