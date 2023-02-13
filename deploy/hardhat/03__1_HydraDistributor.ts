@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { NIFTY_TEAM_SAFE } from '../../constants/addresses';
+import { NIFTY_DAO_LEDGER } from '../../constants/addresses';
 
 const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
@@ -19,7 +19,7 @@ const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnviron
       execute: {
         init: {
           methodName: 'initialize',
-          args: [MockERC721.address, NIFTY_TEAM_SAFE],
+          args: [MockERC721.address, NIFTY_DAO_LEDGER],
         },
       },
     },
