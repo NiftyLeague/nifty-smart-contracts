@@ -13,7 +13,6 @@ interface IERC20BurnableUpgradeable is IERC20Upgradeable {
 
 /**
  * @title NFTLRaffle
- * @notice Hydra is the 7th tribe of NiftyDegen.
  */
 contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
