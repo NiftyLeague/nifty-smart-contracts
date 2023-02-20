@@ -50,9 +50,8 @@ const config: HardhatUserConfig = {
       deploy: ['deploy/remote/'],
     },
     mainnet: {
-      url: `https://mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
-      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-      deploy: ['deploy/remote/'],
+      url: 'http://127.0.0.1:1248', // this is the RPC endpoint exposed by Frame
+      deploy: ['deploy/ledger/'],
     },
   },
   mocha: {
