@@ -1,13 +1,13 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { DEGEN_ADDRESS, NIFTY_TEAM_SAFE } from '../../constants/addresses';
+import { DEGEN_ADDRESS, NIFTY_DAO_LEDGER } from '../../constants/addresses';
 import { NetworkName } from '../../types';
 
-const deployNiftyRareDegenDistribution: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
-  await deploy('NiftyRareDegenDistribution', {
+  await deploy('HydraDistributor', {
     from: deployer,
     args: [],
     log: true,
@@ -17,11 +17,11 @@ const deployNiftyRareDegenDistribution: DeployFunction = async (hre: HardhatRunt
       execute: {
         init: {
           methodName: 'initialize',
-          args: [DEGEN_ADDRESS[hre.network.name as NetworkName], NIFTY_TEAM_SAFE],
+          args: [DEGEN_ADDRESS[hre.network.name as NetworkName], NIFTY_DAO_LEDGER],
         },
       },
     },
   });
 };
-module.exports = deployNiftyRareDegenDistribution;
-deployNiftyRareDegenDistribution.tags = ['NiftyRareDegenDistribution'];
+module.exports = deployHydraDistributor;
+deployHydraDistributor.tags = ['HydraDistributor'];

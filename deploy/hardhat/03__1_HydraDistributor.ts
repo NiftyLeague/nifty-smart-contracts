@@ -1,15 +1,15 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { NIFTY_TEAM_SAFE } from '../../constants/addresses';
+import { NIFTY_DAO_LEDGER } from '../../constants/addresses';
 
-const deployNiftyRareDegenDistribution: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
   // get contracts
   const MockERC721 = await hre.deployments.get('MockERC721');
 
-  await deploy('NiftyRareDegenDistribution', {
+  await deploy('HydraDistributor', {
     from: deployer,
     args: [],
     log: true,
@@ -19,11 +19,11 @@ const deployNiftyRareDegenDistribution: DeployFunction = async (hre: HardhatRunt
       execute: {
         init: {
           methodName: 'initialize',
-          args: [MockERC721.address, NIFTY_TEAM_SAFE],
+          args: [MockERC721.address, NIFTY_DAO_LEDGER],
         },
       },
     },
   });
 };
-module.exports = deployNiftyRareDegenDistribution;
-deployNiftyRareDegenDistribution.tags = ['NiftyRareDegenDistribution'];
+module.exports = deployHydraDistributor;
+deployHydraDistributor.tags = ['HydraDistributor'];

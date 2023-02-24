@@ -128,9 +128,6 @@ describe('HydraDistributor', function () {
       await niftyDegen.connect(alice).setApprovalForAll(hydraDistributor.address, true);
       await hydraDistributor.connect(alice).claimRandomHydra(degenTokenIdList);
 
-      //
-      console.log(await hydraDistributor.getHydraTokenIds());
-
       let aliceDegenCountAfter = await niftyDegen.balanceOf(alice.address);
       let hydraCountAfter = await hydraDistributor.getHydraCount();
 
@@ -146,9 +143,6 @@ describe('HydraDistributor', function () {
       await niftyDegen.connect(niftyWallet).setApprovalForAll(hydraDistributor.address, true);
       await hydraDistributor.connect(niftyWallet).claimRandomHydra(degenTokenIdList);
 
-      //
-      console.log(await hydraDistributor.getHydraTokenIds());
-
       let niftyWalletDegenCountAfter = await niftyDegen.balanceOf(niftyWallet.address);
       hydraCountAfter = await hydraDistributor.getHydraCount();
 
@@ -163,9 +157,6 @@ describe('HydraDistributor', function () {
 
       await niftyDegen.connect(alice).setApprovalForAll(hydraDistributor.address, true);
       await hydraDistributor.connect(alice).claimRandomHydra(degenTokenIdList);
-
-      //
-      console.log(await hydraDistributor.getHydraTokenIds());
 
       aliceDegenCountAfter = await niftyDegen.balanceOf(alice.address);
       hydraCountAfter = await hydraDistributor.getHydraCount();

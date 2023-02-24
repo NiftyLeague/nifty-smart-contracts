@@ -18,6 +18,8 @@ This project demonstrates an advanced Hardhat use case, integrating other tools 
 
 #### Deploy code
 
+For mainnet deployment we use [Frame](https://frame.sh/) to deploy with a Ledger signer.
+
 - `npx hardhat node` (Starts a JSON-RPC server on top of Hardhat Network)
 - `yarn run deploy:hardhat` (Deploy the contracts on Harhdat Network)
 - `yarn run deploy:remote {network}` (Deploy the contracts on the Mainnet or Testnet)

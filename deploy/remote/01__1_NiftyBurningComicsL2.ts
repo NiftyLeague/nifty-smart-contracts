@@ -1,7 +1,7 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { NetworkName } from '../../types';
-import { COMICS_ADDRESS } from '../../constants/addresses';
+import { NIFTY_LAUNCH_COMICS_ADDRESS } from '../../constants/addresses';
 
 const NiftyBurningComicsL2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
@@ -17,7 +17,7 @@ const NiftyBurningComicsL2: DeployFunction = async (hre: HardhatRuntimeEnvironme
       execute: {
         init: {
           methodName: 'initialize',
-          args: [COMICS_ADDRESS[hre.network.name as NetworkName]],
+          args: [NIFTY_LAUNCH_COMICS_ADDRESS[hre.network.name as NetworkName]],
         },
       },
     },
