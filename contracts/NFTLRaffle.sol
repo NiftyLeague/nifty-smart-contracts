@@ -56,6 +56,9 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     /// @dev Ticket Id -> User
     mapping(uint256 => address) public userByTicketId;
 
+    event UserDeposited(address indexed user, uint256 nftlAmount);
+    event WinnerSelected(address indexed by, address indexed winner, uint256 ticketId);
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -119,6 +122,8 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
 
         // increase the total ticket count
         totalTicketCount += userTicketCountToAssign;
+
+        emit UserDeposited(msg.sender, _amount);
     }
 
     function selectWinners() external onlyOwner {
@@ -138,12 +143,15 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
             );
             uint256 winnerTicketIndex = uint256(randomHash) % _ticketIdList.length();
             uint256 winnerTicketId = _ticketIdList.at(winnerTicketIndex);
+            address winner = userByTicketId[winnerTicketId];
 
             // store the winner
-            winners.push(WinnerInfo({ ticketId: winnerTicketId, winner: userByTicketId[winnerTicketId] }));
+            winners.push(WinnerInfo({ ticketId: winnerTicketId, winner: winner }));
 
             // remove the selected ticket Id from the list
             _ticketIdList.remove(winnerTicketId);
+
+            emit WinnerSelected(msg.sender, winner, winnerTicketId);
 
             unchecked {
                 ++i;
