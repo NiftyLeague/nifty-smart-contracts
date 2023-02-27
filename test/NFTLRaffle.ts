@@ -1,20 +1,32 @@
 import { expect } from 'chai';
-import { ethers, upgrades } from 'hardhat';
+import { ethers, upgrades, network } from 'hardhat';
 import { BigNumber } from 'ethers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
 import type { NFTLRaffle, MockERC20 } from '../typechain-types';
+
+const getCurrentBlockTimestamp = async (): Promise<BigNumber> => {
+  const blockNumber = await ethers.provider.getBlockNumber();
+  const block = await ethers.provider.getBlock(blockNumber);
+  return BigNumber.from(block.timestamp);
+};
+
+const increaseTime = async (sec: number): Promise<void> => {
+  await network.provider.send('evm_increaseTime', [sec]);
+  await network.provider.send('evm_mine');
+};
 
 describe('NFTLRaffle', function () {
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;
   let alice: SignerWithAddress;
   let bob: SignerWithAddress;
+  let john: SignerWithAddress;
   let nftlRaffle: NFTLRaffle;
   let nftlToken: MockERC20;
 
   const pendingPeriod = 86400 * 2; // 2 days
-  const totalWinnerCount = 5;
+  const totalWinnerTicketCount = 5;
   const nftlAmountPerTicket = ethers.utils.parseEther('1000');
   const initialNFTLAmount = nftlAmountPerTicket.mul(100);
 
@@ -22,7 +34,7 @@ describe('NFTLRaffle', function () {
 
   beforeEach(async () => {
     accounts = await ethers.getSigners();
-    [deployer, alice, bob] = accounts;
+    [deployer, alice, bob, john] = accounts;
 
     // Deploy MockERC20 contracts
     const MockERC20 = await ethers.getContractFactory('MockERC20');
@@ -33,12 +45,13 @@ describe('NFTLRaffle', function () {
     nftlRaffle = (await upgrades.deployProxy(NFTLRaffle, [
       nftlToken.address,
       pendingPeriod,
-      totalWinnerCount,
+      totalWinnerTicketCount,
     ])) as NFTLRaffle;
 
     // mint NFTL tokens
     await nftlToken.mint(alice.address, initialNFTLAmount);
     await nftlToken.mint(bob.address, initialNFTLAmount);
+    await nftlToken.mint(john.address, initialNFTLAmount);
   });
 
   describe('Initialize', () => {
@@ -47,21 +60,28 @@ describe('NFTLRaffle', function () {
       nftlRaffle = (await upgrades.deployProxy(NFTLRaffle, [
         nftlToken.address,
         pendingPeriod,
-        totalWinnerCount,
+        totalWinnerTicketCount,
       ])) as NFTLRaffle;
     });
 
     it('Should revert if the NFTL contract address is zero', async () => {
       const NFTLRaffle = await ethers.getContractFactory('NFTLRaffle');
       await expect(
-        upgrades.deployProxy(NFTLRaffle, [ZERO_ADDRESS, pendingPeriod, totalWinnerCount]),
+        upgrades.deployProxy(NFTLRaffle, [ZERO_ADDRESS, pendingPeriod, totalWinnerTicketCount]),
       ).to.be.revertedWith('Zero address');
     });
 
     it('Should revert if the pendign period is not greater than 1 day', async () => {
       const NFTLRaffle = await ethers.getContractFactory('NFTLRaffle');
-      await expect(upgrades.deployProxy(NFTLRaffle, [nftlToken.address, 86400, totalWinnerCount])).to.be.revertedWith(
-        '1 day +',
+      await expect(
+        upgrades.deployProxy(NFTLRaffle, [nftlToken.address, 86400, totalWinnerTicketCount]),
+      ).to.be.revertedWith('1 day +');
+    });
+
+    it('Should revert if the totalWinnerTicketCount is zero', async () => {
+      const NFTLRaffle = await ethers.getContractFactory('NFTLRaffle');
+      await expect(upgrades.deployProxy(NFTLRaffle, [nftlToken.address, pendingPeriod, 0])).to.be.revertedWith(
+        'Zero winner ticket count',
       );
     });
   });
@@ -117,6 +137,114 @@ describe('NFTLRaffle', function () {
       ]);
       expect(await nftlRaffle.getTicketIdsByUser(bob.address)).to.deep.equal([BigNumber.from(2), BigNumber.from(3)]);
       expect(await nftlRaffle.totalTicketCount()).to.equal(7);
+    });
+
+    it('Should revert if time is up', async () => {
+      // increase time
+      await increaseTime(pendingPeriod + 100);
+
+      // deposit
+      const nftlAmountToDeposit = nftlAmountPerTicket; // x1
+      await nftlToken.connect(alice).approve(nftlRaffle.address, nftlAmountToDeposit);
+      await expect(nftlRaffle.connect(alice).deposit(nftlAmountToDeposit)).to.be.revertedWith('Expired');
+    });
+  });
+
+  describe('selectWinners', () => {
+    beforeEach(async () => {
+      let nftlAmountToDeposit = nftlAmountPerTicket.mul(10); // x10
+
+      // Alice deposits NFTL and get 10 tickets
+      await nftlToken.connect(alice).approve(nftlRaffle.address, nftlAmountToDeposit);
+      await nftlRaffle.connect(alice).deposit(nftlAmountToDeposit);
+
+      // Bob deposits NFTL and get 10 tickets
+      await nftlToken.connect(bob).approve(nftlRaffle.address, nftlAmountToDeposit);
+      await nftlRaffle.connect(bob).deposit(nftlAmountToDeposit);
+
+      // John deposits NFTL and get 10 tickets
+      await nftlToken.connect(john).approve(nftlRaffle.address, nftlAmountToDeposit);
+      await nftlRaffle.connect(john).deposit(nftlAmountToDeposit);
+    });
+
+    it('Should be able to select the winners', async () => {
+      expect(await nftlRaffle.getWinners()).to.be.empty; // No winner
+
+      // increase time
+      await increaseTime(pendingPeriod + 100);
+
+      // select winners
+      await nftlRaffle.selectWinners();
+
+      // console.log('winners = ', await nftlRaffle.getWinners());
+      expect(await nftlRaffle.getWinners()).to.be.not.empty;
+    });
+
+    it('Should revert if the depositor count is not enough', async () => {
+      const newTotalWinnerTicketCount = 50;
+      await nftlRaffle.updateTotalWinnerTicketCount(newTotalWinnerTicketCount);
+
+      // increase time
+      await increaseTime(pendingPeriod + 100);
+
+      // select winners
+      await expect(nftlRaffle.selectWinners()).to.be.revertedWith('Not enough depositors');
+    });
+
+    it('Should revert if time is not up', async () => {
+      await expect(nftlRaffle.selectWinners()).to.be.revertedWith('Pending period');
+    });
+
+    it('Should revert if the caller is not the owner', async () => {
+      // increase time
+      await increaseTime(pendingPeriod + 100);
+
+      await expect(nftlRaffle.connect(alice).selectWinners()).to.be.revertedWith('Ownable: caller is not the owner');
+    });
+  });
+
+  describe('updateRaffleStartAt', () => {
+    it('Should be able to update the raffleStartAt', async () => {
+      // update the raffleStartAt
+      const newRaffleStartAt = (await getCurrentBlockTimestamp()).add(100);
+      await nftlRaffle.updateRaffleStartAt(newRaffleStartAt);
+
+      expect(await nftlRaffle.raffleStartAt()).to.equal(newRaffleStartAt);
+    });
+
+    it('Should revert if the timestamp is invalid', async () => {
+      const newRaffleStartAt = (await getCurrentBlockTimestamp()).sub(100);
+      await expect(nftlRaffle.updateRaffleStartAt(newRaffleStartAt)).to.be.revertedWith('Invalid timestamp');
+    });
+
+    it('Should revert if the timestamp is invalid', async () => {
+      const newRaffleStartAt = (await getCurrentBlockTimestamp()).add(100);
+      await expect(nftlRaffle.connect(alice).updateRaffleStartAt(newRaffleStartAt)).to.be.revertedWith(
+        'Ownable: caller is not the owner',
+      );
+    });
+  });
+
+  describe('updateTotalWinnerTicketCount', () => {
+    it('Should be able to update the totalWinnerTicketCount', async () => {
+      const newTotalWinnerTicketCount = 30;
+      await nftlRaffle.updateTotalWinnerTicketCount(newTotalWinnerTicketCount);
+
+      expect(await nftlRaffle.totalWinnerTicketCount()).to.equal(newTotalWinnerTicketCount);
+    });
+
+    it('Should revert if the totalWinnerTicketCount is zero', async () => {
+      const newTotalWinnerTicketCount = 0;
+      await expect(nftlRaffle.updateTotalWinnerTicketCount(newTotalWinnerTicketCount)).to.be.revertedWith(
+        'Zero winner ticket count',
+      );
+    });
+
+    it('Should revert if the caller is not the owner', async () => {
+      const newTotalWinnerTicketCount = 30;
+      await expect(
+        nftlRaffle.connect(alice).updateTotalWinnerTicketCount(newTotalWinnerTicketCount),
+      ).to.be.revertedWith('Ownable: caller is not the owner');
     });
   });
 
