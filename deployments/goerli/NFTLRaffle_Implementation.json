@@ -1,0 +1,815 @@
+{
+  "address": "0x86Ff652F40D214722f23C8AdD012b5FdF07e88C6",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "version",
+          "type": "uint8"
+        }
+      ],
+      "name": "Initialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Paused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Unpaused",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "NFTL_AMOUNT_FOR_TICKET",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "deposit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "getTicketCountByUser",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "getTicketIdsByUser",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getUserCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getUserList",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getWinners",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "ticketId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "winner",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct NFTLRaffle.WinnerInfo[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_nftl",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_pendingPeriod",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_totalWinnerTicketCount",
+          "type": "uint256"
+        }
+      ],
+      "name": "initialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "nftl",
+      "outputs": [
+        {
+          "internalType": "contract IERC20BurnableUpgradeable",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "pause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "paused",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "raffleStartAt",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "selectWinners",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalTicketCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalWinnerTicketCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "unpause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_raffleStartAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateRaffleStartAt",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_totalWinnerTicketCount",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateTotalWinnerTicketCount",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "userByTicketId",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "userDeposits",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "winners",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "ticketId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "winner",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xc91cacea919dabfee41a7f1d2c47e5a21f71c41a3f2a3a3f0731c8045a750e59",
+  "receipt": {
+    "to": null,
+    "from": "0x6C287e19065661Ca590A11CF0b419d1434991B67",
+    "contractAddress": "0x86Ff652F40D214722f23C8AdD012b5FdF07e88C6",
+    "transactionIndex": 31,
+    "gasUsed": "1115978",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xb2e370f015ed2b6c28f26af98c948b31e855f01ce374ca337a0d3a4cf6f1d87f",
+    "transactionHash": "0xc91cacea919dabfee41a7f1d2c47e5a21f71c41a3f2a3a3f0731c8045a750e59",
+    "logs": [
+      {
+        "transactionIndex": 31,
+        "blockNumber": 8565367,
+        "transactionHash": "0xc91cacea919dabfee41a7f1d2c47e5a21f71c41a3f2a3a3f0731c8045a750e59",
+        "address": "0x86Ff652F40D214722f23C8AdD012b5FdF07e88C6",
+        "topics": ["0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"],
+        "data": "0x00000000000000000000000000000000000000000000000000000000000000ff",
+        "logIndex": 20,
+        "blockHash": "0xb2e370f015ed2b6c28f26af98c948b31e855f01ce374ca337a0d3a4cf6f1d87f"
+      }
+    ],
+    "blockNumber": 8565367,
+    "cumulativeGasUsed": "2662009",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "4a0cf10886d8dc4055f51ff1020d9765",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.11+commit.d7f03943\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Unpaused\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"NFTL_AMOUNT_FOR_TICKET\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"getTicketCountByUser\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"getTicketIdsByUser\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getUserCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getUserList\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getWinners\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"ticketId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"}],\"internalType\":\"struct NFTLRaffle.WinnerInfo[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_nftl\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_pendingPeriod\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_totalWinnerTicketCount\",\"type\":\"uint256\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"nftl\",\"outputs\":[{\"internalType\":\"contract IERC20BurnableUpgradeable\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"raffleStartAt\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"selectWinners\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalTicketCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalWinnerTicketCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"unpause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_raffleStartAt\",\"type\":\"uint256\"}],\"name\":\"updateRaffleStartAt\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_totalWinnerTicketCount\",\"type\":\"uint256\"}],\"name\":\"updateTotalWinnerTicketCount\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"userByTicketId\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"userDeposits\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"winners\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"ticketId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"constructor\":{\"custom:oz-upgrades-unsafe-allow\":\"constructor\"},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"paused()\":{\"details\":\"Returns true if the contract is paused, and false otherwise.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"stateVariables\":{\"NFTL_AMOUNT_FOR_TICKET\":{\"details\":\"NFTL amount required for 1 ticket\"},\"_ticketIdList\":{\"details\":\"TokenId list\"},\"_ticketIdsByUser\":{\"details\":\"User -> Ticket Id list\"},\"_userList\":{\"details\":\"User list\"},\"nftl\":{\"details\":\"NFTL address\"},\"raffleStartAt\":{\"details\":\"Timestamp the raffle start\"},\"totalTicketCount\":{\"details\":\"Total ticket count\"},\"totalWinnerTicketCount\":{\"details\":\"Winner count\"},\"userByTicketId\":{\"details\":\"Ticket Id -> User\"},\"userDeposits\":{\"details\":\"User -> NFTL amount deposited\"},\"winners\":{\"details\":\"Winner list\"}},\"title\":\"NFTLRaffle\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"pause()\":{\"notice\":\"Pause the contract\"},\"unpause()\":{\"notice\":\"Unpause the contract\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/NFTLRaffle.sol\":\"NFTLRaffle\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.7.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/ContextUpgradeable.sol\\\";\\nimport \\\"../proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    function __Ownable_init() internal onlyInitializing {\\n        __Ownable_init_unchained();\\n    }\\n\\n    function __Ownable_init_unchained() internal onlyInitializing {\\n        _transferOwnership(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n\\n    /**\\n     * @dev This empty reserved space is put in place to allow future versions to add new\\n     * variables without shifting down storage in the inheritance chain.\\n     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps\\n     */\\n    uint256[49] private __gap;\\n}\\n\",\"keccak256\":\"0x247c62047745915c0af6b955470a72d1696ebad4352d7d3011aef1a2463cd888\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.8.1) (proxy/utils/Initializable.sol)\\n\\npragma solidity ^0.8.2;\\n\\nimport \\\"../../utils/AddressUpgradeable.sol\\\";\\n\\n/**\\n * @dev This is a base contract to aid in writing upgradeable contracts, or any kind of contract that will be deployed\\n * behind a proxy. Since proxied contracts do not make use of a constructor, it's common to move constructor logic to an\\n * external initializer function, usually called `initialize`. It then becomes necessary to protect this initializer\\n * function so it can only be called once. The {initializer} modifier provided by this contract will have this effect.\\n *\\n * The initialization functions use a version number. Once a version number is used, it is consumed and cannot be\\n * reused. This mechanism prevents re-execution of each \\\"step\\\" but allows the creation of new initialization steps in\\n * case an upgrade adds a module that needs to be initialized.\\n *\\n * For example:\\n *\\n * [.hljs-theme-light.nopadding]\\n * ```\\n * contract MyToken is ERC20Upgradeable {\\n *     function initialize() initializer public {\\n *         __ERC20_init(\\\"MyToken\\\", \\\"MTK\\\");\\n *     }\\n * }\\n * contract MyTokenV2 is MyToken, ERC20PermitUpgradeable {\\n *     function initializeV2() reinitializer(2) public {\\n *         __ERC20Permit_init(\\\"MyToken\\\");\\n *     }\\n * }\\n * ```\\n *\\n * TIP: To avoid leaving the proxy in an uninitialized state, the initializer function should be called as early as\\n * possible by providing the encoded function call as the `_data` argument to {ERC1967Proxy-constructor}.\\n *\\n * CAUTION: When used with inheritance, manual care must be taken to not invoke a parent initializer twice, or to ensure\\n * that all initializers are idempotent. This is not verified automatically as constructors are by Solidity.\\n *\\n * [CAUTION]\\n * ====\\n * Avoid leaving a contract uninitialized.\\n *\\n * An uninitialized contract can be taken over by an attacker. This applies to both a proxy and its implementation\\n * contract, which may impact the proxy. To prevent the implementation contract from being used, you should invoke\\n * the {_disableInitializers} function in the constructor to automatically lock it when it is deployed:\\n *\\n * [.hljs-theme-light.nopadding]\\n * ```\\n * /// @custom:oz-upgrades-unsafe-allow constructor\\n * constructor() {\\n *     _disableInitializers();\\n * }\\n * ```\\n * ====\\n */\\nabstract contract Initializable {\\n    /**\\n     * @dev Indicates that the contract has been initialized.\\n     * @custom:oz-retyped-from bool\\n     */\\n    uint8 private _initialized;\\n\\n    /**\\n     * @dev Indicates that the contract is in the process of being initialized.\\n     */\\n    bool private _initializing;\\n\\n    /**\\n     * @dev Triggered when the contract has been initialized or reinitialized.\\n     */\\n    event Initialized(uint8 version);\\n\\n    /**\\n     * @dev A modifier that defines a protected initializer function that can be invoked at most once. In its scope,\\n     * `onlyInitializing` functions can be used to initialize parent contracts.\\n     *\\n     * Similar to `reinitializer(1)`, except that functions marked with `initializer` can be nested in the context of a\\n     * constructor.\\n     *\\n     * Emits an {Initialized} event.\\n     */\\n    modifier initializer() {\\n        bool isTopLevelCall = !_initializing;\\n        require(\\n            (isTopLevelCall && _initialized < 1) || (!AddressUpgradeable.isContract(address(this)) && _initialized == 1),\\n            \\\"Initializable: contract is already initialized\\\"\\n        );\\n        _initialized = 1;\\n        if (isTopLevelCall) {\\n            _initializing = true;\\n        }\\n        _;\\n        if (isTopLevelCall) {\\n            _initializing = false;\\n            emit Initialized(1);\\n        }\\n    }\\n\\n    /**\\n     * @dev A modifier that defines a protected reinitializer function that can be invoked at most once, and only if the\\n     * contract hasn't been initialized to a greater version before. In its scope, `onlyInitializing` functions can be\\n     * used to initialize parent contracts.\\n     *\\n     * A reinitializer may be used after the original initialization step. This is essential to configure modules that\\n     * are added through upgrades and that require initialization.\\n     *\\n     * When `version` is 1, this modifier is similar to `initializer`, except that functions marked with `reinitializer`\\n     * cannot be nested. If one is invoked in the context of another, execution will revert.\\n     *\\n     * Note that versions can jump in increments greater than 1; this implies that if multiple reinitializers coexist in\\n     * a contract, executing them in the right order is up to the developer or operator.\\n     *\\n     * WARNING: setting the version to 255 will prevent any future reinitialization.\\n     *\\n     * Emits an {Initialized} event.\\n     */\\n    modifier reinitializer(uint8 version) {\\n        require(!_initializing && _initialized < version, \\\"Initializable: contract is already initialized\\\");\\n        _initialized = version;\\n        _initializing = true;\\n        _;\\n        _initializing = false;\\n        emit Initialized(version);\\n    }\\n\\n    /**\\n     * @dev Modifier to protect an initialization function so that it can only be invoked by functions with the\\n     * {initializer} and {reinitializer} modifiers, directly or indirectly.\\n     */\\n    modifier onlyInitializing() {\\n        require(_initializing, \\\"Initializable: contract is not initializing\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Locks the contract, preventing any future reinitialization. This cannot be part of an initializer call.\\n     * Calling this in the constructor of a contract will prevent that contract from being initialized or reinitialized\\n     * to any version. It is recommended to use this to lock implementation contracts that are designed to be called\\n     * through proxies.\\n     *\\n     * Emits an {Initialized} event the first time it is successfully executed.\\n     */\\n    function _disableInitializers() internal virtual {\\n        require(!_initializing, \\\"Initializable: contract is initializing\\\");\\n        if (_initialized < type(uint8).max) {\\n            _initialized = type(uint8).max;\\n            emit Initialized(type(uint8).max);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the highest version that has been initialized. See {reinitializer}.\\n     */\\n    function _getInitializedVersion() internal view returns (uint8) {\\n        return _initialized;\\n    }\\n\\n    /**\\n     * @dev Returns `true` if the contract is currently initializing. See {onlyInitializing}.\\n     */\\n    function _isInitializing() internal view returns (bool) {\\n        return _initializing;\\n    }\\n}\\n\",\"keccak256\":\"0x037c334add4b033ad3493038c25be1682d78c00992e1acb0e2795caff3925271\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.7.0) (security/Pausable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/ContextUpgradeable.sol\\\";\\nimport \\\"../proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Contract module which allows children to implement an emergency stop\\n * mechanism that can be triggered by an authorized account.\\n *\\n * This module is used through inheritance. It will make available the\\n * modifiers `whenNotPaused` and `whenPaused`, which can be applied to\\n * the functions of your contract. Note that they will not be pausable by\\n * simply including this module, only once the modifiers are put in place.\\n */\\nabstract contract PausableUpgradeable is Initializable, ContextUpgradeable {\\n    /**\\n     * @dev Emitted when the pause is triggered by `account`.\\n     */\\n    event Paused(address account);\\n\\n    /**\\n     * @dev Emitted when the pause is lifted by `account`.\\n     */\\n    event Unpaused(address account);\\n\\n    bool private _paused;\\n\\n    /**\\n     * @dev Initializes the contract in unpaused state.\\n     */\\n    function __Pausable_init() internal onlyInitializing {\\n        __Pausable_init_unchained();\\n    }\\n\\n    function __Pausable_init_unchained() internal onlyInitializing {\\n        _paused = false;\\n    }\\n\\n    /**\\n     * @dev Modifier to make a function callable only when the contract is not paused.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must not be paused.\\n     */\\n    modifier whenNotPaused() {\\n        _requireNotPaused();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Modifier to make a function callable only when the contract is paused.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must be paused.\\n     */\\n    modifier whenPaused() {\\n        _requirePaused();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns true if the contract is paused, and false otherwise.\\n     */\\n    function paused() public view virtual returns (bool) {\\n        return _paused;\\n    }\\n\\n    /**\\n     * @dev Throws if the contract is paused.\\n     */\\n    function _requireNotPaused() internal view virtual {\\n        require(!paused(), \\\"Pausable: paused\\\");\\n    }\\n\\n    /**\\n     * @dev Throws if the contract is not paused.\\n     */\\n    function _requirePaused() internal view virtual {\\n        require(paused(), \\\"Pausable: not paused\\\");\\n    }\\n\\n    /**\\n     * @dev Triggers stopped state.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must not be paused.\\n     */\\n    function _pause() internal virtual whenNotPaused {\\n        _paused = true;\\n        emit Paused(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Returns to normal state.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must be paused.\\n     */\\n    function _unpause() internal virtual whenPaused {\\n        _paused = false;\\n        emit Unpaused(_msgSender());\\n    }\\n\\n    /**\\n     * @dev This empty reserved space is put in place to allow future versions to add new\\n     * variables without shifting down storage in the inheritance chain.\\n     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps\\n     */\\n    uint256[49] private __gap;\\n}\\n\",\"keccak256\":\"0x40c636b4572ff5f1dc50cf22097e93c0723ee14eff87e99ac2b02636eeca1250\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.6.0) (token/ERC20/IERC20.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Interface of the ERC20 standard as defined in the EIP.\\n */\\ninterface IERC20Upgradeable {\\n    /**\\n     * @dev Emitted when `value` tokens are moved from one account (`from`) to\\n     * another (`to`).\\n     *\\n     * Note that `value` may be zero.\\n     */\\n    event Transfer(address indexed from, address indexed to, uint256 value);\\n\\n    /**\\n     * @dev Emitted when the allowance of a `spender` for an `owner` is set by\\n     * a call to {approve}. `value` is the new allowance.\\n     */\\n    event Approval(address indexed owner, address indexed spender, uint256 value);\\n\\n    /**\\n     * @dev Returns the amount of tokens in existence.\\n     */\\n    function totalSupply() external view returns (uint256);\\n\\n    /**\\n     * @dev Returns the amount of tokens owned by `account`.\\n     */\\n    function balanceOf(address account) external view returns (uint256);\\n\\n    /**\\n     * @dev Moves `amount` tokens from the caller's account to `to`.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transfer(address to, uint256 amount) external returns (bool);\\n\\n    /**\\n     * @dev Returns the remaining number of tokens that `spender` will be\\n     * allowed to spend on behalf of `owner` through {transferFrom}. This is\\n     * zero by default.\\n     *\\n     * This value changes when {approve} or {transferFrom} are called.\\n     */\\n    function allowance(address owner, address spender) external view returns (uint256);\\n\\n    /**\\n     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * IMPORTANT: Beware that changing an allowance with this method brings the risk\\n     * that someone may use both the old and the new allowance by unfortunate\\n     * transaction ordering. One possible solution to mitigate this race\\n     * condition is to first reduce the spender's allowance to 0 and set the\\n     * desired value afterwards:\\n     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\\n     *\\n     * Emits an {Approval} event.\\n     */\\n    function approve(address spender, uint256 amount) external returns (bool);\\n\\n    /**\\n     * @dev Moves `amount` tokens from `from` to `to` using the\\n     * allowance mechanism. `amount` is then deducted from the caller's\\n     * allowance.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transferFrom(\\n        address from,\\n        address to,\\n        uint256 amount\\n    ) external returns (bool);\\n}\\n\",\"keccak256\":\"0x4e733d3164f73f461eaf9d8087a7ad1ea180bdc8ba0d3d61b0e1ae16d8e63dff\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.8.0) (utils/Address.sol)\\n\\npragma solidity ^0.8.1;\\n\\n/**\\n * @dev Collection of functions related to the address type\\n */\\nlibrary AddressUpgradeable {\\n    /**\\n     * @dev Returns true if `account` is a contract.\\n     *\\n     * [IMPORTANT]\\n     * ====\\n     * It is unsafe to assume that an address for which this function returns\\n     * false is an externally-owned account (EOA) and not a contract.\\n     *\\n     * Among others, `isContract` will return false for the following\\n     * types of addresses:\\n     *\\n     *  - an externally-owned account\\n     *  - a contract in construction\\n     *  - an address where a contract will be created\\n     *  - an address where a contract lived, but was destroyed\\n     * ====\\n     *\\n     * [IMPORTANT]\\n     * ====\\n     * You shouldn't rely on `isContract` to protect against flash loan attacks!\\n     *\\n     * Preventing calls from contracts is highly discouraged. It breaks composability, breaks support for smart wallets\\n     * like Gnosis Safe, and does not provide security since it can be circumvented by calling from a contract\\n     * constructor.\\n     * ====\\n     */\\n    function isContract(address account) internal view returns (bool) {\\n        // This method relies on extcodesize/address.code.length, which returns 0\\n        // for contracts in construction, since the code is only stored at the end\\n        // of the constructor execution.\\n\\n        return account.code.length > 0;\\n    }\\n\\n    /**\\n     * @dev Replacement for Solidity's `transfer`: sends `amount` wei to\\n     * `recipient`, forwarding all available gas and reverting on errors.\\n     *\\n     * https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost\\n     * of certain opcodes, possibly making contracts go over the 2300 gas limit\\n     * imposed by `transfer`, making them unable to receive funds via\\n     * `transfer`. {sendValue} removes this limitation.\\n     *\\n     * https://diligence.consensys.net/posts/2019/09/stop-using-soliditys-transfer-now/[Learn more].\\n     *\\n     * IMPORTANT: because control is transferred to `recipient`, care must be\\n     * taken to not create reentrancy vulnerabilities. Consider using\\n     * {ReentrancyGuard} or the\\n     * https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern].\\n     */\\n    function sendValue(address payable recipient, uint256 amount) internal {\\n        require(address(this).balance >= amount, \\\"Address: insufficient balance\\\");\\n\\n        (bool success, ) = recipient.call{value: amount}(\\\"\\\");\\n        require(success, \\\"Address: unable to send value, recipient may have reverted\\\");\\n    }\\n\\n    /**\\n     * @dev Performs a Solidity function call using a low level `call`. A\\n     * plain `call` is an unsafe replacement for a function call: use this\\n     * function instead.\\n     *\\n     * If `target` reverts with a revert reason, it is bubbled up by this\\n     * function (like regular Solidity function calls).\\n     *\\n     * Returns the raw returned data. To convert to the expected return value,\\n     * use https://solidity.readthedocs.io/en/latest/units-and-global-variables.html?highlight=abi.decode#abi-encoding-and-decoding-functions[`abi.decode`].\\n     *\\n     * Requirements:\\n     *\\n     * - `target` must be a contract.\\n     * - calling `target` with `data` must not revert.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCall(address target, bytes memory data) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, 0, \\\"Address: low-level call failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`], but with\\n     * `errorMessage` as a fallback revert reason when `target` reverts.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCall(\\n        address target,\\n        bytes memory data,\\n        string memory errorMessage\\n    ) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, 0, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but also transferring `value` wei to `target`.\\n     *\\n     * Requirements:\\n     *\\n     * - the calling contract must have an ETH balance of at least `value`.\\n     * - the called Solidity function must be `payable`.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCallWithValue(\\n        address target,\\n        bytes memory data,\\n        uint256 value\\n    ) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, value, \\\"Address: low-level call with value failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCallWithValue-address-bytes-uint256-}[`functionCallWithValue`], but\\n     * with `errorMessage` as a fallback revert reason when `target` reverts.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCallWithValue(\\n        address target,\\n        bytes memory data,\\n        uint256 value,\\n        string memory errorMessage\\n    ) internal returns (bytes memory) {\\n        require(address(this).balance >= value, \\\"Address: insufficient balance for call\\\");\\n        (bool success, bytes memory returndata) = target.call{value: value}(data);\\n        return verifyCallResultFromTarget(target, success, returndata, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but performing a static call.\\n     *\\n     * _Available since v3.3._\\n     */\\n    function functionStaticCall(address target, bytes memory data) internal view returns (bytes memory) {\\n        return functionStaticCall(target, data, \\\"Address: low-level static call failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-string-}[`functionCall`],\\n     * but performing a static call.\\n     *\\n     * _Available since v3.3._\\n     */\\n    function functionStaticCall(\\n        address target,\\n        bytes memory data,\\n        string memory errorMessage\\n    ) internal view returns (bytes memory) {\\n        (bool success, bytes memory returndata) = target.staticcall(data);\\n        return verifyCallResultFromTarget(target, success, returndata, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Tool to verify that a low level call to smart-contract was successful, and revert (either by bubbling\\n     * the revert reason or using the provided one) in case of unsuccessful call or if target was not a contract.\\n     *\\n     * _Available since v4.8._\\n     */\\n    function verifyCallResultFromTarget(\\n        address target,\\n        bool success,\\n        bytes memory returndata,\\n        string memory errorMessage\\n    ) internal view returns (bytes memory) {\\n        if (success) {\\n            if (returndata.length == 0) {\\n                // only check isContract if the call was successful and the return data is empty\\n                // otherwise we already know that it was a contract\\n                require(isContract(target), \\\"Address: call to non-contract\\\");\\n            }\\n            return returndata;\\n        } else {\\n            _revert(returndata, errorMessage);\\n        }\\n    }\\n\\n    /**\\n     * @dev Tool to verify that a low level call was successful, and revert if it wasn't, either by bubbling the\\n     * revert reason or using the provided one.\\n     *\\n     * _Available since v4.3._\\n     */\\n    function verifyCallResult(\\n        bool success,\\n        bytes memory returndata,\\n        string memory errorMessage\\n    ) internal pure returns (bytes memory) {\\n        if (success) {\\n            return returndata;\\n        } else {\\n            _revert(returndata, errorMessage);\\n        }\\n    }\\n\\n    function _revert(bytes memory returndata, string memory errorMessage) private pure {\\n        // Look for revert reason and bubble it up if present\\n        if (returndata.length > 0) {\\n            // The easiest way to bubble the revert reason is using memory via assembly\\n            /// @solidity memory-safe-assembly\\n            assembly {\\n                let returndata_size := mload(returndata)\\n                revert(add(32, returndata), returndata_size)\\n            }\\n        } else {\\n            revert(errorMessage);\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x2edcb41c121abc510932e8d83ff8b82cf9cdde35e7c297622f5c29ef0af25183\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\\n\\npragma solidity ^0.8.0;\\nimport \\\"../proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract ContextUpgradeable is Initializable {\\n    function __Context_init() internal onlyInitializing {\\n    }\\n\\n    function __Context_init_unchained() internal onlyInitializing {\\n    }\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    /**\\n     * @dev This empty reserved space is put in place to allow future versions to add new\\n     * variables without shifting down storage in the inheritance chain.\\n     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps\\n     */\\n    uint256[50] private __gap;\\n}\\n\",\"keccak256\":\"0x963ea7f0b48b032eef72fe3a7582edf78408d6f834115b9feadd673a4d5bd149\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.8.0) (utils/structs/EnumerableSet.sol)\\n// This file was procedurally generated from scripts/generate/templates/EnumerableSet.js.\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Library for managing\\n * https://en.wikipedia.org/wiki/Set_(abstract_data_type)[sets] of primitive\\n * types.\\n *\\n * Sets have the following properties:\\n *\\n * - Elements are added, removed, and checked for existence in constant time\\n * (O(1)).\\n * - Elements are enumerated in O(n). No guarantees are made on the ordering.\\n *\\n * ```\\n * contract Example {\\n *     // Add the library methods\\n *     using EnumerableSet for EnumerableSet.AddressSet;\\n *\\n *     // Declare a set state variable\\n *     EnumerableSet.AddressSet private mySet;\\n * }\\n * ```\\n *\\n * As of v3.3.0, sets of type `bytes32` (`Bytes32Set`), `address` (`AddressSet`)\\n * and `uint256` (`UintSet`) are supported.\\n *\\n * [WARNING]\\n * ====\\n * Trying to delete such a structure from storage will likely result in data corruption, rendering the structure\\n * unusable.\\n * See https://github.com/ethereum/solidity/pull/11843[ethereum/solidity#11843] for more info.\\n *\\n * In order to clean an EnumerableSet, you can either remove all elements one by one or create a fresh instance using an\\n * array of EnumerableSet.\\n * ====\\n */\\nlibrary EnumerableSetUpgradeable {\\n    // To implement this library for multiple types with as little code\\n    // repetition as possible, we write it in terms of a generic Set type with\\n    // bytes32 values.\\n    // The Set implementation uses private functions, and user-facing\\n    // implementations (such as AddressSet) are just wrappers around the\\n    // underlying Set.\\n    // This means that we can only create new EnumerableSets for types that fit\\n    // in bytes32.\\n\\n    struct Set {\\n        // Storage of set values\\n        bytes32[] _values;\\n        // Position of the value in the `values` array, plus 1 because index 0\\n        // means a value is not in the set.\\n        mapping(bytes32 => uint256) _indexes;\\n    }\\n\\n    /**\\n     * @dev Add a value to a set. O(1).\\n     *\\n     * Returns true if the value was added to the set, that is if it was not\\n     * already present.\\n     */\\n    function _add(Set storage set, bytes32 value) private returns (bool) {\\n        if (!_contains(set, value)) {\\n            set._values.push(value);\\n            // The value is stored at length-1, but we add 1 to all indexes\\n            // and use 0 as a sentinel value\\n            set._indexes[value] = set._values.length;\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n\\n    /**\\n     * @dev Removes a value from a set. O(1).\\n     *\\n     * Returns true if the value was removed from the set, that is if it was\\n     * present.\\n     */\\n    function _remove(Set storage set, bytes32 value) private returns (bool) {\\n        // We read and store the value's index to prevent multiple reads from the same storage slot\\n        uint256 valueIndex = set._indexes[value];\\n\\n        if (valueIndex != 0) {\\n            // Equivalent to contains(set, value)\\n            // To delete an element from the _values array in O(1), we swap the element to delete with the last one in\\n            // the array, and then remove the last element (sometimes called as 'swap and pop').\\n            // This modifies the order of the array, as noted in {at}.\\n\\n            uint256 toDeleteIndex = valueIndex - 1;\\n            uint256 lastIndex = set._values.length - 1;\\n\\n            if (lastIndex != toDeleteIndex) {\\n                bytes32 lastValue = set._values[lastIndex];\\n\\n                // Move the last value to the index where the value to delete is\\n                set._values[toDeleteIndex] = lastValue;\\n                // Update the index for the moved value\\n                set._indexes[lastValue] = valueIndex; // Replace lastValue's index to valueIndex\\n            }\\n\\n            // Delete the slot where the moved value was stored\\n            set._values.pop();\\n\\n            // Delete the index for the deleted slot\\n            delete set._indexes[value];\\n\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns true if the value is in the set. O(1).\\n     */\\n    function _contains(Set storage set, bytes32 value) private view returns (bool) {\\n        return set._indexes[value] != 0;\\n    }\\n\\n    /**\\n     * @dev Returns the number of values on the set. O(1).\\n     */\\n    function _length(Set storage set) private view returns (uint256) {\\n        return set._values.length;\\n    }\\n\\n    /**\\n     * @dev Returns the value stored at position `index` in the set. O(1).\\n     *\\n     * Note that there are no guarantees on the ordering of values inside the\\n     * array, and it may change when more values are added or removed.\\n     *\\n     * Requirements:\\n     *\\n     * - `index` must be strictly less than {length}.\\n     */\\n    function _at(Set storage set, uint256 index) private view returns (bytes32) {\\n        return set._values[index];\\n    }\\n\\n    /**\\n     * @dev Return the entire set in an array\\n     *\\n     * WARNING: This operation will copy the entire storage to memory, which can be quite expensive. This is designed\\n     * to mostly be used by view accessors that are queried without any gas fees. Developers should keep in mind that\\n     * this function has an unbounded cost, and using it as part of a state-changing function may render the function\\n     * uncallable if the set grows to a point where copying to memory consumes too much gas to fit in a block.\\n     */\\n    function _values(Set storage set) private view returns (bytes32[] memory) {\\n        return set._values;\\n    }\\n\\n    // Bytes32Set\\n\\n    struct Bytes32Set {\\n        Set _inner;\\n    }\\n\\n    /**\\n     * @dev Add a value to a set. O(1).\\n     *\\n     * Returns true if the value was added to the set, that is if it was not\\n     * already present.\\n     */\\n    function add(Bytes32Set storage set, bytes32 value) internal returns (bool) {\\n        return _add(set._inner, value);\\n    }\\n\\n    /**\\n     * @dev Removes a value from a set. O(1).\\n     *\\n     * Returns true if the value was removed from the set, that is if it was\\n     * present.\\n     */\\n    function remove(Bytes32Set storage set, bytes32 value) internal returns (bool) {\\n        return _remove(set._inner, value);\\n    }\\n\\n    /**\\n     * @dev Returns true if the value is in the set. O(1).\\n     */\\n    function contains(Bytes32Set storage set, bytes32 value) internal view returns (bool) {\\n        return _contains(set._inner, value);\\n    }\\n\\n    /**\\n     * @dev Returns the number of values in the set. O(1).\\n     */\\n    function length(Bytes32Set storage set) internal view returns (uint256) {\\n        return _length(set._inner);\\n    }\\n\\n    /**\\n     * @dev Returns the value stored at position `index` in the set. O(1).\\n     *\\n     * Note that there are no guarantees on the ordering of values inside the\\n     * array, and it may change when more values are added or removed.\\n     *\\n     * Requirements:\\n     *\\n     * - `index` must be strictly less than {length}.\\n     */\\n    function at(Bytes32Set storage set, uint256 index) internal view returns (bytes32) {\\n        return _at(set._inner, index);\\n    }\\n\\n    /**\\n     * @dev Return the entire set in an array\\n     *\\n     * WARNING: This operation will copy the entire storage to memory, which can be quite expensive. This is designed\\n     * to mostly be used by view accessors that are queried without any gas fees. Developers should keep in mind that\\n     * this function has an unbounded cost, and using it as part of a state-changing function may render the function\\n     * uncallable if the set grows to a point where copying to memory consumes too much gas to fit in a block.\\n     */\\n    function values(Bytes32Set storage set) internal view returns (bytes32[] memory) {\\n        bytes32[] memory store = _values(set._inner);\\n        bytes32[] memory result;\\n\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            result := store\\n        }\\n\\n        return result;\\n    }\\n\\n    // AddressSet\\n\\n    struct AddressSet {\\n        Set _inner;\\n    }\\n\\n    /**\\n     * @dev Add a value to a set. O(1).\\n     *\\n     * Returns true if the value was added to the set, that is if it was not\\n     * already present.\\n     */\\n    function add(AddressSet storage set, address value) internal returns (bool) {\\n        return _add(set._inner, bytes32(uint256(uint160(value))));\\n    }\\n\\n    /**\\n     * @dev Removes a value from a set. O(1).\\n     *\\n     * Returns true if the value was removed from the set, that is if it was\\n     * present.\\n     */\\n    function remove(AddressSet storage set, address value) internal returns (bool) {\\n        return _remove(set._inner, bytes32(uint256(uint160(value))));\\n    }\\n\\n    /**\\n     * @dev Returns true if the value is in the set. O(1).\\n     */\\n    function contains(AddressSet storage set, address value) internal view returns (bool) {\\n        return _contains(set._inner, bytes32(uint256(uint160(value))));\\n    }\\n\\n    /**\\n     * @dev Returns the number of values in the set. O(1).\\n     */\\n    function length(AddressSet storage set) internal view returns (uint256) {\\n        return _length(set._inner);\\n    }\\n\\n    /**\\n     * @dev Returns the value stored at position `index` in the set. O(1).\\n     *\\n     * Note that there are no guarantees on the ordering of values inside the\\n     * array, and it may change when more values are added or removed.\\n     *\\n     * Requirements:\\n     *\\n     * - `index` must be strictly less than {length}.\\n     */\\n    function at(AddressSet storage set, uint256 index) internal view returns (address) {\\n        return address(uint160(uint256(_at(set._inner, index))));\\n    }\\n\\n    /**\\n     * @dev Return the entire set in an array\\n     *\\n     * WARNING: This operation will copy the entire storage to memory, which can be quite expensive. This is designed\\n     * to mostly be used by view accessors that are queried without any gas fees. Developers should keep in mind that\\n     * this function has an unbounded cost, and using it as part of a state-changing function may render the function\\n     * uncallable if the set grows to a point where copying to memory consumes too much gas to fit in a block.\\n     */\\n    function values(AddressSet storage set) internal view returns (address[] memory) {\\n        bytes32[] memory store = _values(set._inner);\\n        address[] memory result;\\n\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            result := store\\n        }\\n\\n        return result;\\n    }\\n\\n    // UintSet\\n\\n    struct UintSet {\\n        Set _inner;\\n    }\\n\\n    /**\\n     * @dev Add a value to a set. O(1).\\n     *\\n     * Returns true if the value was added to the set, that is if it was not\\n     * already present.\\n     */\\n    function add(UintSet storage set, uint256 value) internal returns (bool) {\\n        return _add(set._inner, bytes32(value));\\n    }\\n\\n    /**\\n     * @dev Removes a value from a set. O(1).\\n     *\\n     * Returns true if the value was removed from the set, that is if it was\\n     * present.\\n     */\\n    function remove(UintSet storage set, uint256 value) internal returns (bool) {\\n        return _remove(set._inner, bytes32(value));\\n    }\\n\\n    /**\\n     * @dev Returns true if the value is in the set. O(1).\\n     */\\n    function contains(UintSet storage set, uint256 value) internal view returns (bool) {\\n        return _contains(set._inner, bytes32(value));\\n    }\\n\\n    /**\\n     * @dev Returns the number of values in the set. O(1).\\n     */\\n    function length(UintSet storage set) internal view returns (uint256) {\\n        return _length(set._inner);\\n    }\\n\\n    /**\\n     * @dev Returns the value stored at position `index` in the set. O(1).\\n     *\\n     * Note that there are no guarantees on the ordering of values inside the\\n     * array, and it may change when more values are added or removed.\\n     *\\n     * Requirements:\\n     *\\n     * - `index` must be strictly less than {length}.\\n     */\\n    function at(UintSet storage set, uint256 index) internal view returns (uint256) {\\n        return uint256(_at(set._inner, index));\\n    }\\n\\n    /**\\n     * @dev Return the entire set in an array\\n     *\\n     * WARNING: This operation will copy the entire storage to memory, which can be quite expensive. This is designed\\n     * to mostly be used by view accessors that are queried without any gas fees. Developers should keep in mind that\\n     * this function has an unbounded cost, and using it as part of a state-changing function may render the function\\n     * uncallable if the set grows to a point where copying to memory consumes too much gas to fit in a block.\\n     */\\n    function values(UintSet storage set) internal view returns (uint256[] memory) {\\n        bytes32[] memory store = _values(set._inner);\\n        uint256[] memory result;\\n\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            result := store\\n        }\\n\\n        return result;\\n    }\\n}\\n\",\"keccak256\":\"0x4807db844a856813048b5af81a764fdd25a0ae8876a3132593e8d21ddc6b607c\",\"license\":\"MIT\"},\"contracts/NFTLRaffle.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.8.11;\\n\\nimport \\\"@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol\\\";\\nimport \\\"@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol\\\";\\nimport \\\"@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol\\\";\\nimport \\\"@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol\\\";\\n\\ninterface IERC20BurnableUpgradeable is IERC20Upgradeable {\\n    function burnFrom(address account, uint256 amount) external;\\n}\\n\\n/**\\n * @title NFTLRaffle\\n */\\ncontract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {\\n    using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;\\n    using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;\\n\\n    struct WinnerInfo {\\n        uint256 ticketId;\\n        address winner;\\n    }\\n\\n    /// @dev NFTL address\\n    IERC20BurnableUpgradeable public nftl;\\n\\n    /// @dev Timestamp the raffle start\\n    uint256 public raffleStartAt;\\n\\n    /// @dev Winner count\\n    uint256 public totalWinnerTicketCount;\\n\\n    /// @dev Winner list\\n    WinnerInfo[] public winners;\\n\\n    /// @dev Total ticket count\\n    uint256 public totalTicketCount;\\n\\n    /// @dev NFTL amount required for 1 ticket\\n    uint256 public constant NFTL_AMOUNT_FOR_TICKET = 1000 * 10 ** 18;\\n\\n    /// @dev User list\\n    EnumerableSetUpgradeable.AddressSet internal _userList;\\n\\n    /// @dev TokenId list\\n    EnumerableSetUpgradeable.UintSet internal _ticketIdList;\\n\\n    /// @dev User -> NFTL amount deposited\\n    mapping(address => uint256) public userDeposits;\\n\\n    /// @dev User -> Ticket Id list\\n    mapping(address => EnumerableSetUpgradeable.UintSet) internal _ticketIdsByUser;\\n\\n    /// @dev Ticket Id -> User\\n    mapping(uint256 => address) public userByTicketId;\\n\\n    /// @custom:oz-upgrades-unsafe-allow constructor\\n    constructor() {\\n        _disableInitializers();\\n    }\\n\\n    function initialize(address _nftl, uint256 _pendingPeriod, uint256 _totalWinnerTicketCount) public initializer {\\n        __Ownable_init();\\n        __Pausable_init();\\n\\n        require(_nftl != address(0), \\\"Zero address\\\");\\n        require(_pendingPeriod > 3600, \\\"1 day +\\\");\\n        require(_totalWinnerTicketCount > 0, \\\"Zero winner ticket count\\\");\\n\\n        nftl = IERC20BurnableUpgradeable(_nftl);\\n        raffleStartAt = block.timestamp + _pendingPeriod;\\n        totalWinnerTicketCount = _totalWinnerTicketCount;\\n    }\\n\\n    function updateRaffleStartAt(uint256 _raffleStartAt) external onlyOwner {\\n        require(block.timestamp < _raffleStartAt, \\\"Invalid timestamp\\\");\\n        raffleStartAt = _raffleStartAt;\\n    }\\n\\n    function updateTotalWinnerTicketCount(uint256 _totalWinnerTicketCount) external onlyOwner {\\n        require(_totalWinnerTicketCount > 0, \\\"Zero winner ticket count\\\");\\n        totalWinnerTicketCount = _totalWinnerTicketCount;\\n    }\\n\\n    function deposit(uint256 _amount) external {\\n        require(block.timestamp < raffleStartAt, \\\"Expired\\\");\\n\\n        // burn NFTL tokens\\n        nftl.burnFrom(msg.sender, _amount);\\n\\n        // increase the user deposit\\n        userDeposits[msg.sender] += _amount;\\n\\n        // add the user if not exist\\n        _userList.add(msg.sender);\\n\\n        // assign the tickets (user <-> ticketId)\\n        uint256 userTicketCount = getTicketCountByUser(msg.sender);\\n        uint256 userTicketCountToAssign = userDeposits[msg.sender] / NFTL_AMOUNT_FOR_TICKET - userTicketCount;\\n        uint256 baseTicketId = totalTicketCount;\\n        for (uint256 i = 0; i < userTicketCountToAssign; ) {\\n            uint256 ticketIdToAssign = baseTicketId + i;\\n\\n            // add the ticket Id\\n            _ticketIdList.add(ticketIdToAssign);\\n\\n            // user -> ticket Ids\\n            _ticketIdsByUser[msg.sender].add(ticketIdToAssign);\\n\\n            // ticket ID -> user\\n            userByTicketId[ticketIdToAssign] = msg.sender;\\n\\n            unchecked {\\n                ++i;\\n            }\\n        }\\n\\n        // increase the total ticket count\\n        totalTicketCount += userTicketCountToAssign;\\n    }\\n\\n    function selectWinners() external onlyOwner {\\n        require(raffleStartAt <= block.timestamp, \\\"Pending period\\\");\\n        require(totalWinnerTicketCount <= _ticketIdList.length(), \\\"Not enough depositors\\\");\\n\\n        for (uint256 i = 0; i < totalWinnerTicketCount; ) {\\n            // select the winner\\n            bytes32 randomHash = keccak256(\\n                abi.encodePacked(\\n                    blockhash(block.number),\\n                    msg.sender,\\n                    block.timestamp,\\n                    block.difficulty,\\n                    i * totalWinnerTicketCount\\n                )\\n            );\\n            uint256 winnerTicketIndex = uint256(randomHash) % _ticketIdList.length();\\n            uint256 winnerTicketId = _ticketIdList.at(winnerTicketIndex);\\n\\n            // store the winner\\n            winners.push(WinnerInfo({ ticketId: winnerTicketId, winner: userByTicketId[winnerTicketId] }));\\n\\n            // remove the selected ticket Id from the list\\n            _ticketIdList.remove(winnerTicketId);\\n\\n            unchecked {\\n                ++i;\\n            }\\n        }\\n    }\\n\\n    function getWinners() external view returns (WinnerInfo[] memory) {\\n        return winners;\\n    }\\n\\n    function getUserCount() external view returns (uint256) {\\n        return _userList.length();\\n    }\\n\\n    function getTicketIdsByUser(address _user) external view returns (uint256[] memory) {\\n        return _ticketIdsByUser[_user].values();\\n    }\\n\\n    function getTicketCountByUser(address _user) public view returns (uint256) {\\n        return _ticketIdsByUser[_user].length();\\n    }\\n\\n    function getUserList() external view returns (address[] memory) {\\n        return _userList.values();\\n    }\\n\\n    /**\\n     * @notice Pause the contract\\n     */\\n    function pause() external onlyOwner {\\n        _pause();\\n    }\\n\\n    /**\\n     * @notice Unpause the contract\\n     */\\n    function unpause() external onlyOwner {\\n        _unpause();\\n    }\\n}\\n\",\"keccak256\":\"0x6925b0a3fb484b8c85d344c3005d61b12af0db10188d9c4c7d775795d4b08653\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5061001961001e565b6100de565b600054610100900460ff161561008a5760405162461bcd60e51b815260206004820152602760248201527f496e697469616c697a61626c653a20636f6e747261637420697320696e697469604482015266616c697a696e6760c81b606482015260840160405180910390fd5b60005460ff90811610156100dc576000805460ff191660ff9081179091556040519081527f7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb38474024989060200160405180910390a15b565b6112be806100ed6000396000f3fe608060405234801561001057600080fd5b50600436106101585760003560e01c80638456cb59116100c3578063b5cb15f71161007c578063b5cb15f7146102cb578063b6b55f25146102d3578063b8522043146102e6578063df15c37e146102fb578063f200006c14610310578063f2fde38b1461033957600080fd5b80638456cb591461024957806384a1890e14610251578063869c046c146102645780638da5cb5b14610277578063a2fb117514610288578063a488af25146102b857600080fd5b80634e81da0a116101155780634e81da0a146101bd5780635671fc66146101e85780635c975abb146101f857806360d131681461020e578063715018a61461022e5780637a1ac61e1461023657600080fd5b80630ba36dcd1461015d57806314558fab1461019057806319d750ce146101995780631a0de74c146101a2578063323c1bb3146101ac5780633f4ba83a146101b5575b600080fd5b61017d61016b36600461102b565b60a06020526000908152604090205481565b6040519081526020015b60405180910390f35b61017d609b5481565b61017d60985481565b6101aa61034c565b005b61017d60995481565b6101aa610552565b6097546101d0906001600160a01b031681565b6040516001600160a01b039091168152602001610187565b61017d683635c9adc5dea0000081565b60655460ff166040519015158152602001610187565b61022161021c36600461102b565b610564565b6040516101879190611046565b6101aa61058e565b6101aa61024436600461108a565b6105a0565b6101aa6107b4565b61017d61025f36600461102b565b6107c4565b6101aa6102723660046110bd565b6107e5565b6033546001600160a01b03166101d0565b61029b6102963660046110bd565b61083d565b604080519283526001600160a01b03909116602083015201610187565b6101aa6102c63660046110bd565b610874565b61017d6108c4565b6101aa6102e13660046110bd565b6108d5565b6102ee610a6e565b60405161018791906110d6565b610303610a7a565b6040516101879190611117565b6101d061031e3660046110bd565b60a2602052600090815260409020546001600160a01b031681565b6101aa61034736600461102b565b610aef565b610354610b65565b42609854111561039c5760405162461bcd60e51b815260206004820152600e60248201526d14195b991a5b99c81c195c9a5bd960921b60448201526064015b60405180910390fd5b6103a6609e610bbf565b60995411156103ef5760405162461bcd60e51b81526020600482015260156024820152744e6f7420656e6f756768206465706f7369746f727360581b6044820152606401610393565b60005b60995481101561054f5760004340334244609954866104119190611185565b60405160200161045595949392919094855260609390931b6bffffffffffffffffffffffff1916602085015260348401919091526054830152607482015260940190565b6040516020818303038152906040528051906020012090506000610479609e610bbf565b61048390836111ba565b90506000610492609e83610bc9565b604080518082018252828152600083815260a26020908152928120546001600160a01b03908116938301938452609a8054600181018255925291517f44da158ba27f9252712a74ff6a55c5d531f69609f1f6e7f17c4443a8e2089be460029092029182015591517f44da158ba27f9252712a74ff6a55c5d531f69609f1f6e7f17c4443a8e2089be590920180546001600160a01b031916929091169190911790559050610540609e82610bdc565b508360010193505050506103f2565b50565b61055a610b65565b610562610be8565b565b6001600160a01b038116600090815260a16020526040902060609061058890610c3a565b92915050565b610596610b65565b6105626000610c47565b600054610100900460ff16158080156105c05750600054600160ff909116105b806105da5750303b1580156105da575060005460ff166001145b61063d5760405162461bcd60e51b815260206004820152602e60248201527f496e697469616c697a61626c653a20636f6e747261637420697320616c72656160448201526d191e481a5b9a5d1a585b1a5e995960921b6064820152608401610393565b6000805460ff191660011790558015610660576000805461ff0019166101001790555b610668610c99565b610670610cc8565b6001600160a01b0384166106b55760405162461bcd60e51b815260206004820152600c60248201526b5a65726f206164647265737360a01b6044820152606401610393565b610e1083116106f05760405162461bcd60e51b81526020600482015260076024820152663120646179202b60c81b6044820152606401610393565b6000821161073b5760405162461bcd60e51b815260206004820152601860248201527716995c9bc81dda5b9b995c881d1a58dad95d0818dbdd5b9d60421b6044820152606401610393565b609780546001600160a01b0319166001600160a01b03861617905561076083426111ce565b609855609982905580156107ae576000805461ff0019169055604051600181527f7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb38474024989060200160405180910390a15b50505050565b6107bc610b65565b610562610cf7565b6001600160a01b038116600090815260a16020526040812061058890610bbf565b6107ed610b65565b600081116108385760405162461bcd60e51b815260206004820152601860248201527716995c9bc81dda5b9b995c881d1a58dad95d0818dbdd5b9d60421b6044820152606401610393565b609955565b609a818154811061084d57600080fd5b6000918252602090912060029091020180546001909101549091506001600160a01b031682565b61087c610b65565b8042106108bf5760405162461bcd60e51b81526020600482015260116024820152700496e76616c69642074696d657374616d7607c1b6044820152606401610393565b609855565b60006108d0609c610bbf565b905090565b60985442106109105760405162461bcd60e51b8152602060048201526007602482015266115e1c1a5c995960ca1b6044820152606401610393565b60975460405163079cc67960e41b8152336004820152602481018390526001600160a01b03909116906379cc679090604401600060405180830381600087803b15801561095c57600080fd5b505af1158015610970573d6000803e3d6000fd5b505033600090815260a06020526040812080548594509092506109949084906111ce565b909155506109a59050609c33610d34565b5060006109b1336107c4565b33600090815260a060205260408120549192509082906109db90683635c9adc5dea00000906111e6565b6109e591906111fa565b609b5490915060005b82811015610a50576000610a0282846111ce565b9050610a0f609e82610d49565b5033600090815260a160205260409020610a299082610d49565b50600090815260a26020526040902080546001600160a01b031916331790556001016109ee565b5081609b6000828254610a6391906111ce565b909155505050505050565b60606108d0609c610c3a565b6060609a805480602002602001604051908101604052809291908181526020016000905b82821015610ae65760008481526020908190206040805180820190915260028502909101805482526001908101546001600160a01b0316828401529083529092019101610a9e565b50505050905090565b610af7610b65565b6001600160a01b038116610b5c5760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b6064820152608401610393565b61054f81610c47565b6033546001600160a01b031633146105625760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152606401610393565b6000610588825490565b6000610bd58383610d55565b9392505050565b6000610bd58383610d7f565b610bf0610e72565b6065805460ff191690557f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa335b6040516001600160a01b03909116815260200160405180910390a1565b60606000610bd583610ebb565b603380546001600160a01b038381166001600160a01b0319831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b600054610100900460ff16610cc05760405162461bcd60e51b815260040161039390611211565b610562610f17565b600054610100900460ff16610cef5760405162461bcd60e51b815260040161039390611211565b610562610f47565b610cff610f7a565b6065805460ff191660011790557f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258610c1d3390565b6000610bd5836001600160a01b038416610fc0565b6000610bd58383610fc0565b6000826000018281548110610d6c57610d6c61125c565b9060005260206000200154905092915050565b60008181526001830160205260408120548015610e68576000610da36001836111fa565b8554909150600090610db7906001906111fa565b9050818114610e1c576000866000018281548110610dd757610dd761125c565b9060005260206000200154905080876000018481548110610dfa57610dfa61125c565b6000918252602080832090910192909255918252600188019052604090208390555b8554869080610e2d57610e2d611272565b600190038181906000526020600020016000905590558560010160008681526020019081526020016000206000905560019350505050610588565b6000915050610588565b60655460ff166105625760405162461bcd60e51b815260206004820152601460248201527314185d5cd8589b194e881b9bdd081c185d5cd95960621b6044820152606401610393565b606081600001805480602002602001604051908101604052809291908181526020018280548015610f0b57602002820191906000526020600020905b815481526020019060010190808311610ef7575b50505050509050919050565b600054610100900460ff16610f3e5760405162461bcd60e51b815260040161039390611211565b61056233610c47565b600054610100900460ff16610f6e5760405162461bcd60e51b815260040161039390611211565b6065805460ff19169055565b60655460ff16156105625760405162461bcd60e51b815260206004820152601060248201526f14185d5cd8589b194e881c185d5cd95960821b6044820152606401610393565b600081815260018301602052604081205461100757508154600181810184556000848152602080822090930184905584548482528286019093526040902091909155610588565b506000610588565b80356001600160a01b038116811461102657600080fd5b919050565b60006020828403121561103d57600080fd5b610bd58261100f565b6020808252825182820181905260009190848201906040850190845b8181101561107e57835183529284019291840191600101611062565b50909695505050505050565b60008060006060848603121561109f57600080fd5b6110a88461100f565b95602085013595506040909401359392505050565b6000602082840312156110cf57600080fd5b5035919050565b6020808252825182820181905260009190848201906040850190845b8181101561107e5783516001600160a01b0316835292840192918401916001016110f2565b602080825282518282018190526000919060409081850190868401855b82811015611162578151805185528601516001600160a01b0316868501529284019290850190600101611134565b5091979650505050505050565b634e487b7160e01b600052601160045260246000fd5b600081600019048311821515161561119f5761119f61116f565b500290565b634e487b7160e01b600052601260045260246000fd5b6000826111c9576111c96111a4565b500690565b600082198211156111e1576111e161116f565b500190565b6000826111f5576111f56111a4565b500490565b60008282101561120c5761120c61116f565b500390565b6020808252602b908201527f496e697469616c697a61626c653a20636f6e7472616374206973206e6f74206960408201526a6e697469616c697a696e6760a81b606082015260800190565b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052603160045260246000fdfea2646970667358221220ed34324d2365cf3c46efa5c067c892bd1010cf13776faea19cf5159ac81a929864736f6c634300080b0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106101585760003560e01c80638456cb59116100c3578063b5cb15f71161007c578063b5cb15f7146102cb578063b6b55f25146102d3578063b8522043146102e6578063df15c37e146102fb578063f200006c14610310578063f2fde38b1461033957600080fd5b80638456cb591461024957806384a1890e14610251578063869c046c146102645780638da5cb5b14610277578063a2fb117514610288578063a488af25146102b857600080fd5b80634e81da0a116101155780634e81da0a146101bd5780635671fc66146101e85780635c975abb146101f857806360d131681461020e578063715018a61461022e5780637a1ac61e1461023657600080fd5b80630ba36dcd1461015d57806314558fab1461019057806319d750ce146101995780631a0de74c146101a2578063323c1bb3146101ac5780633f4ba83a146101b5575b600080fd5b61017d61016b36600461102b565b60a06020526000908152604090205481565b6040519081526020015b60405180910390f35b61017d609b5481565b61017d60985481565b6101aa61034c565b005b61017d60995481565b6101aa610552565b6097546101d0906001600160a01b031681565b6040516001600160a01b039091168152602001610187565b61017d683635c9adc5dea0000081565b60655460ff166040519015158152602001610187565b61022161021c36600461102b565b610564565b6040516101879190611046565b6101aa61058e565b6101aa61024436600461108a565b6105a0565b6101aa6107b4565b61017d61025f36600461102b565b6107c4565b6101aa6102723660046110bd565b6107e5565b6033546001600160a01b03166101d0565b61029b6102963660046110bd565b61083d565b604080519283526001600160a01b03909116602083015201610187565b6101aa6102c63660046110bd565b610874565b61017d6108c4565b6101aa6102e13660046110bd565b6108d5565b6102ee610a6e565b60405161018791906110d6565b610303610a7a565b6040516101879190611117565b6101d061031e3660046110bd565b60a2602052600090815260409020546001600160a01b031681565b6101aa61034736600461102b565b610aef565b610354610b65565b42609854111561039c5760405162461bcd60e51b815260206004820152600e60248201526d14195b991a5b99c81c195c9a5bd960921b60448201526064015b60405180910390fd5b6103a6609e610bbf565b60995411156103ef5760405162461bcd60e51b81526020600482015260156024820152744e6f7420656e6f756768206465706f7369746f727360581b6044820152606401610393565b60005b60995481101561054f5760004340334244609954866104119190611185565b60405160200161045595949392919094855260609390931b6bffffffffffffffffffffffff1916602085015260348401919091526054830152607482015260940190565b6040516020818303038152906040528051906020012090506000610479609e610bbf565b61048390836111ba565b90506000610492609e83610bc9565b604080518082018252828152600083815260a26020908152928120546001600160a01b03908116938301938452609a8054600181018255925291517f44da158ba27f9252712a74ff6a55c5d531f69609f1f6e7f17c4443a8e2089be460029092029182015591517f44da158ba27f9252712a74ff6a55c5d531f69609f1f6e7f17c4443a8e2089be590920180546001600160a01b031916929091169190911790559050610540609e82610bdc565b508360010193505050506103f2565b50565b61055a610b65565b610562610be8565b565b6001600160a01b038116600090815260a16020526040902060609061058890610c3a565b92915050565b610596610b65565b6105626000610c47565b600054610100900460ff16158080156105c05750600054600160ff909116105b806105da5750303b1580156105da575060005460ff166001145b61063d5760405162461bcd60e51b815260206004820152602e60248201527f496e697469616c697a61626c653a20636f6e747261637420697320616c72656160448201526d191e481a5b9a5d1a585b1a5e995960921b6064820152608401610393565b6000805460ff191660011790558015610660576000805461ff0019166101001790555b610668610c99565b610670610cc8565b6001600160a01b0384166106b55760405162461bcd60e51b815260206004820152600c60248201526b5a65726f206164647265737360a01b6044820152606401610393565b610e1083116106f05760405162461bcd60e51b81526020600482015260076024820152663120646179202b60c81b6044820152606401610393565b6000821161073b5760405162461bcd60e51b815260206004820152601860248201527716995c9bc81dda5b9b995c881d1a58dad95d0818dbdd5b9d60421b6044820152606401610393565b609780546001600160a01b0319166001600160a01b03861617905561076083426111ce565b609855609982905580156107ae576000805461ff0019169055604051600181527f7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb38474024989060200160405180910390a15b50505050565b6107bc610b65565b610562610cf7565b6001600160a01b038116600090815260a16020526040812061058890610bbf565b6107ed610b65565b600081116108385760405162461bcd60e51b815260206004820152601860248201527716995c9bc81dda5b9b995c881d1a58dad95d0818dbdd5b9d60421b6044820152606401610393565b609955565b609a818154811061084d57600080fd5b6000918252602090912060029091020180546001909101549091506001600160a01b031682565b61087c610b65565b8042106108bf5760405162461bcd60e51b81526020600482015260116024820152700496e76616c69642074696d657374616d7607c1b6044820152606401610393565b609855565b60006108d0609c610bbf565b905090565b60985442106109105760405162461bcd60e51b8152602060048201526007602482015266115e1c1a5c995960ca1b6044820152606401610393565b60975460405163079cc67960e41b8152336004820152602481018390526001600160a01b03909116906379cc679090604401600060405180830381600087803b15801561095c57600080fd5b505af1158015610970573d6000803e3d6000fd5b505033600090815260a06020526040812080548594509092506109949084906111ce565b909155506109a59050609c33610d34565b5060006109b1336107c4565b33600090815260a060205260408120549192509082906109db90683635c9adc5dea00000906111e6565b6109e591906111fa565b609b5490915060005b82811015610a50576000610a0282846111ce565b9050610a0f609e82610d49565b5033600090815260a160205260409020610a299082610d49565b50600090815260a26020526040902080546001600160a01b031916331790556001016109ee565b5081609b6000828254610a6391906111ce565b909155505050505050565b60606108d0609c610c3a565b6060609a805480602002602001604051908101604052809291908181526020016000905b82821015610ae65760008481526020908190206040805180820190915260028502909101805482526001908101546001600160a01b0316828401529083529092019101610a9e565b50505050905090565b610af7610b65565b6001600160a01b038116610b5c5760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b6064820152608401610393565b61054f81610c47565b6033546001600160a01b031633146105625760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152606401610393565b6000610588825490565b6000610bd58383610d55565b9392505050565b6000610bd58383610d7f565b610bf0610e72565b6065805460ff191690557f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa335b6040516001600160a01b03909116815260200160405180910390a1565b60606000610bd583610ebb565b603380546001600160a01b038381166001600160a01b0319831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b600054610100900460ff16610cc05760405162461bcd60e51b815260040161039390611211565b610562610f17565b600054610100900460ff16610cef5760405162461bcd60e51b815260040161039390611211565b610562610f47565b610cff610f7a565b6065805460ff191660011790557f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258610c1d3390565b6000610bd5836001600160a01b038416610fc0565b6000610bd58383610fc0565b6000826000018281548110610d6c57610d6c61125c565b9060005260206000200154905092915050565b60008181526001830160205260408120548015610e68576000610da36001836111fa565b8554909150600090610db7906001906111fa565b9050818114610e1c576000866000018281548110610dd757610dd761125c565b9060005260206000200154905080876000018481548110610dfa57610dfa61125c565b6000918252602080832090910192909255918252600188019052604090208390555b8554869080610e2d57610e2d611272565b600190038181906000526020600020016000905590558560010160008681526020019081526020016000206000905560019350505050610588565b6000915050610588565b60655460ff166105625760405162461bcd60e51b815260206004820152601460248201527314185d5cd8589b194e881b9bdd081c185d5cd95960621b6044820152606401610393565b606081600001805480602002602001604051908101604052809291908181526020018280548015610f0b57602002820191906000526020600020905b815481526020019060010190808311610ef7575b50505050509050919050565b600054610100900460ff16610f3e5760405162461bcd60e51b815260040161039390611211565b61056233610c47565b600054610100900460ff16610f6e5760405162461bcd60e51b815260040161039390611211565b6065805460ff19169055565b60655460ff16156105625760405162461bcd60e51b815260206004820152601060248201526f14185d5cd8589b194e881c185d5cd95960821b6044820152606401610393565b600081815260018301602052604081205461100757508154600181810184556000848152602080822090930184905584548482528286019093526040902091909155610588565b506000610588565b80356001600160a01b038116811461102657600080fd5b919050565b60006020828403121561103d57600080fd5b610bd58261100f565b6020808252825182820181905260009190848201906040850190845b8181101561107e57835183529284019291840191600101611062565b50909695505050505050565b60008060006060848603121561109f57600080fd5b6110a88461100f565b95602085013595506040909401359392505050565b6000602082840312156110cf57600080fd5b5035919050565b6020808252825182820181905260009190848201906040850190845b8181101561107e5783516001600160a01b0316835292840192918401916001016110f2565b602080825282518282018190526000919060409081850190868401855b82811015611162578151805185528601516001600160a01b0316868501529284019290850190600101611134565b5091979650505050505050565b634e487b7160e01b600052601160045260246000fd5b600081600019048311821515161561119f5761119f61116f565b500290565b634e487b7160e01b600052601260045260246000fd5b6000826111c9576111c96111a4565b500690565b600082198211156111e1576111e161116f565b500190565b6000826111f5576111f56111a4565b500490565b60008282101561120c5761120c61116f565b500390565b6020808252602b908201527f496e697469616c697a61626c653a20636f6e7472616374206973206e6f74206960408201526a6e697469616c697a696e6760a81b606082015260800190565b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052603160045260246000fdfea2646970667358221220ed34324d2365cf3c46efa5c067c892bd1010cf13776faea19cf5159ac81a929864736f6c634300080b0033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "constructor": {
+        "custom:oz-upgrades-unsafe-allow": "constructor"
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "paused()": {
+        "details": "Returns true if the contract is paused, and false otherwise."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "stateVariables": {
+      "NFTL_AMOUNT_FOR_TICKET": {
+        "details": "NFTL amount required for 1 ticket"
+      },
+      "_ticketIdList": {
+        "details": "TokenId list"
+      },
+      "_ticketIdsByUser": {
+        "details": "User -> Ticket Id list"
+      },
+      "_userList": {
+        "details": "User list"
+      },
+      "nftl": {
+        "details": "NFTL address"
+      },
+      "raffleStartAt": {
+        "details": "Timestamp the raffle start"
+      },
+      "totalTicketCount": {
+        "details": "Total ticket count"
+      },
+      "totalWinnerTicketCount": {
+        "details": "Winner count"
+      },
+      "userByTicketId": {
+        "details": "Ticket Id -> User"
+      },
+      "userDeposits": {
+        "details": "User -> NFTL amount deposited"
+      },
+      "winners": {
+        "details": "Winner list"
+      }
+    },
+    "title": "NFTLRaffle",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "pause()": {
+        "notice": "Pause the contract"
+      },
+      "unpause()": {
+        "notice": "Unpause the contract"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 138,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "_initialized",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_uint8"
+      },
+      {
+        "astId": 141,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "_initializing",
+        "offset": 1,
+        "slot": "0",
+        "type": "t_bool"
+      },
+      {
+        "astId": 830,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "__gap",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_array(t_uint256)50_storage"
+      },
+      {
+        "astId": 10,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "51",
+        "type": "t_address"
+      },
+      {
+        "astId": 130,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "__gap",
+        "offset": 0,
+        "slot": "52",
+        "type": "t_array(t_uint256)49_storage"
+      },
+      {
+        "astId": 321,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "_paused",
+        "offset": 0,
+        "slot": "101",
+        "type": "t_bool"
+      },
+      {
+        "astId": 426,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "__gap",
+        "offset": 0,
+        "slot": "102",
+        "type": "t_array(t_uint256)49_storage"
+      },
+      {
+        "astId": 1484,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "nftl",
+        "offset": 0,
+        "slot": "151",
+        "type": "t_contract(IERC20BurnableUpgradeable)1460"
+      },
+      {
+        "astId": 1487,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "raffleStartAt",
+        "offset": 0,
+        "slot": "152",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 1490,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "totalWinnerTicketCount",
+        "offset": 0,
+        "slot": "153",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 1495,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "winners",
+        "offset": 0,
+        "slot": "154",
+        "type": "t_array(t_struct(WinnerInfo)1480_storage)dyn_storage"
+      },
+      {
+        "astId": 1498,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "totalTicketCount",
+        "offset": 0,
+        "slot": "155",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 1510,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "_userList",
+        "offset": 0,
+        "slot": "156",
+        "type": "t_struct(AddressSet)1157_storage"
+      },
+      {
+        "astId": 1514,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "_ticketIdList",
+        "offset": 0,
+        "slot": "158",
+        "type": "t_struct(UintSet)1314_storage"
+      },
+      {
+        "astId": 1519,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "userDeposits",
+        "offset": 0,
+        "slot": "160",
+        "type": "t_mapping(t_address,t_uint256)"
+      },
+      {
+        "astId": 1525,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "_ticketIdsByUser",
+        "offset": 0,
+        "slot": "161",
+        "type": "t_mapping(t_address,t_struct(UintSet)1314_storage)"
+      },
+      {
+        "astId": 1530,
+        "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+        "label": "userByTicketId",
+        "offset": 0,
+        "slot": "162",
+        "type": "t_mapping(t_uint256,t_address)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_bytes32)dyn_storage": {
+        "base": "t_bytes32",
+        "encoding": "dynamic_array",
+        "label": "bytes32[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_struct(WinnerInfo)1480_storage)dyn_storage": {
+        "base": "t_struct(WinnerInfo)1480_storage",
+        "encoding": "dynamic_array",
+        "label": "struct NFTLRaffle.WinnerInfo[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_uint256)49_storage": {
+        "base": "t_uint256",
+        "encoding": "inplace",
+        "label": "uint256[49]",
+        "numberOfBytes": "1568"
+      },
+      "t_array(t_uint256)50_storage": {
+        "base": "t_uint256",
+        "encoding": "inplace",
+        "label": "uint256[50]",
+        "numberOfBytes": "1600"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_contract(IERC20BurnableUpgradeable)1460": {
+        "encoding": "inplace",
+        "label": "contract IERC20BurnableUpgradeable",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_struct(UintSet)1314_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct EnumerableSetUpgradeable.UintSet)",
+        "numberOfBytes": "32",
+        "value": "t_struct(UintSet)1314_storage"
+      },
+      "t_mapping(t_address,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_mapping(t_bytes32,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_mapping(t_uint256,t_address)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_struct(AddressSet)1157_storage": {
+        "encoding": "inplace",
+        "label": "struct EnumerableSetUpgradeable.AddressSet",
+        "members": [
+          {
+            "astId": 1156,
+            "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+            "label": "_inner",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_struct(Set)842_storage"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_struct(Set)842_storage": {
+        "encoding": "inplace",
+        "label": "struct EnumerableSetUpgradeable.Set",
+        "members": [
+          {
+            "astId": 837,
+            "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+            "label": "_values",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_array(t_bytes32)dyn_storage"
+          },
+          {
+            "astId": 841,
+            "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+            "label": "_indexes",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_mapping(t_bytes32,t_uint256)"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_struct(UintSet)1314_storage": {
+        "encoding": "inplace",
+        "label": "struct EnumerableSetUpgradeable.UintSet",
+        "members": [
+          {
+            "astId": 1313,
+            "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+            "label": "_inner",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_struct(Set)842_storage"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_struct(WinnerInfo)1480_storage": {
+        "encoding": "inplace",
+        "label": "struct NFTLRaffle.WinnerInfo",
+        "members": [
+          {
+            "astId": 1477,
+            "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+            "label": "ticketId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1479,
+            "contract": "contracts/NFTLRaffle.sol:NFTLRaffle",
+            "label": "winner",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      },
+      "t_uint8": {
+        "encoding": "inplace",
+        "label": "uint8",
+        "numberOfBytes": "1"
+      }
+    }
+  }
+}
