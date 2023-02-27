@@ -30,7 +30,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     uint256 public raffleStartAt;
 
     /// @dev Winner count
-    uint256 public totalWinnerCount;
+    uint256 public totalWinnerTicketCount;
 
     /// @dev Winner list
     WinnerInfo[] public winners;
@@ -61,16 +61,27 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         _disableInitializers();
     }
 
-    function initialize(address _nftl, uint256 _pendingPeriod, uint256 _totalWinnerCount) public initializer {
+    function initialize(address _nftl, uint256 _pendingPeriod, uint256 _totalWinnerTicketCount) public initializer {
         __Ownable_init();
         __Pausable_init();
 
         require(_nftl != address(0), "Zero address");
         require(_pendingPeriod > 86400, "1 day +");
+        require(_totalWinnerTicketCount > 0, "Zero winner ticket count");
 
         nftl = IERC20BurnableUpgradeable(_nftl);
         raffleStartAt = block.timestamp + _pendingPeriod;
-        totalWinnerCount = _totalWinnerCount;
+        totalWinnerTicketCount = _totalWinnerTicketCount;
+    }
+
+    function updateRaffleStartAt(uint256 _raffleStartAt) external onlyOwner {
+        require(block.timestamp < _raffleStartAt, "Invalid timestamp");
+        raffleStartAt = _raffleStartAt;
+    }
+
+    function updateTotalWinnerTicketCount(uint256 _totalWinnerTicketCount) external onlyOwner {
+        require(_totalWinnerTicketCount > 0, "Zero winner ticket count");
+        totalWinnerTicketCount = _totalWinnerTicketCount;
     }
 
     function deposit(uint256 _amount) external {
@@ -112,14 +123,20 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
 
     function selectWinners() external onlyOwner {
         require(raffleStartAt <= block.timestamp, "Pending period");
+        require(totalWinnerTicketCount <= _ticketIdList.length(), "Not enough depositors");
 
-        for (uint256 i = 0; i < totalWinnerCount; ) {
+        for (uint256 i = 0; i < totalWinnerTicketCount; ) {
             // select the winner
             bytes32 randomHash = keccak256(
-                abi.encodePacked(blockhash(block.number), msg.sender, block.timestamp, block.difficulty, i)
+                abi.encodePacked(
+                    blockhash(block.number),
+                    msg.sender,
+                    block.timestamp,
+                    block.difficulty,
+                    i * totalWinnerTicketCount
+                )
             );
-            uint256 currentTotalTicketCount = _ticketIdList.length();
-            uint256 winnerTicketIndex = uint256(randomHash) % currentTotalTicketCount;
+            uint256 winnerTicketIndex = uint256(randomHash) % _ticketIdList.length();
             uint256 winnerTicketId = _ticketIdList.at(winnerTicketIndex);
 
             // store the winner
