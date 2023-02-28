@@ -6,6 +6,9 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 
 interface IERC20BurnableUpgradeable is IERC20Upgradeable {
     function burnFrom(address account, uint256 amount) external;
@@ -17,11 +20,25 @@ interface IERC20BurnableUpgradeable is IERC20Upgradeable {
 contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
+    using SafeERC20Upgradeable for IERC20Upgradeable;
+
+    event UserDeposited(address indexed user, uint256 nftlAmount);
+    event WinnerSelected(address indexed by, address indexed winner, uint256 ticketId);
+
+    error OnlyCoordinatorCanFulfill(address have, address want);
 
     struct WinnerInfo {
         uint256 ticketId;
         address winner;
     }
+
+    /// @dev Chainlink VRF params
+    address private vrfCoordinator; // goerli: 0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D, etherscan: 0x271682DEB8C4E0901D1a1550aD2e64D568E69909
+    address private constant LINK = 0x326C977E6efc84E512bB9C30f76E30c160eD06FB; // 0x514910771AF9Ca656af840dff83E8264EcF986CA
+    bytes32 private constant s_keyHash = 0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15; // 0x8af398995b04c28e9951adb9721ef74c74f93e6a478f39e7e0777be13527e7ef
+    uint16 private constant s_requestConfirmations = 3;
+    uint32 private constant s_callbackGasLimit = 2500000;
+    uint64 public s_subscriptionId;
 
     /// @dev NFTL address
     IERC20BurnableUpgradeable public nftl;
@@ -56,15 +73,17 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     /// @dev Ticket Id -> User
     mapping(uint256 => address) public userByTicketId;
 
-    event UserDeposited(address indexed user, uint256 nftlAmount);
-    event WinnerSelected(address indexed by, address indexed winner, uint256 ticketId);
-
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
     }
 
-    function initialize(address _nftl, uint256 _pendingPeriod, uint256 _totalWinnerTicketCount) public initializer {
+    function initialize(
+        address _nftl,
+        uint256 _pendingPeriod,
+        uint256 _totalWinnerTicketCount,
+        address _vrfCoordinator
+    ) public initializer {
         __Ownable_init();
         __Pausable_init();
 
@@ -75,6 +94,9 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         nftl = IERC20BurnableUpgradeable(_nftl);
         raffleStartAt = block.timestamp + _pendingPeriod;
         totalWinnerTicketCount = _totalWinnerTicketCount;
+        vrfCoordinator = _vrfCoordinator;
+
+        _createNewSubscription();
     }
 
     function updateRaffleStartAt(uint256 _raffleStartAt) external onlyOwner {
@@ -191,5 +213,64 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
      */
     function unpause() external onlyOwner {
         _unpause();
+    }
+
+    function chargeLINK(uint256 amount) external {
+        IERC20Upgradeable(LINK).safeTransferFrom(msg.sender, address(this), amount);
+        LinkTokenInterface(LINK).transferAndCall(vrfCoordinator, amount, abi.encode(s_subscriptionId));
+    }
+
+    function requestRandomWords(uint32 numWords) internal returns (uint256) {
+        return
+            VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
+                s_keyHash,
+                s_subscriptionId,
+                s_requestConfirmations,
+                s_callbackGasLimit,
+                numWords
+            );
+    }
+
+    /**
+     * @notice fulfillRandomness handles the VRF response. Your contract must
+     * @notice implement it. See "SECURITY CONSIDERATIONS" above for important
+     * @notice principles to keep in mind when implementing your fulfillRandomness
+     * @notice method.
+     *
+     * @dev VRFConsumerBaseV2 expects its subcontracts to have a method with this
+     * @dev signature, and will call it once it has verified the proof
+     * @dev associated with the randomness. (It is triggered via a call to
+     * @dev rawFulfillRandomness, below.)
+     *
+     * @param requestId The Id initially returned by requestRandomWords
+     * @param randomWords the VRF output expanded to the requested number of words
+     */
+    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal virtual;
+
+    // rawFulfillRandomness is called by VRFCoordinator when it receives a valid VRF
+    // proof. rawFulfillRandomness then calls fulfillRandomness, after validating
+    // the origin of the call
+    function rawFulfillRandomWords(uint256 requestId, uint256[] memory randomWords) external {
+        if (msg.sender != vrfCoordinator) {
+            revert OnlyCoordinatorCanFulfill(msg.sender, vrfCoordinator);
+        }
+        fulfillRandomWords(requestId, randomWords);
+    }
+
+    function manageConsumers(address consumer, bool add) external onlyOwner {
+        add
+            ? VRFCoordinatorV2Interface(vrfCoordinator).addConsumer(s_subscriptionId, consumer)
+            : VRFCoordinatorV2Interface(vrfCoordinator).removeConsumer(s_subscriptionId, consumer);
+    }
+
+    function cancelSubscription() external onlyOwner {
+        VRFCoordinatorV2Interface(vrfCoordinator).cancelSubscription(s_subscriptionId, owner());
+        s_subscriptionId = 0;
+    }
+
+    // Create a new subscription when the contract is initially deployed.
+    function _createNewSubscription() private {
+        s_subscriptionId = VRFCoordinatorV2Interface(vrfCoordinator).createSubscription();
+        VRFCoordinatorV2Interface(vrfCoordinator).addConsumer(s_subscriptionId, address(this));
     }
 }
