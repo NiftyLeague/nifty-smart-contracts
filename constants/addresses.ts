@@ -44,3 +44,8 @@ export const STARK_CONTRACT_ADDRESS: ContractAddressRecord = {
   mainnet: '0x5FDCCA53617f4d2b9134B29090C87D01058e27e9',
   goerli: '0x7917eDb51ecD6CdB3F9854c3cc593F33de10c623',
 };
+
+export const VRF_COORDINATOR_ADDRESS: ContractAddressRecord = {
+  mainnet: '0x271682DEB8C4E0901D1a1550aD2e64D568E69909',
+  goerli: '0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D',
+};
