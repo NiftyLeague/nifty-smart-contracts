@@ -22,11 +22,6 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    event UserDeposited(address indexed user, uint256 nftlAmount);
-    event WinnerSelected(address indexed by, address indexed winner, uint256 ticketId);
-
-    error OnlyCoordinatorCanFulfill(address have, address want);
-
     struct WinnerInfo {
         uint256 ticketId;
         address winner;
@@ -39,6 +34,9 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     uint16 private constant s_requestConfirmations = 3;
     uint32 private constant s_callbackGasLimit = 2500000;
     uint64 public s_subscriptionId;
+
+    // @dev VRF request Id
+    uint256 private vrfRequestId;
 
     /// @dev NFTL address
     IERC20BurnableUpgradeable public nftl;
@@ -72,6 +70,9 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
 
     /// @dev Ticket Id -> User
     mapping(uint256 => address) public userByTicketId;
+
+    event UserDeposited(address indexed user, uint256 nftlAmount);
+    event WinnerSelected(address indexed by, address indexed winner, uint256 ticketId);
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -107,6 +108,11 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     function updateTotalWinnerTicketCount(uint256 _totalWinnerTicketCount) external onlyOwner {
         require(_totalWinnerTicketCount > 0, "Zero winner ticket count");
         totalWinnerTicketCount = _totalWinnerTicketCount;
+    }
+
+    function distributeTicketsToCitadelKeyHolders(address[] calldata _holders, uint256[] _keyCount) external onlyOwner {
+        uint256 holderCount = _holders.length;
+        require(holderCount == _keyCount.length, "Invalid params");
     }
 
     function deposit(uint256 _amount) external {
@@ -148,38 +154,48 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         emit UserDeposited(msg.sender, _amount);
     }
 
-    function selectWinners() external onlyOwner {
-        require(raffleStartAt <= block.timestamp, "Pending period");
-        require(totalWinnerTicketCount <= _ticketIdList.length(), "Not enough depositors");
-
-        for (uint256 i = 0; i < totalWinnerTicketCount; ) {
-            // select the winner
-            bytes32 randomHash = keccak256(
-                abi.encodePacked(
-                    blockhash(block.number),
-                    msg.sender,
-                    block.timestamp,
-                    block.difficulty,
-                    i * totalWinnerTicketCount
-                )
-            );
-            uint256 winnerTicketIndex = uint256(randomHash) % _ticketIdList.length();
-            uint256 winnerTicketId = _ticketIdList.at(winnerTicketIndex);
-            address winner = userByTicketId[winnerTicketId];
-
-            // store the winner
-            winners.push(WinnerInfo({ ticketId: winnerTicketId, winner: winner }));
-
-            // remove the selected ticket Id from the list
-            _ticketIdList.remove(winnerTicketId);
-
-            emit WinnerSelected(msg.sender, winner, winnerTicketId);
-
-            unchecked {
-                ++i;
-            }
-        }
+    function requestRandomWordsForWinnerSelection() external onlyOwner returns (uint256 requestId) {
+        require(vrfRequestId == 0, "Already requested");
+        requestId = _requestRandomWords(uint32(totalWinnerTicketCount));
+        vrfRequestId = requestId;
     }
+
+    function _selectWinners(uint256 _requestId, uint256[] memory _randomWords) internal {
+        require(_requestId == vrfRequestId, "Invalid requestId");
+    }
+
+    // function selectWinners() external onlyOwner {
+    //     require(raffleStartAt <= block.timestamp, "Pending period");
+    //     require(totalWinnerTicketCount <= _ticketIdList.length(), "Not enough depositors");
+
+    //     for (uint256 i = 0; i < totalWinnerTicketCount; ) {
+    //         // select the winner
+    //         bytes32 randomHash = keccak256(
+    //             abi.encodePacked(
+    //                 blockhash(block.number),
+    //                 msg.sender,
+    //                 block.timestamp,
+    //                 block.difficulty,
+    //                 i * totalWinnerTicketCount
+    //             )
+    //         );
+    //         uint256 winnerTicketIndex = uint256(randomHash) % _ticketIdList.length();
+    //         uint256 winnerTicketId = _ticketIdList.at(winnerTicketIndex);
+    //         address winner = userByTicketId[winnerTicketId];
+
+    //         // store the winner
+    //         winners.push(WinnerInfo({ ticketId: winnerTicketId, winner: winner }));
+
+    //         // remove the selected ticket Id from the list
+    //         _ticketIdList.remove(winnerTicketId);
+
+    //         emit WinnerSelected(msg.sender, winner, winnerTicketId);
+
+    //         unchecked {
+    //             ++i;
+    //         }
+    //     }
+    // }
 
     function getWinners() external view returns (WinnerInfo[] memory) {
         return winners;
@@ -215,19 +231,19 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         _unpause();
     }
 
-    function chargeLINK(uint256 amount) external {
-        IERC20Upgradeable(LINK).safeTransferFrom(msg.sender, address(this), amount);
-        LinkTokenInterface(LINK).transferAndCall(vrfCoordinator, amount, abi.encode(s_subscriptionId));
+    function chargeLINK(uint256 _amount) external {
+        IERC20Upgradeable(LINK).safeTransferFrom(msg.sender, address(this), _amount);
+        LinkTokenInterface(LINK).transferAndCall(vrfCoordinator, _amount, abi.encode(s_subscriptionId));
     }
 
-    function requestRandomWords(uint32 numWords) internal returns (uint256) {
+    function _requestRandomWords(uint32 _numWords) internal returns (uint256) {
         return
             VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
                 s_keyHash,
                 s_subscriptionId,
                 s_requestConfirmations,
                 s_callbackGasLimit,
-                numWords
+                _numWords
             );
     }
 
@@ -242,25 +258,25 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
      * @dev associated with the randomness. (It is triggered via a call to
      * @dev rawFulfillRandomness, below.)
      *
-     * @param requestId The Id initially returned by requestRandomWords
-     * @param randomWords the VRF output expanded to the requested number of words
+     * @param _requestId The Id initially returned by requestRandomWords
+     * @param _randomWords the VRF output expanded to the requested number of words
      */
-    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal virtual;
+    function fulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) internal {
+        _selectWinners(_requestId, _randomWords);
+    }
 
     // rawFulfillRandomness is called by VRFCoordinator when it receives a valid VRF
     // proof. rawFulfillRandomness then calls fulfillRandomness, after validating
     // the origin of the call
-    function rawFulfillRandomWords(uint256 requestId, uint256[] memory randomWords) external {
-        if (msg.sender != vrfCoordinator) {
-            revert OnlyCoordinatorCanFulfill(msg.sender, vrfCoordinator);
-        }
-        fulfillRandomWords(requestId, randomWords);
+    function rawFulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) external {
+        require(msg.sender == vrfCoordinator, "Only VRF coordinator");
+        fulfillRandomWords(_requestId, _randomWords);
     }
 
-    function manageConsumers(address consumer, bool add) external onlyOwner {
-        add
-            ? VRFCoordinatorV2Interface(vrfCoordinator).addConsumer(s_subscriptionId, consumer)
-            : VRFCoordinatorV2Interface(vrfCoordinator).removeConsumer(s_subscriptionId, consumer);
+    function manageConsumers(address _consumer, bool _add) external onlyOwner {
+        _add
+            ? VRFCoordinatorV2Interface(vrfCoordinator).addConsumer(s_subscriptionId, _consumer)
+            : VRFCoordinatorV2Interface(vrfCoordinator).removeConsumer(s_subscriptionId, _consumer);
     }
 
     function cancelSubscription() external onlyOwner {
