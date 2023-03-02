@@ -93,6 +93,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         require(_nftl != address(0), "Zero address");
         require(_pendingPeriod > 86400, "1 day +");
         require(_totalWinnerTicketCount > 0, "Zero winner ticket count");
+        require(_vrfCoordinator != address(0), "Zero address");
 
         nftl = IERC20BurnableUpgradeable(_nftl);
         raffleStartAt = block.timestamp + _pendingPeriod;
@@ -118,11 +119,15 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     ) external onlyOwner {
         uint256 holderCount = _holders.length;
         require(holderCount == _keyCount.length, "Invalid params");
+        require(block.timestamp < raffleStartAt, "Expired");
 
         // distribute 100 tickets to each Citadel Key holders
         uint256 userTicketCountToAssign = 100;
         for (uint256 i = 0; i < holderCount; ) {
             address holder = _holders[i];
+
+            // mark as if the holder deposited tokens for the userTicketCountToAssign calculation in deposit() function.
+            userDeposits[holder] += userTicketCountToAssign * NFTL_AMOUNT_FOR_TICKET;
 
             // add the user if not exist
             _userList.add(holder);
@@ -166,7 +171,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         emit UserDeposited(msg.sender, _amount);
     }
 
-    function _assignTicketsToUser(address user, uint256 _startTicketId, uint256 _count) private {
+    function _assignTicketsToUser(address _user, uint256 _startTicketId, uint256 _count) private {
         for (uint256 i = 0; i < _count; ) {
             uint256 ticketIdToAssign = _startTicketId + i;
 
@@ -174,10 +179,10 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
             _ticketIdList.add(ticketIdToAssign);
 
             // user -> ticket Ids
-            _ticketIdsByUser[user].add(ticketIdToAssign);
+            _ticketIdsByUser[_user].add(ticketIdToAssign);
 
             // ticket ID -> user
-            userByTicketId[ticketIdToAssign] = user;
+            userByTicketId[ticketIdToAssign] = _user;
 
             unchecked {
                 ++i;
