@@ -71,8 +71,10 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     /// @dev Ticket Id -> User
     mapping(uint256 => address) public userByTicketId;
 
+    event TicketDistributed(address indexed to, uint256 startTicketId, uint256 endTicketId);
     event UserDeposited(address indexed user, uint256 nftlAmount);
     event WinnerSelected(address indexed by, address indexed winner, uint256 ticketId);
+    event RandomWordsReceived(uint256[] randomWords);
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -110,9 +112,34 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         totalWinnerTicketCount = _totalWinnerTicketCount;
     }
 
-    function distributeTicketsToCitadelKeyHolders(address[] calldata _holders, uint256[] _keyCount) external onlyOwner {
+    function distributeTicketsToCitadelKeyHolders(
+        address[] calldata _holders,
+        uint256[] calldata _keyCount
+    ) external onlyOwner {
         uint256 holderCount = _holders.length;
         require(holderCount == _keyCount.length, "Invalid params");
+
+        // distribute 100 tickets to each Citadel Key holders
+        uint256 userTicketCountToAssign = 100;
+        for (uint256 i = 0; i < holderCount; ) {
+            address holder = _holders[i];
+
+            // add the user if not exist
+            _userList.add(holder);
+
+            // assign tickets (user <-> ticketId)
+            uint256 baseTicketId = totalTicketCount;
+            _assignTicketsToUser(holder, baseTicketId, userTicketCountToAssign);
+
+            emit TicketDistributed(holder, baseTicketId, baseTicketId + userTicketCountToAssign - 1);
+
+            // increase the total ticket count
+            totalTicketCount += userTicketCountToAssign;
+
+            unchecked {
+                ++i;
+            }
+        }
     }
 
     function deposit(uint256 _amount) external {
@@ -127,26 +154,11 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         // add the user if not exist
         _userList.add(msg.sender);
 
-        // assign the tickets (user <-> ticketId)
+        // assign tickets (user <-> ticketId)
         uint256 userTicketCount = getTicketCountByUser(msg.sender);
         uint256 userTicketCountToAssign = userDeposits[msg.sender] / NFTL_AMOUNT_FOR_TICKET - userTicketCount;
         uint256 baseTicketId = totalTicketCount;
-        for (uint256 i = 0; i < userTicketCountToAssign; ) {
-            uint256 ticketIdToAssign = baseTicketId + i;
-
-            // add the ticket Id
-            _ticketIdList.add(ticketIdToAssign);
-
-            // user -> ticket Ids
-            _ticketIdsByUser[msg.sender].add(ticketIdToAssign);
-
-            // ticket ID -> user
-            userByTicketId[ticketIdToAssign] = msg.sender;
-
-            unchecked {
-                ++i;
-            }
-        }
+        _assignTicketsToUser(msg.sender, baseTicketId, userTicketCountToAssign);
 
         // increase the total ticket count
         totalTicketCount += userTicketCountToAssign;
@@ -154,48 +166,59 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         emit UserDeposited(msg.sender, _amount);
     }
 
+    function _assignTicketsToUser(address user, uint256 _startTicketId, uint256 _count) private {
+        for (uint256 i = 0; i < _count; ) {
+            uint256 ticketIdToAssign = _startTicketId + i;
+
+            // add the ticket Id
+            _ticketIdList.add(ticketIdToAssign);
+
+            // user -> ticket Ids
+            _ticketIdsByUser[user].add(ticketIdToAssign);
+
+            // ticket ID -> user
+            userByTicketId[ticketIdToAssign] = user;
+
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
     function requestRandomWordsForWinnerSelection() external onlyOwner returns (uint256 requestId) {
+        require(raffleStartAt <= block.timestamp, "Pending period");
+        require(totalWinnerTicketCount <= _ticketIdList.length(), "Not enough depositors");
         require(vrfRequestId == 0, "Already requested");
+
         requestId = _requestRandomWords(uint32(totalWinnerTicketCount));
         vrfRequestId = requestId;
     }
 
     function _selectWinners(uint256 _requestId, uint256[] memory _randomWords) internal {
         require(_requestId == vrfRequestId, "Invalid requestId");
+        require(_randomWords.length == totalWinnerTicketCount, "Invalid random word count");
+
+        for (uint256 i = 0; i < totalWinnerTicketCount; ) {
+            // select the winner
+            uint256 winnerTicketIndex = _randomWords[i] % _ticketIdList.length();
+            uint256 winnerTicketId = _ticketIdList.at(winnerTicketIndex);
+            address winner = userByTicketId[winnerTicketId];
+
+            // store the winner
+            winners.push(WinnerInfo({ ticketId: winnerTicketId, winner: winner }));
+
+            // remove the selected ticket Id from the list
+            _ticketIdList.remove(winnerTicketId);
+
+            emit WinnerSelected(msg.sender, winner, winnerTicketId);
+
+            unchecked {
+                ++i;
+            }
+        }
+
+        emit RandomWordsReceived(_randomWords);
     }
-
-    // function selectWinners() external onlyOwner {
-    //     require(raffleStartAt <= block.timestamp, "Pending period");
-    //     require(totalWinnerTicketCount <= _ticketIdList.length(), "Not enough depositors");
-
-    //     for (uint256 i = 0; i < totalWinnerTicketCount; ) {
-    //         // select the winner
-    //         bytes32 randomHash = keccak256(
-    //             abi.encodePacked(
-    //                 blockhash(block.number),
-    //                 msg.sender,
-    //                 block.timestamp,
-    //                 block.difficulty,
-    //                 i * totalWinnerTicketCount
-    //             )
-    //         );
-    //         uint256 winnerTicketIndex = uint256(randomHash) % _ticketIdList.length();
-    //         uint256 winnerTicketId = _ticketIdList.at(winnerTicketIndex);
-    //         address winner = userByTicketId[winnerTicketId];
-
-    //         // store the winner
-    //         winners.push(WinnerInfo({ ticketId: winnerTicketId, winner: winner }));
-
-    //         // remove the selected ticket Id from the list
-    //         _ticketIdList.remove(winnerTicketId);
-
-    //         emit WinnerSelected(msg.sender, winner, winnerTicketId);
-
-    //         unchecked {
-    //             ++i;
-    //         }
-    //     }
-    // }
 
     function getWinners() external view returns (WinnerInfo[] memory) {
         return winners;
