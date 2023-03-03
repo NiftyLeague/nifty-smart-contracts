@@ -29,7 +29,7 @@ describe('NFTLRaffle', function () {
   const pendingPeriod = 86400 * 2; // 2 days
   const totalWinnerTicketCount = 5;
   const nftlAmountPerTicket = ethers.utils.parseEther('1000');
-  const initialNFTLAmount = nftlAmountPerTicket.mul(100);
+  const initialNFTLAmount = nftlAmountPerTicket.mul(1000);
 
   const ZERO_ADDRESS = ethers.constants.AddressZero;
 
@@ -92,7 +92,7 @@ describe('NFTLRaffle', function () {
       ).to.be.revertedWith('Zero winner ticket count');
     });
 
-    it.skip('Should revert if the VRF coordinator address is zero', async () => {
+    it('Should revert if the VRF coordinator address is zero', async () => {
       const NFTLRaffle = await ethers.getContractFactory('NFTLRaffle');
       await expect(
         upgrades.deployProxy(NFTLRaffle, [nftlToken.address, pendingPeriod, totalWinnerTicketCount, ZERO_ADDRESS]),
@@ -100,7 +100,67 @@ describe('NFTLRaffle', function () {
     });
   });
 
+  describe.only('distributeTicketsToCitadelKeyHolders', () => {
+    beforeEach(async () => {
+      // deposit tokens
+      let nftlAmountToDeposit = nftlAmountPerTicket.mul(100);
+      await nftlToken.connect(alice).approve(nftlRaffle.address, nftlAmountToDeposit);
+      await nftlRaffle.connect(alice).deposit(nftlAmountToDeposit); // (0-99)
+    });
+
+    it('Shoud be able to distribute tickets to CitadelKey holders', async () => {
+      // distribute tickets
+      const holders = [alice.address, bob.address];
+      const keyCount = [1, 1];
+      await nftlRaffle.distributeTicketsToCitadelKeyHolders(holders, keyCount); // (100-199, 200-299)
+
+      // Alice deposits after distributing tickets
+      let aliceTicketCountBefore = await nftlRaffle.getTicketCountByUser(alice.address);
+
+      let nftlAmountToDeposit = nftlAmountPerTicket.mul(2).add(nftlAmountPerTicket.div(2)); // x2.5
+      await nftlToken.connect(alice).approve(nftlRaffle.address, nftlAmountToDeposit);
+      await nftlRaffle.connect(alice).deposit(nftlAmountToDeposit);
+
+      expect(await nftlRaffle.getTicketCountByUser(alice.address)).gt(aliceTicketCountBefore);
+      expect(await nftlRaffle.getTicketCountByUser(alice.address)).to.equal(202); // (0-99, 100-199, 300, 301)
+
+      // Check the user status
+      expect(await nftlRaffle.getWinners()).to.be.empty; // No winner
+      expect(await nftlRaffle.getUserCount()).to.equal(2); // Alice, Bob
+      expect(await nftlRaffle.getUserList()).to.deep.equal([alice.address, bob.address]); // Alice, Bob
+      expect(await nftlRaffle.getTicketIdsByUser(alice.address)).to.deep.include.members([
+        BigNumber.from(0),
+        BigNumber.from(99),
+        BigNumber.from(100),
+        BigNumber.from(199),
+        BigNumber.from(104),
+        BigNumber.from(300),
+        BigNumber.from(301),
+      ]);
+      expect(await nftlRaffle.getTicketIdsByUser(bob.address)).to.deep.include.members([
+        BigNumber.from(200),
+        BigNumber.from(299),
+      ]);
+      expect(await nftlRaffle.totalTicketCount()).to.equal(302);
+    });
+
+    it('Should revert if the coller is not the owner', async () => {
+      const holders = [alice.address, bob.address];
+      const keyCount = [1, 1];
+      await expect(
+        nftlRaffle.connect(alice).distributeTicketsToCitadelKeyHolders(holders, keyCount),
+      ).to.be.revertedWith('Ownable: caller is not the owner');
+    });
+  });
+
   describe('Deposit', () => {
+    beforeEach(async () => {
+      // distribute tickets to CitadelKey holders
+      const holders = [alice.address];
+      const keyCount = [1];
+      await nftlRaffle.distributeTicketsToCitadelKeyHolders(holders, keyCount); // (0-99)
+    });
+
     it('Should be able to deposit NFTL tokens', async () => {
       // Alice deposits
       let aliceNFTLBalanceBefore = await nftlToken.balanceOf(alice.address);
@@ -112,7 +172,7 @@ describe('NFTLRaffle', function () {
 
       expect(await nftlToken.balanceOf(alice.address)).equal(aliceNFTLBalanceBefore.sub(nftlAmountToDeposit));
       expect(await nftlRaffle.getTicketCountByUser(alice.address)).gt(aliceTicketCountBefore);
-      expect(await nftlRaffle.getTicketCountByUser(alice.address)).to.equal(2); // (0, 1)
+      expect(await nftlRaffle.getTicketCountByUser(alice.address)).to.equal(102); // (0-99, 100, 101)
 
       // Bob deposits
       let bobNFTLBalanceBefore = await nftlToken.balanceOf(bob.address);
@@ -124,7 +184,7 @@ describe('NFTLRaffle', function () {
 
       expect(await nftlToken.balanceOf(bob.address)).equal(bobNFTLBalanceBefore.sub(nftlAmountToDeposit));
       expect(await nftlRaffle.getTicketCountByUser(bob.address)).gt(bobTicketCountBefore);
-      expect(await nftlRaffle.getTicketCountByUser(bob.address)).to.equal(2); // (2, 3)
+      expect(await nftlRaffle.getTicketCountByUser(bob.address)).to.equal(2); // (102, 103)
 
       // Alice deposits
       aliceNFTLBalanceBefore = await nftlToken.balanceOf(alice.address);
@@ -136,21 +196,26 @@ describe('NFTLRaffle', function () {
 
       expect(await nftlToken.balanceOf(alice.address)).equal(aliceNFTLBalanceBefore.sub(nftlAmountToDeposit));
       expect(await nftlRaffle.getTicketCountByUser(alice.address)).gt(aliceTicketCountBefore);
-      expect(await nftlRaffle.getTicketCountByUser(alice.address)).to.equal(5); // (0, 1) + (4, 5, 6)
+      expect(await nftlRaffle.getTicketCountByUser(alice.address)).to.equal(105); // (0-99, 100, 101) + (104, 105, 106)
 
       // Check the user status
       expect(await nftlRaffle.getWinners()).to.be.empty; // No winner
       expect(await nftlRaffle.getUserCount()).to.equal(2); // Alice, Bob
       expect(await nftlRaffle.getUserList()).to.deep.equal([alice.address, bob.address]); // Alice, Bob
-      expect(await nftlRaffle.getTicketIdsByUser(alice.address)).to.deep.equal([
+      expect(await nftlRaffle.getTicketIdsByUser(alice.address)).to.deep.include.members([
         BigNumber.from(0),
-        BigNumber.from(1),
-        BigNumber.from(4),
-        BigNumber.from(5),
-        BigNumber.from(6),
+        BigNumber.from(99),
+        BigNumber.from(100),
+        BigNumber.from(101),
+        BigNumber.from(104),
+        BigNumber.from(105),
+        BigNumber.from(106),
       ]);
-      expect(await nftlRaffle.getTicketIdsByUser(bob.address)).to.deep.equal([BigNumber.from(2), BigNumber.from(3)]);
-      expect(await nftlRaffle.totalTicketCount()).to.equal(7);
+      expect(await nftlRaffle.getTicketIdsByUser(bob.address)).to.deep.include.members([
+        BigNumber.from(102),
+        BigNumber.from(103),
+      ]);
+      expect(await nftlRaffle.totalTicketCount()).to.equal(107);
     });
 
     it('Should revert if time is up', async () => {
@@ -231,7 +296,7 @@ describe('NFTLRaffle', function () {
       await expect(nftlRaffle.updateRaffleStartAt(newRaffleStartAt)).to.be.revertedWith('Invalid timestamp');
     });
 
-    it('Should revert if the timestamp is invalid', async () => {
+    it('Should revert if the caller is not the owner', async () => {
       const newRaffleStartAt = (await getCurrentBlockTimestamp()).add(100);
       await expect(nftlRaffle.connect(alice).updateRaffleStartAt(newRaffleStartAt)).to.be.revertedWith(
         'Ownable: caller is not the owner',
