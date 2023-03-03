@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import { ethers, upgrades, network } from 'hardhat';
-import { BigNumber } from 'ethers';
+import { BigNumber, Signer } from 'ethers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
-import type { NFTLRaffle, MockERC20, VRFCoordinatorV2Mock } from '../typechain-types';
+import type { NFTLRaffle, MockERC20, VRFCoordinatorV2Interface, LinkTokenInterface } from '../typechain-types';
 
 const getCurrentBlockTimestamp = async (): Promise<BigNumber> => {
   const blockNumber = await ethers.provider.getBlockNumber();
@@ -16,6 +16,21 @@ const increaseTime = async (sec: number): Promise<void> => {
   await network.provider.send('evm_mine');
 };
 
+const toBytes32 = (bn: BigNumber) => {
+  return ethers.utils.hexlify(ethers.utils.zeroPad(bn.toHexString(), 32));
+};
+
+const getAccountToken = async (amount: BigNumber, userAddress: string, tokenAddress: string, slot: number) => {
+  // Get storage slot index
+  const index = ethers.utils.solidityKeccak256(
+    ['uint256', 'uint256'],
+    [userAddress, slot], // key, slot
+  );
+
+  await ethers.provider.send('hardhat_setStorageAt', [tokenAddress, index, toBytes32(amount).toString()]);
+  await ethers.provider.send('evm_mine', []); // Just mines to the next block
+};
+
 describe('NFTLRaffle', function () {
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;
@@ -24,7 +39,10 @@ describe('NFTLRaffle', function () {
   let john: SignerWithAddress;
   let nftlRaffle: NFTLRaffle;
   let nftlToken: MockERC20;
-  let vrfCoordinator: VRFCoordinatorV2Mock;
+  let vrfCoordinator: VRFCoordinatorV2Interface;
+  let linkToken: LinkTokenInterface;
+
+  let requestId;
 
   const pendingPeriod = 86400 * 2; // 2 days
   const totalWinnerTicketCount = 5;
@@ -32,20 +50,37 @@ describe('NFTLRaffle', function () {
   const initialNFTLAmount = nftlAmountPerTicket.mul(1000);
 
   const ZERO_ADDRESS = ethers.constants.AddressZero;
+  const VRF_COORDINATOR_ADDRESS = '0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D';
+  const LINK_TOKEN_ADDRESS = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
+
+  before(async () => {
+    await network.provider.request({
+      method: 'hardhat_reset',
+      params: [
+        {
+          forking: {
+            jsonRpcUrl: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+          },
+        },
+      ],
+    });
+  });
 
   beforeEach(async () => {
     accounts = await ethers.getSigners();
     [deployer, alice, bob, john] = accounts;
 
-    // Deploy MockERC20 contract
+    // deploy MockERC20 contract
     const MockERC20 = await ethers.getContractFactory('MockERC20');
     nftlToken = await MockERC20.deploy();
 
-    // Deploy VRFCoordinatorV2Mock contract
-    const VRFCoordinator = await ethers.getContractFactory('VRFCoordinatorV2Mock');
-    vrfCoordinator = await VRFCoordinator.deploy(ethers.utils.parseEther('0.1'), 1e9);
+    // get VRFCoordinatorV2 contract
+    vrfCoordinator = await ethers.getContractAt('VRFCoordinatorV2Interface', VRF_COORDINATOR_ADDRESS);
 
-    // Deploy NFTLRaffle contract
+    // get Link contract
+    linkToken = await ethers.getContractAt('LinkTokenInterface', LINK_TOKEN_ADDRESS);
+
+    // deploy NFTLRaffle contract
     const NFTLRaffle = await ethers.getContractFactory('NFTLRaffle');
     nftlRaffle = (await upgrades.deployProxy(NFTLRaffle, [
       nftlToken.address,
@@ -58,6 +93,9 @@ describe('NFTLRaffle', function () {
     await nftlToken.mint(alice.address, initialNFTLAmount);
     await nftlToken.mint(bob.address, initialNFTLAmount);
     await nftlToken.mint(john.address, initialNFTLAmount);
+
+    // fund LINK tokens
+    await getAccountToken(ethers.utils.parseEther('100'), deployer.address, LINK_TOKEN_ADDRESS, 1);
   });
 
   describe('Initialize', () => {
@@ -100,7 +138,36 @@ describe('NFTLRaffle', function () {
     });
   });
 
-  describe.only('distributeTicketsToCitadelKeyHolders', () => {
+  describe('chargeLINK', () => {
+    it('Should be able to charge LINK tokens', async () => {
+      let linkTokenBalanceBefore = await linkToken.balanceOf(deployer.address);
+
+      // charge LINK tokens
+      const linkTokenAmountToCharge = ethers.utils.parseEther('10');
+      await linkToken.approve(nftlRaffle.address, linkTokenAmountToCharge);
+      await nftlRaffle.chargeLINK(linkTokenAmountToCharge);
+
+      expect(await linkToken.balanceOf(deployer.address)).to.equal(linkTokenBalanceBefore.sub(linkTokenAmountToCharge));
+    });
+  });
+
+  describe('manageConsumers', () => {
+    it('Should be able to add/remove the consumers', async () => {
+      await nftlRaffle.manageConsumers(nftlRaffle.address, true);
+      await nftlRaffle.manageConsumers(nftlRaffle.address, false);
+    });
+
+    it('Should revert if the caller is not the owner', async () => {
+      await expect(nftlRaffle.connect(alice).manageConsumers(nftlRaffle.address, true)).to.be.revertedWith(
+        'Ownable: caller is not the owner',
+      );
+      await expect(nftlRaffle.connect(alice).manageConsumers(nftlRaffle.address, false)).to.be.revertedWith(
+        'Ownable: caller is not the owner',
+      );
+    });
+  });
+
+  describe('distributeTicketsToCitadelKeyHolders', () => {
     beforeEach(async () => {
       // deposit tokens
       let nftlAmountToDeposit = nftlAmountPerTicket.mul(100);
@@ -153,7 +220,7 @@ describe('NFTLRaffle', function () {
     });
   });
 
-  describe('Deposit', () => {
+  describe('deposit', () => {
     beforeEach(async () => {
       // distribute tickets to CitadelKey holders
       const holders = [alice.address];
@@ -228,6 +295,78 @@ describe('NFTLRaffle', function () {
       await expect(nftlRaffle.connect(alice).deposit(nftlAmountToDeposit)).to.be.revertedWith('Expired');
     });
   });
+
+  describe.only('requestRandomWordsForWinnerSelection', () => {
+    beforeEach(async () => {
+      let nftlAmountToDeposit = nftlAmountPerTicket.mul(10); // x10
+
+      // Alice deposits NFTL and get 10 tickets
+      await nftlToken.connect(alice).approve(nftlRaffle.address, nftlAmountToDeposit);
+      await nftlRaffle.connect(alice).deposit(nftlAmountToDeposit);
+
+      // Bob deposits NFTL and get 10 tickets
+      await nftlToken.connect(bob).approve(nftlRaffle.address, nftlAmountToDeposit);
+      await nftlRaffle.connect(bob).deposit(nftlAmountToDeposit);
+
+      // John deposits NFTL and get 10 tickets
+      await nftlToken.connect(john).approve(nftlRaffle.address, nftlAmountToDeposit);
+      await nftlRaffle.connect(john).deposit(nftlAmountToDeposit);
+
+      // distribute tickets
+      const holders = [alice.address];
+      const count = [1];
+      await nftlRaffle.distributeTicketsToCitadelKeyHolders(holders, count);
+
+      // add the consumer
+      await nftlRaffle.manageConsumers(nftlRaffle.address, true);
+
+      // charge LINK tokens
+      const linkTokenAmountToCharge = ethers.utils.parseEther('10');
+      await linkToken.approve(nftlRaffle.address, linkTokenAmountToCharge);
+      await nftlRaffle.chargeLINK(linkTokenAmountToCharge);
+    });
+
+    it('Should be able to request the random words', async () => {
+      // increase time
+      await increaseTime(pendingPeriod + 100);
+
+      requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
+      await nftlRaffle.requestRandomWordsForWinnerSelection();
+    });
+
+    it('Should revert if the pending period is not expired', async () => {
+      await expect(nftlRaffle.requestRandomWordsForWinnerSelection()).to.be.revertedWith('Pending period');
+    });
+
+    it('Should revert if the depositor count is not enough', async () => {
+      const newTotalWinnerTicketCount = 5000;
+      await nftlRaffle.updateTotalWinnerTicketCount(newTotalWinnerTicketCount);
+
+      // increase time
+      await increaseTime(pendingPeriod + 100);
+
+      await expect(nftlRaffle.requestRandomWordsForWinnerSelection()).to.be.revertedWith('Not enough depositors');
+    });
+
+    it('Should revert if the requestId already exists', async () => {
+      // increase time
+      await increaseTime(pendingPeriod + 100);
+
+      await nftlRaffle.requestRandomWordsForWinnerSelection();
+      await expect(nftlRaffle.requestRandomWordsForWinnerSelection()).to.be.revertedWith('Already requested');
+    });
+
+    it('Should revert if the coller is not the owner', async () => {
+      // increase time
+      await increaseTime(pendingPeriod + 100);
+
+      await expect(nftlRaffle.connect(alice).requestRandomWordsForWinnerSelection()).to.be.revertedWith(
+        'Ownable: caller is not the owner',
+      );
+    });
+  });
+
+  describe('rawFulfillRandomWords', () => {});
 
   describe('selectWinners', () => {
     beforeEach(async () => {
