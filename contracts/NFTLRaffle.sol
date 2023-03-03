@@ -73,8 +73,9 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
 
     event TicketDistributed(address indexed to, uint256 startTicketId, uint256 endTicketId);
     event UserDeposited(address indexed user, uint256 nftlAmount);
-    event WinnerSelected(address indexed by, address indexed winner, uint256 ticketId);
+    event RandomWordsRequested(uint256 requestId);
     event RandomWordsReceived(uint256[] randomWords);
+    event WinnerSelected(address indexed by, address indexed winner, uint256 ticketId);
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -103,6 +104,17 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         _createNewSubscription();
     }
 
+    // Create a new subscription when the contract is initially deployed.
+    function _createNewSubscription() private {
+        s_subscriptionId = VRFCoordinatorV2Interface(vrfCoordinator).createSubscription();
+        VRFCoordinatorV2Interface(vrfCoordinator).addConsumer(s_subscriptionId, address(this));
+    }
+
+    function cancelSubscription() external onlyOwner {
+        VRFCoordinatorV2Interface(vrfCoordinator).cancelSubscription(s_subscriptionId, owner());
+        s_subscriptionId = 0;
+    }
+
     function updateRaffleStartAt(uint256 _raffleStartAt) external onlyOwner {
         require(block.timestamp < _raffleStartAt, "Invalid timestamp");
         raffleStartAt = _raffleStartAt;
@@ -122,9 +134,9 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         require(block.timestamp < raffleStartAt, "Expired");
 
         // distribute 100 tickets to each Citadel Key holders
-        uint256 userTicketCountToAssign = 100;
         for (uint256 i = 0; i < holderCount; ) {
             address holder = _holders[i];
+            uint256 userTicketCountToAssign = 100 * _keyCount[i];
 
             // mark as if the holder deposited tokens for the userTicketCountToAssign calculation in deposit() function.
             userDeposits[holder] += userTicketCountToAssign * NFTL_AMOUNT_FOR_TICKET;
@@ -190,6 +202,17 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         }
     }
 
+    function manageConsumers(address _consumer, bool _add) external onlyOwner {
+        _add
+            ? VRFCoordinatorV2Interface(vrfCoordinator).addConsumer(s_subscriptionId, _consumer)
+            : VRFCoordinatorV2Interface(vrfCoordinator).removeConsumer(s_subscriptionId, _consumer);
+    }
+
+    function chargeLINK(uint256 _amount) external {
+        IERC20Upgradeable(LINK).safeTransferFrom(msg.sender, address(this), _amount);
+        LinkTokenInterface(LINK).transferAndCall(vrfCoordinator, _amount, abi.encode(s_subscriptionId));
+    }
+
     function requestRandomWordsForWinnerSelection() external onlyOwner returns (uint256 requestId) {
         require(raffleStartAt <= block.timestamp, "Pending period");
         require(totalWinnerTicketCount <= _ticketIdList.length(), "Not enough depositors");
@@ -197,6 +220,45 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
 
         requestId = _requestRandomWords(uint32(totalWinnerTicketCount));
         vrfRequestId = requestId;
+
+        emit RandomWordsRequested(requestId);
+    }
+
+    function _requestRandomWords(uint32 _numWords) internal returns (uint256) {
+        return
+            VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
+                s_keyHash,
+                s_subscriptionId,
+                s_requestConfirmations,
+                s_callbackGasLimit,
+                _numWords
+            );
+    }
+
+    // rawFulfillRandomness is called by VRFCoordinator when it receives a valid VRF
+    // proof. rawFulfillRandomness then calls fulfillRandomness, after validating
+    // the origin of the call
+    function rawFulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) external {
+        require(msg.sender == vrfCoordinator, "Only VRF coordinator");
+        _fulfillRandomWords(_requestId, _randomWords);
+    }
+
+    /**
+     * @notice fulfillRandomness handles the VRF response. Your contract must
+     * @notice implement it. See "SECURITY CONSIDERATIONS" above for important
+     * @notice principles to keep in mind when implementing your fulfillRandomness
+     * @notice method.
+     *
+     * @dev VRFConsumerBaseV2 expects its subcontracts to have a method with this
+     * @dev signature, and will call it once it has verified the proof
+     * @dev associated with the randomness. (It is triggered via a call to
+     * @dev rawFulfillRandomness, below.)
+     *
+     * @param _requestId The Id initially returned by requestRandomWords
+     * @param _randomWords the VRF output expanded to the requested number of words
+     */
+    function _fulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) internal {
+        _selectWinners(_requestId, _randomWords);
     }
 
     function _selectWinners(uint256 _requestId, uint256[] memory _randomWords) internal {
@@ -257,64 +319,5 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
      */
     function unpause() external onlyOwner {
         _unpause();
-    }
-
-    function chargeLINK(uint256 _amount) external {
-        IERC20Upgradeable(LINK).safeTransferFrom(msg.sender, address(this), _amount);
-        LinkTokenInterface(LINK).transferAndCall(vrfCoordinator, _amount, abi.encode(s_subscriptionId));
-    }
-
-    function _requestRandomWords(uint32 _numWords) internal returns (uint256) {
-        return
-            VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
-                s_keyHash,
-                s_subscriptionId,
-                s_requestConfirmations,
-                s_callbackGasLimit,
-                _numWords
-            );
-    }
-
-    /**
-     * @notice fulfillRandomness handles the VRF response. Your contract must
-     * @notice implement it. See "SECURITY CONSIDERATIONS" above for important
-     * @notice principles to keep in mind when implementing your fulfillRandomness
-     * @notice method.
-     *
-     * @dev VRFConsumerBaseV2 expects its subcontracts to have a method with this
-     * @dev signature, and will call it once it has verified the proof
-     * @dev associated with the randomness. (It is triggered via a call to
-     * @dev rawFulfillRandomness, below.)
-     *
-     * @param _requestId The Id initially returned by requestRandomWords
-     * @param _randomWords the VRF output expanded to the requested number of words
-     */
-    function fulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) internal {
-        _selectWinners(_requestId, _randomWords);
-    }
-
-    // rawFulfillRandomness is called by VRFCoordinator when it receives a valid VRF
-    // proof. rawFulfillRandomness then calls fulfillRandomness, after validating
-    // the origin of the call
-    function rawFulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) external {
-        require(msg.sender == vrfCoordinator, "Only VRF coordinator");
-        fulfillRandomWords(_requestId, _randomWords);
-    }
-
-    function manageConsumers(address _consumer, bool _add) external onlyOwner {
-        _add
-            ? VRFCoordinatorV2Interface(vrfCoordinator).addConsumer(s_subscriptionId, _consumer)
-            : VRFCoordinatorV2Interface(vrfCoordinator).removeConsumer(s_subscriptionId, _consumer);
-    }
-
-    function cancelSubscription() external onlyOwner {
-        VRFCoordinatorV2Interface(vrfCoordinator).cancelSubscription(s_subscriptionId, owner());
-        s_subscriptionId = 0;
-    }
-
-    // Create a new subscription when the contract is initially deployed.
-    function _createNewSubscription() private {
-        s_subscriptionId = VRFCoordinatorV2Interface(vrfCoordinator).createSubscription();
-        VRFCoordinatorV2Interface(vrfCoordinator).addConsumer(s_subscriptionId, address(this));
     }
 }
