@@ -1,7 +1,7 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { getLedgerSigner } from '../../scripts/ledger';
-import { NFTL_TOKEN_ADDRESS, VRF_COORDINATOR_ADDRESS } from '../../constants/addresses';
+import { NFTL_TOKEN_ADDRESS, DEGEN_ADDRESS, VRF_COORDINATOR_ADDRESS } from '../../constants/addresses';
 import { NetworkName } from '../../types';
 import { config as dotenvConfig } from 'dotenv';
 import path from 'path';
@@ -28,6 +28,7 @@ const deployNFTLRaffle: DeployFunction = async (hre: HardhatRuntimeEnvironment) 
               NFTL_TOKEN_ADDRESS[hre.network.name as NetworkName],
               process.env.PENDING_PERIOD,
               process.env.TOTAL_WINNER_TICKET_COUNT,
+              DEGEN_ADDRESS[hre.network.name as NetworkName],
               VRF_COORDINATOR_ADDRESS[hre.network.name as NetworkName],
             ],
           },

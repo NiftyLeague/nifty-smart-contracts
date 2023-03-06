@@ -23,6 +23,7 @@ const deployNFTLRaffle: DeployFunction = async (hre: HardhatRuntimeEnvironment) 
             MockERC721.address,
             process.env.PENDING_PERIOD,
             process.env.TOTAL_WINNER_TICKET_COUNT,
+            MockERC721.address,
             VRFCoordinatorV2Mock.address,
           ],
         },
