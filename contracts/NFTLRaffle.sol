@@ -213,6 +213,10 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         LinkTokenInterface(LINK).transferAndCall(vrfCoordinator, _amount, abi.encode(s_subscriptionId));
     }
 
+    function withdrawLINK(address _to) external onlyOwner {
+        IERC20Upgradeable(LINK).safeTransfer(_to, IERC20Upgradeable(LINK).balanceOf(address(this)));
+    }
+
     function requestRandomWordsForWinnerSelection() external onlyOwner returns (uint256 requestId) {
         require(raffleStartAt <= block.timestamp, "Pending period");
         require(totalWinnerTicketCount <= _ticketIdList.length(), "Not enough depositors");
