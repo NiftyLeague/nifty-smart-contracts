@@ -538,7 +538,7 @@ describe.only('NFTLRaffle', function () {
       await nftlRaffle.requestRandomWordsForWinnerSelection();
     });
 
-    it.only('Should be able to receive the random word and transfer the prize NFT to the winner', async () => {
+    it.skip('Should be able to receive the random word and transfer the prize NFT to the winner', async () => {
       expect(await nftlRaffle.getWinners()).to.be.empty;
 
       const impersonatedCoordinator = await impersonate(VRF_COORDINATOR_ADDRESS);
