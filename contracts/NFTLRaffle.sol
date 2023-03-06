@@ -31,9 +31,9 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     }
 
     /// @dev Chainlink VRF params
-    address private vrfCoordinator; // goerli: 0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D, etherscan: 0x271682DEB8C4E0901D1a1550aD2e64D568E69909
-    address private constant LINK = 0x326C977E6efc84E512bB9C30f76E30c160eD06FB; // 0x514910771AF9Ca656af840dff83E8264EcF986CA
-    bytes32 private constant s_keyHash = 0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15; // 0x8af398995b04c28e9951adb9721ef74c74f93e6a478f39e7e0777be13527e7ef
+    address private vrfCoordinator; // etherscan: 0x271682DEB8C4E0901D1a1550aD2e64D568E69909
+    address private constant LINK = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
+    bytes32 private constant s_keyHash = 0x8af398995b04c28e9951adb9721ef74c74f93e6a478f39e7e0777be13527e7ef;
     uint16 private constant s_requestConfirmations = 3;
     uint32 private constant s_callbackGasLimit = 2500000;
     uint64 public s_subscriptionId;
