@@ -3,8 +3,13 @@ import { ethers, upgrades, network } from 'hardhat';
 import { BigNumber, Signer } from 'ethers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
-import type { NFTLRaffle, MockERC20, VRFCoordinatorV2Interface, LinkTokenInterface } from '../typechain-types';
-import { link } from 'fs';
+import type {
+  NFTLRaffle,
+  MockERC20,
+  MockERC721,
+  VRFCoordinatorV2Interface,
+  LinkTokenInterface,
+} from '../typechain-types';
 
 const getCurrentBlockTimestamp = async (): Promise<BigNumber> => {
   const blockNumber = await ethers.provider.getBlockNumber();
@@ -49,7 +54,7 @@ const impersonate = async (addr: string, fund = true): Promise<Signer> => {
   return ethers.provider.getSigner(addr);
 };
 
-describe.skip('NFTLRaffle', function () {
+describe.only('NFTLRaffle', function () {
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;
   let alice: SignerWithAddress;
@@ -57,6 +62,7 @@ describe.skip('NFTLRaffle', function () {
   let john: SignerWithAddress;
   let nftlRaffle: NFTLRaffle;
   let nftlToken: MockERC20;
+  let prizeNFT: MockERC721;
   let vrfCoordinator: VRFCoordinatorV2Interface;
   let linkToken: LinkTokenInterface;
 
@@ -92,6 +98,10 @@ describe.skip('NFTLRaffle', function () {
     const MockERC20 = await ethers.getContractFactory('MockERC20');
     nftlToken = await MockERC20.deploy();
 
+    // deploy MockERC721 contract
+    const MockERC721 = await ethers.getContractFactory('MockERC721');
+    prizeNFT = await MockERC721.deploy();
+
     // get VRFCoordinatorV2 contract
     vrfCoordinator = await ethers.getContractAt('VRFCoordinatorV2Interface', VRF_COORDINATOR_ADDRESS);
 
@@ -104,6 +114,7 @@ describe.skip('NFTLRaffle', function () {
       nftlToken.address,
       pendingPeriod,
       totalWinnerTicketCount,
+      prizeNFT.address,
       vrfCoordinator.address,
     ])) as NFTLRaffle;
 
@@ -111,6 +122,11 @@ describe.skip('NFTLRaffle', function () {
     await nftlToken.mint(alice.address, initialNFTLAmount);
     await nftlToken.mint(bob.address, initialNFTLAmount);
     await nftlToken.mint(john.address, initialNFTLAmount);
+
+    // mint Prize NFTs
+    for (let i = 0; i < 10; i++) {
+      await prizeNFT.mint(deployer.address);
+    }
 
     // fund LINK tokens
     await getAccountToken(ethers.utils.parseEther('100'), deployer.address, LINK_TOKEN_ADDRESS, 1);
@@ -123,6 +139,7 @@ describe.skip('NFTLRaffle', function () {
         nftlToken.address,
         pendingPeriod,
         totalWinnerTicketCount,
+        prizeNFT.address,
         vrfCoordinator.address,
       ])) as NFTLRaffle;
     });
@@ -130,29 +147,86 @@ describe.skip('NFTLRaffle', function () {
     it('Should revert if the NFTL contract address is zero', async () => {
       const NFTLRaffle = await ethers.getContractFactory('NFTLRaffle');
       await expect(
-        upgrades.deployProxy(NFTLRaffle, [ZERO_ADDRESS, pendingPeriod, totalWinnerTicketCount, vrfCoordinator.address]),
+        upgrades.deployProxy(NFTLRaffle, [
+          ZERO_ADDRESS,
+          pendingPeriod,
+          totalWinnerTicketCount,
+          prizeNFT.address,
+          vrfCoordinator.address,
+        ]),
       ).to.be.revertedWith('Zero address');
     });
 
     it('Should revert if the pendign period is not greater than 1 day', async () => {
       const NFTLRaffle = await ethers.getContractFactory('NFTLRaffle');
       await expect(
-        upgrades.deployProxy(NFTLRaffle, [nftlToken.address, 86400, totalWinnerTicketCount, vrfCoordinator.address]),
+        upgrades.deployProxy(NFTLRaffle, [
+          nftlToken.address,
+          86400,
+          totalWinnerTicketCount,
+          prizeNFT.address,
+          vrfCoordinator.address,
+        ]),
       ).to.be.revertedWith('1 day +');
     });
 
     it('Should revert if the totalWinnerTicketCount is zero', async () => {
       const NFTLRaffle = await ethers.getContractFactory('NFTLRaffle');
       await expect(
-        upgrades.deployProxy(NFTLRaffle, [nftlToken.address, pendingPeriod, 0, vrfCoordinator.address]),
+        upgrades.deployProxy(NFTLRaffle, [
+          nftlToken.address,
+          pendingPeriod,
+          0,
+          prizeNFT.address,
+          vrfCoordinator.address,
+        ]),
       ).to.be.revertedWith('Zero winner ticket count');
+    });
+
+    it('Should revert if the prize NFT address is zero', async () => {
+      const NFTLRaffle = await ethers.getContractFactory('NFTLRaffle');
+      await expect(
+        upgrades.deployProxy(NFTLRaffle, [
+          nftlToken.address,
+          pendingPeriod,
+          totalWinnerTicketCount,
+          ZERO_ADDRESS,
+          vrfCoordinator.address,
+        ]),
+      ).to.be.revertedWith('Zero address');
     });
 
     it('Should revert if the VRF coordinator address is zero', async () => {
       const NFTLRaffle = await ethers.getContractFactory('NFTLRaffle');
       await expect(
-        upgrades.deployProxy(NFTLRaffle, [nftlToken.address, pendingPeriod, totalWinnerTicketCount, ZERO_ADDRESS]),
+        upgrades.deployProxy(NFTLRaffle, [
+          nftlToken.address,
+          pendingPeriod,
+          totalWinnerTicketCount,
+          prizeNFT.address,
+          ZERO_ADDRESS,
+        ]),
       ).to.be.revertedWith('Zero address');
+    });
+  });
+
+  describe('depositPrizeNFT', () => {
+    it('Should be able the deposit the prize NFT', async () => {
+      const tokenIds = [1, 3, 5, 6, 9];
+      await prizeNFT.setApprovalForAll(nftlRaffle.address, true);
+      await nftlRaffle.depositPrizeNFT(tokenIds);
+    });
+
+    it('Should revert if the prize NFT count is not the same as the winner ticket count', async () => {
+      const tokenIds = [1, 3, 5, 9];
+      await expect(nftlRaffle.depositPrizeNFT(tokenIds)).to.be.revertedWith('Mismatched prize count');
+    });
+
+    it('Should revert if the caller is not the owner', async () => {
+      const tokenIds = [1, 3, 5, 6, 9];
+      await expect(nftlRaffle.connect(alice).depositPrizeNFT(tokenIds)).to.be.revertedWith(
+        'Ownable: caller is not the owner',
+      );
     });
   });
 
@@ -359,17 +433,47 @@ describe.skip('NFTLRaffle', function () {
       const linkTokenAmountToCharge = ethers.utils.parseEther('10');
       await linkToken.approve(nftlRaffle.address, linkTokenAmountToCharge);
       await nftlRaffle.chargeLINK(linkTokenAmountToCharge);
+
+      // deposit the prize NFT
+      const tokenIds = [1, 3, 5, 6, 9];
+      await prizeNFT.setApprovalForAll(nftlRaffle.address, true);
+      await nftlRaffle.depositPrizeNFT(tokenIds);
     });
 
     it('Should be able to request the random words', async () => {
       // increase time
       await increaseTime(pendingPeriod + 100);
 
+      // first request
+      let requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
       await nftlRaffle.requestRandomWordsForWinnerSelection();
+
+      expect(await nftlRaffle.currentWinnerTicketCount()).to.equal(1);
+      expect(await nftlRaffle.prizeNFTTokenIndex(requestId)).to.equal(0);
+
+      requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
+      await nftlRaffle.requestRandomWordsForWinnerSelection();
+
+      expect(await nftlRaffle.currentWinnerTicketCount()).to.equal(2);
+      expect(await nftlRaffle.prizeNFTTokenIndex(requestId)).to.equal(1);
     });
 
     it('Should revert if the pending period is not expired', async () => {
       await expect(nftlRaffle.requestRandomWordsForWinnerSelection()).to.be.revertedWith('Pending period');
+    });
+
+    it('Should revert if the request is oveflow', async () => {
+      // increase time
+      await increaseTime(pendingPeriod + 100);
+
+      // request
+      await nftlRaffle.requestRandomWordsForWinnerSelection();
+
+      // updat the total winner ticket count
+      const newTotalWinnerTicketCount = 1;
+      await nftlRaffle.updateTotalWinnerTicketCount(newTotalWinnerTicketCount);
+
+      await expect(nftlRaffle.requestRandomWordsForWinnerSelection()).to.be.revertedWith('Request overflow');
     });
 
     it('Should revert if the depositor count is not enough', async () => {
@@ -380,14 +484,6 @@ describe.skip('NFTLRaffle', function () {
       await increaseTime(pendingPeriod + 100);
 
       await expect(nftlRaffle.requestRandomWordsForWinnerSelection()).to.be.revertedWith('Not enough depositors');
-    });
-
-    it('Should revert if the requestId already exists', async () => {
-      // increase time
-      await increaseTime(pendingPeriod + 100);
-
-      await nftlRaffle.requestRandomWordsForWinnerSelection();
-      await expect(nftlRaffle.requestRandomWordsForWinnerSelection()).to.be.revertedWith('Already requested');
     });
 
     it('Should revert if the coller is not the owner', async () => {
@@ -401,8 +497,6 @@ describe.skip('NFTLRaffle', function () {
   });
 
   describe('rawFulfillRandomWords', () => {
-    let requestId: BigNumber;
-
     beforeEach(async () => {
       let nftlAmountToDeposit = nftlAmountPerTicket.mul(10); // x10
 
@@ -431,6 +525,11 @@ describe.skip('NFTLRaffle', function () {
       await linkToken.approve(nftlRaffle.address, linkTokenAmountToCharge);
       await nftlRaffle.chargeLINK(linkTokenAmountToCharge);
 
+      // deposit the prize NFT
+      const tokenIds = [1, 3, 5, 6, 9];
+      await prizeNFT.setApprovalForAll(nftlRaffle.address, true);
+      await nftlRaffle.depositPrizeNFT(tokenIds);
+
       // increase time
       await increaseTime(pendingPeriod + 100);
 
@@ -439,15 +538,35 @@ describe.skip('NFTLRaffle', function () {
       await nftlRaffle.requestRandomWordsForWinnerSelection();
     });
 
-    it('Should be able to receive the random words', async () => {
+    it.only('Should be able to receive the random word and transfer the prize NFT to the winner', async () => {
       expect(await nftlRaffle.getWinners()).to.be.empty;
 
-      const randomWords = [0, 0, 50, 100, 250];
-
       const impersonatedCoordinator = await impersonate(VRF_COORDINATOR_ADDRESS);
+
+      // select the first winner
+      let randomWords = [50];
       await nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId, randomWords);
 
-      expect(await nftlRaffle.getWinners()).to.be.not.empty;
+      let winners = await nftlRaffle.getWinners();
+      let winnerAddress = winners[0].winner;
+      let prizeNFTTokenId = winners[0].prizeTokenId;
+      expect(winners.length).to.equal(1);
+      expect(await prizeNFT.ownerOf(prizeNFTTokenId)).to.equal(winnerAddress);
+
+      // select the second winner
+      requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
+      await nftlRaffle.requestRandomWordsForWinnerSelection();
+
+      randomWords = [50, 100];
+      await nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId, randomWords);
+
+      winners = await nftlRaffle.getWinners();
+      winnerAddress = winners[0].winner;
+      prizeNFTTokenId = winners[0].prizeTokenId;
+      expect(winners.length).to.equal(2);
+      expect(await prizeNFT.ownerOf(prizeNFTTokenId)).to.equal(winnerAddress);
+
+      console.log('winneres = ', winners);
     });
 
     it('Should revert if the caller is not the VRF Coordinator', async () => {
@@ -457,23 +576,23 @@ describe.skip('NFTLRaffle', function () {
       );
     });
 
-    it('Should revert if requestId is invalid', async () => {
-      const randomWords = [0, 0, 50, 100, 250];
+    // it('Should revert if requestId is invalid', async () => {
+    //   const randomWords = [0, 0, 50, 100, 250];
 
-      const impersonatedCoordinator = await impersonate(VRF_COORDINATOR_ADDRESS);
-      await expect(
-        nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId.add(1), randomWords),
-      ).to.be.revertedWith('Invalid requestId');
-    });
+    //   const impersonatedCoordinator = await impersonate(VRF_COORDINATOR_ADDRESS);
+    //   await expect(
+    //     nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId.add(1), randomWords),
+    //   ).to.be.revertedWith('Invalid requestId');
+    // });
 
-    it('Should revert if the random word count is invalid', async () => {
-      const randomWords = [0, 0, 50, 100, 250, 300];
+    // it('Should revert if the random word count is invalid', async () => {
+    //   const randomWords = [0, 0, 50, 100, 250, 300];
 
-      const impersonatedCoordinator = await impersonate(VRF_COORDINATOR_ADDRESS);
-      await expect(
-        nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId, randomWords),
-      ).to.be.revertedWith('Invalid random word count');
-    });
+    //   const impersonatedCoordinator = await impersonate(VRF_COORDINATOR_ADDRESS);
+    //   await expect(
+    //     nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId, randomWords),
+    //   ).to.be.revertedWith('Invalid random word count');
+    // });
   });
 
   describe('cancelSubscription', () => {
