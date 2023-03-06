@@ -26,8 +26,8 @@ const deployNFTLRaffle: DeployFunction = async (hre: HardhatRuntimeEnvironment) 
             methodName: 'initialize',
             args: [
               NFTL_TOKEN_ADDRESS[hre.network.name as NetworkName],
-              process.env.PENDING_PERIOD,
-              process.env.TOTAL_WINNER_TICKET_COUNT,
+              process.env.PENDING_PERIOD as string,
+              process.env.TOTAL_WINNER_TICKET_COUNT as string,
               DEGEN_ADDRESS[hre.network.name as NetworkName],
               VRF_COORDINATOR_ADDRESS[hre.network.name as NetworkName],
             ],
