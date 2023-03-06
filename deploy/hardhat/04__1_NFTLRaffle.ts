@@ -7,6 +7,7 @@ const deployNFTLRaffle: DeployFunction = async (hre: HardhatRuntimeEnvironment) 
 
   // get contracts
   const MockERC721 = await hre.deployments.get('MockERC721');
+  const VRFCoordinatorV2Mock = await hre.deployments.get('VRFCoordinatorV2Mock');
 
   await deploy('NFTLRaffle', {
     from: deployer,
@@ -18,7 +19,12 @@ const deployNFTLRaffle: DeployFunction = async (hre: HardhatRuntimeEnvironment) 
       execute: {
         init: {
           methodName: 'initialize',
-          args: [MockERC721.address, process.env.PENDING_PERIOD, process.env.TOTAL_WINNER_TICKET_COUNT],
+          args: [
+            MockERC721.address,
+            process.env.PENDING_PERIOD,
+            process.env.TOTAL_WINNER_TICKET_COUNT,
+            VRFCoordinatorV2Mock.address,
+          ],
         },
       },
     },
