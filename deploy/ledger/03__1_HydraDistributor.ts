@@ -26,7 +26,7 @@ const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnviron
       },
     });
   } catch (err) {
-    console.error('\nFailed in the BalanceManager contract deployment using the ledger\n');
+    console.error('\nFailed in the HydraDistributor contract deployment using the ledger\n');
     console.error(err);
   }
 };
