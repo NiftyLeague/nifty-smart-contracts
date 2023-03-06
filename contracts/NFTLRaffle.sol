@@ -5,6 +5,8 @@ pragma solidity ^0.8.11;
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
@@ -17,7 +19,7 @@ interface IERC20BurnableUpgradeable is IERC20Upgradeable {
 /**
  * @title NFTLRaffle
  */
-contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
+contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, ERC721HolderUpgradeable {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -25,6 +27,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     struct WinnerInfo {
         uint256 ticketId;
         address winner;
+        uint256 prizeTokenId;
     }
 
     /// @dev Chainlink VRF params
@@ -35,8 +38,11 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     uint32 private constant s_callbackGasLimit = 2500000;
     uint64 public s_subscriptionId;
 
-    // @dev VRF request Id
-    uint256 private vrfRequestId;
+    /// @dev Prize NFT (NiftyDegen) address
+    IERC721Upgradeable public prizeNFT;
+
+    /// @dev PrizeNFT TokenIds
+    uint256[] public prizeNFTokenIds;
 
     /// @dev NFTL address
     IERC20BurnableUpgradeable public nftl;
@@ -44,8 +50,14 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     /// @dev Timestamp the raffle start
     uint256 public raffleStartAt;
 
-    /// @dev Winner count
+    // @dev VRF request Id => Prize NFT TokenId Index
+    mapping(uint256 => uint256) public prizeNFTTokenIndex;
+
+    /// @dev Total winner count to select
     uint256 public totalWinnerTicketCount;
+
+    /// @dev Current selected winner count
+    uint256 public currentWinnerTicketCount;
 
     /// @dev Winner list
     WinnerInfo[] public winners;
@@ -73,9 +85,9 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
 
     event TicketDistributed(address indexed to, uint256 startTicketId, uint256 endTicketId);
     event UserDeposited(address indexed user, uint256 nftlAmount);
-    event RandomWordsRequested(uint256 requestId);
-    event RandomWordsReceived(uint256[] randomWords);
-    event WinnerSelected(address indexed by, address indexed winner, uint256 ticketId);
+    event RandomWordsRequested(uint256 requestId, uint256 currentWinnerTicketCount);
+    event RandomWordsReceived(uint256 requestId, uint256[] randomWords);
+    event WinnerSelected(address indexed by, address indexed winner, uint256 ticketId, uint256 prizeTokenId);
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -86,22 +98,42 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
         address _nftl,
         uint256 _pendingPeriod,
         uint256 _totalWinnerTicketCount,
+        address _prizeNFT,
         address _vrfCoordinator
     ) public initializer {
         __Ownable_init();
         __Pausable_init();
+        __ERC721Holder_init();
 
         require(_nftl != address(0), "Zero address");
         require(_pendingPeriod > 86400, "1 day +");
         require(_totalWinnerTicketCount > 0, "Zero winner ticket count");
+        require(_prizeNFT != address(0), "Zero address");
         require(_vrfCoordinator != address(0), "Zero address");
 
         nftl = IERC20BurnableUpgradeable(_nftl);
         raffleStartAt = block.timestamp + _pendingPeriod;
         totalWinnerTicketCount = _totalWinnerTicketCount;
+        prizeNFT = IERC721Upgradeable(_prizeNFT);
         vrfCoordinator = _vrfCoordinator;
 
         _createNewSubscription();
+    }
+
+    function depositPrizeNFT(uint256[] memory _prizeNFTTokenIds) external onlyOwner {
+        uint256 totalPrizeCount = _prizeNFTTokenIds.length;
+        require((totalPrizeCount + prizeNFTokenIds.length) == totalWinnerTicketCount, "Mismatched prize count");
+
+        for (uint256 i = 0; i < totalPrizeCount; ) {
+            uint256 prizeNFTTokenId = _prizeNFTTokenIds[i];
+            prizeNFT.safeTransferFrom(msg.sender, address(this), prizeNFTTokenId, bytes(""));
+
+            prizeNFTokenIds.push(prizeNFTTokenId);
+
+            unchecked {
+                ++i;
+            }
+        }
     }
 
     // Create a new subscription when the contract is initially deployed.
@@ -219,13 +251,15 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
 
     function requestRandomWordsForWinnerSelection() external onlyOwner returns (uint256 requestId) {
         require(raffleStartAt <= block.timestamp, "Pending period");
-        require(totalWinnerTicketCount <= _ticketIdList.length(), "Not enough depositors");
-        require(vrfRequestId == 0, "Already requested");
+        require(currentWinnerTicketCount < totalWinnerTicketCount, "Request overflow");
+        require((totalWinnerTicketCount - currentWinnerTicketCount) <= _ticketIdList.length(), "Not enough depositors");
 
-        requestId = _requestRandomWords(uint32(totalWinnerTicketCount));
-        vrfRequestId = requestId;
+        uint256 winnerCountToRequest = 1;
+        currentWinnerTicketCount += winnerCountToRequest;
+        requestId = _requestRandomWords(uint32(winnerCountToRequest));
+        prizeNFTTokenIndex[requestId] = currentWinnerTicketCount - 1;
 
-        emit RandomWordsRequested(requestId);
+        emit RandomWordsRequested(requestId, currentWinnerTicketCount - 1);
     }
 
     function _requestRandomWords(uint32 _numWords) internal returns (uint256) {
@@ -266,29 +300,23 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable {
     }
 
     function _selectWinners(uint256 _requestId, uint256[] memory _randomWords) internal {
-        require(_requestId == vrfRequestId, "Invalid requestId");
-        require(_randomWords.length == totalWinnerTicketCount, "Invalid random word count");
+        // select the winner
+        uint256 winnerTicketIndex = _randomWords[0] % _ticketIdList.length();
+        uint256 winnerTicketId = _ticketIdList.at(winnerTicketIndex);
+        address winner = userByTicketId[winnerTicketId];
 
-        for (uint256 i = 0; i < totalWinnerTicketCount; ) {
-            // select the winner
-            uint256 winnerTicketIndex = _randomWords[i] % _ticketIdList.length();
-            uint256 winnerTicketId = _ticketIdList.at(winnerTicketIndex);
-            address winner = userByTicketId[winnerTicketId];
+        // transfer the prize
+        uint256 prizeTokenId = prizeNFTokenIds[prizeNFTTokenIndex[_requestId]];
+        prizeNFT.safeTransferFrom(address(this), winner, prizeTokenId, bytes(""));
 
-            // store the winner
-            winners.push(WinnerInfo({ ticketId: winnerTicketId, winner: winner }));
+        // store the winner
+        winners.push(WinnerInfo({ ticketId: winnerTicketId, winner: winner, prizeTokenId: prizeTokenId }));
 
-            // remove the selected ticket Id from the list
-            _ticketIdList.remove(winnerTicketId);
+        // remove the selected ticket Id from the list
+        _ticketIdList.remove(winnerTicketId);
 
-            emit WinnerSelected(msg.sender, winner, winnerTicketId);
-
-            unchecked {
-                ++i;
-            }
-        }
-
-        emit RandomWordsReceived(_randomWords);
+        emit WinnerSelected(msg.sender, winner, winnerTicketId, prizeTokenId);
+        emit RandomWordsReceived(_requestId, _randomWords);
     }
 
     function getWinners() external view returns (WinnerInfo[] memory) {
