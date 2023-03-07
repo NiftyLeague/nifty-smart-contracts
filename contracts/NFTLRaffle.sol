@@ -37,7 +37,6 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     uint16 private constant s_requestConfirmations = 3;
     uint32 private constant s_callbackGasLimit = 2500000;
     uint64 public s_subscriptionId;
-
     /// @dev Prize NFT (NiftyDegen) address
     IERC721Upgradeable public prizeNFT;
 
@@ -82,6 +81,12 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 
     /// @dev Ticket Id -> User
     mapping(uint256 => address) public userByTicketId;
+
+    /// @dev Ticket list
+    uint256[] public ticketIdList;
+
+    /// @dev User -> Ticket count
+    mapping(address => uint256) public ticketCountByUser;
 
     event TicketDistributed(address indexed to, uint256 startTicketId, uint256 endTicketId);
     event UserDeposited(address indexed user, uint256 nftlAmount);
@@ -204,7 +209,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
         _userList.add(msg.sender);
 
         // assign tickets (user <-> ticketId)
-        uint256 userTicketCount = getTicketCountByUser(msg.sender);
+        uint256 userTicketCount = ticketCountByUser[msg.sender];
         uint256 userTicketCountToAssign = userDeposits[msg.sender] / NFTL_AMOUNT_FOR_TICKET - userTicketCount;
         uint256 baseTicketId = totalTicketCount;
         _assignTicketsToUser(msg.sender, baseTicketId, userTicketCountToAssign);
@@ -220,10 +225,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
             uint256 ticketIdToAssign = _startTicketId + i;
 
             // add the ticket Id
-            _ticketIdList.add(ticketIdToAssign);
-
-            // user -> ticket Ids
-            _ticketIdsByUser[_user].add(ticketIdToAssign);
+            ticketIdList.push(ticketIdToAssign);
 
             // ticket ID -> user
             userByTicketId[ticketIdToAssign] = _user;
@@ -232,6 +234,9 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
                 ++i;
             }
         }
+
+        // user -> ticket count
+        ticketCountByUser[_user] += _count;
     }
 
     function manageConsumers(address _consumer, bool _add) external onlyOwner {
@@ -252,7 +257,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     function requestRandomWordsForWinnerSelection() external onlyOwner returns (uint256 requestId) {
         require(raffleStartAt <= block.timestamp, "Pending period");
         require(currentWinnerTicketCount < totalWinnerTicketCount, "Request overflow");
-        require((totalWinnerTicketCount - currentWinnerTicketCount) <= _ticketIdList.length(), "Not enough depositors");
+        require((totalWinnerTicketCount - currentWinnerTicketCount) <= ticketIdList.length, "Not enough depositors");
 
         uint256 winnerCountToRequest = 1;
         currentWinnerTicketCount += winnerCountToRequest;
@@ -301,8 +306,8 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 
     function _selectWinners(uint256 _requestId, uint256[] memory _randomWords) internal {
         // select the winner
-        uint256 winnerTicketIndex = _randomWords[0] % _ticketIdList.length();
-        uint256 winnerTicketId = _ticketIdList.at(winnerTicketIndex);
+        uint256 winnerTicketIndex = _randomWords[0] % ticketIdList.length;
+        uint256 winnerTicketId = ticketIdList[winnerTicketIndex];
         address winner = userByTicketId[winnerTicketId];
 
         // transfer the prize
@@ -313,7 +318,8 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
         winners.push(WinnerInfo({ ticketId: winnerTicketId, winner: winner, prizeTokenId: prizeTokenId }));
 
         // remove the selected ticket Id from the list
-        _ticketIdList.remove(winnerTicketId);
+        ticketIdList[winnerTicketIndex] = ticketIdList[ticketIdList.length - 1];
+        ticketIdList.pop();
 
         emit WinnerSelected(msg.sender, winner, winnerTicketId, prizeTokenId);
         emit RandomWordsReceived(_requestId, _randomWords);
@@ -325,14 +331,6 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 
     function getUserCount() external view returns (uint256) {
         return _userList.length();
-    }
-
-    function getTicketIdsByUser(address _user) external view returns (uint256[] memory) {
-        return _ticketIdsByUser[_user].values();
-    }
-
-    function getTicketCountByUser(address _user) public view returns (uint256) {
-        return _ticketIdsByUser[_user].length();
     }
 
     function getUserList() external view returns (address[] memory) {
