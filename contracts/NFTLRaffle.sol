@@ -107,7 +107,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     mapping(uint256 => bool) public isWinnerTicketId;
 
     /// @dev Random word list
-    uint256[] private _randomWordList;
+    uint256[] public randomWordList;
 
     event TicketDistributed(address indexed to, uint256 ticketCount);
     event UserDeposited(address indexed user, uint256 nftlAmount);
@@ -277,7 +277,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
         require(currentWinnerTicketCount < totalWinnerTicketCount, "Request overflow");
         require(totalWinnerTicketCount <= totalTicketCount, "Not enough depositors");
 
-        if (_randomWordList.length != 0) {
+        if (randomWordList.length != 0) {
             // select winners
             bool isWinnerSelected = _selectWinners();
             if (isWinnerSelected) return 0;
@@ -327,11 +327,11 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
      */
     function _fulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) internal {
         // since we'll use the random word in the reverse order, push the last random word first
-        for (uint256 i = _randomWords.length - 1; i >= 0; ) {
-            _randomWordList.push(_randomWords[i]);
+        for (uint256 i = 0; i < _randomWords.length; ) {
+            randomWordList.push(_randomWords[_randomWords.length - 1 - i]);
 
             unchecked {
-                --i;
+                ++i;
             }
         }
 
@@ -341,8 +341,8 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 
     function _selectWinners() internal returns (bool) {
         // get the random word and remove it from the list
-        uint256 randomWord = _randomWordList[_randomWordList.length - 1];
-        _randomWordList.pop();
+        uint256 randomWord = randomWordList[randomWordList.length - 1];
+        randomWordList.pop();
 
         // select the winner
         uint256 winnerTicketId;
@@ -351,11 +351,11 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 
             if (isWinnerTicketId[winnerTicketId]) {
                 // winner ticket Id already selected
-                if (_randomWordList.length == 0) {
+                if (randomWordList.length == 0) {
                     return false;
                 } else {
-                    randomWord = _randomWordList[_randomWordList.length - 1];
-                    _randomWordList.pop();
+                    randomWord = randomWordList[randomWordList.length - 1];
+                    randomWordList.pop();
                 }
             } else {
                 break;
@@ -411,6 +411,10 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 
     function getUserList() public view returns (address[] memory) {
         return _userList.values();
+    }
+
+    function getRandomWordsList() external view returns (uint256[] memory) {
+        return randomWordList;
     }
 
     function allowUserDeposit() external onlyOwner {
