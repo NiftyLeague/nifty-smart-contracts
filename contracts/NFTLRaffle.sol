@@ -53,7 +53,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     IERC20BurnableUpgradeable public nftl;
 
     /// @dev Timestamp the raffle start
-    uint256 public raffleStartAt;
+    uint256 public raffleStartAt; // deprecated
 
     // @dev VRF request Id => Prize NFT TokenId Index
     mapping(uint256 => uint256) public prizeNFTTokenIndex; // deprecated
@@ -148,7 +148,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
         require(_vrfCoordinator != address(0), "Zero address");
 
         nftl = IERC20BurnableUpgradeable(_nftl);
-        raffleStartAt = block.timestamp + _pendingPeriod;
+        raffleStartAt = block.timestamp + _pendingPeriod; // deprecated
         totalWinnerTicketCount = _totalWinnerTicketCount;
         prizeNFT = IERC721Upgradeable(_prizeNFT);
         vrfCoordinator = _vrfCoordinator;
@@ -244,7 +244,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
             });
 
             unchecked {
-                currentWinnerTicketCount += userTicketCountToAssign;
+                currentTotalTicketCount += userTicketCountToAssign;
                 ++i;
             }
         }
