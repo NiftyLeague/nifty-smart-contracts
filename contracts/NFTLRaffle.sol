@@ -30,6 +30,11 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
         uint256 prizeTokenId;
     }
 
+    struct TicketRange {
+        uint256 startTicketId;
+        uint256 endTicketId;
+    }
+
     /// @dev Chainlink VRF params
     address private vrfCoordinator; // etherscan: 0x271682DEB8C4E0901D1a1550aD2e64D568E69909
     address private constant LINK = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
@@ -37,6 +42,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     uint16 private constant s_requestConfirmations = 3;
     uint32 private constant s_callbackGasLimit = 2500000;
     uint64 public s_subscriptionId;
+
     /// @dev Prize NFT (NiftyDegen) address
     IERC721Upgradeable public prizeNFT;
 
@@ -50,7 +56,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     uint256 public raffleStartAt;
 
     // @dev VRF request Id => Prize NFT TokenId Index
-    mapping(uint256 => uint256) public prizeNFTTokenIndex;
+    mapping(uint256 => uint256) public prizeNFTTokenIndex; // deprecated
 
     /// @dev Total winner count to select
     uint256 public totalWinnerTicketCount;
@@ -71,28 +77,53 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     EnumerableSetUpgradeable.AddressSet internal _userList;
 
     /// @dev TokenId list
-    EnumerableSetUpgradeable.UintSet internal _ticketIdList;
+    EnumerableSetUpgradeable.UintSet internal _ticketIdList; // deprecated
 
     /// @dev User -> NFTL amount deposited
     mapping(address => uint256) public userDeposits;
 
     /// @dev User -> Ticket Id list
-    mapping(address => EnumerableSetUpgradeable.UintSet) internal _ticketIdsByUser;
+    mapping(address => EnumerableSetUpgradeable.UintSet) internal _ticketIdsByUser; // deprecated
 
     /// @dev Ticket Id -> User
-    mapping(uint256 => address) public userByTicketId;
+    mapping(uint256 => address) public userByTicketId; // deprecated
 
     /// @dev Ticket list
-    uint256[] public ticketIdList;
+    uint256[] public ticketIdList; // deprecated
 
     /// @dev User -> Ticket count
-    mapping(address => uint256) public ticketCountByUser;
+    mapping(address => uint256) public ticketCountByUser; // deprecated
 
-    event TicketDistributed(address indexed to, uint256 startTicketId, uint256 endTicketId);
+    /// @dev Swith to on/off the deposit
+    bool public isUserDepositAllowed;
+
+    /// @dev Ticket assign status
+    bool public isTicketAssignedToUsers;
+
+    /// @dev User -> Ticket range
+    mapping(address => TicketRange) public ticketRangeByUser;
+
+    /// @dev Winner Ticket Id -> Bool
+    mapping(uint256 => bool) public isWinnerTicketId;
+
+    /// @dev Random word list
+    uint256[] private _randomWordList;
+
+    event TicketDistributed(address indexed to, uint256 ticketCount);
     event UserDeposited(address indexed user, uint256 nftlAmount);
-    event RandomWordsRequested(uint256 requestId, uint256 currentWinnerTicketCount);
+    event RandomWordsRequested(uint256 requestId, uint256 randomCountToRequest);
     event RandomWordsReceived(uint256 requestId, uint256[] randomWords);
     event WinnerSelected(address indexed by, address indexed winner, uint256 ticketId, uint256 prizeTokenId);
+
+    modifier onlyDepositAllowed() {
+        require(isUserDepositAllowed, "Only deposit allowed");
+        _;
+    }
+
+    modifier onlyDepositDisallowed() {
+        require(!isUserDepositAllowed, "Only deposit disallowed");
+        _;
+    }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -152,11 +183,6 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
         s_subscriptionId = 0;
     }
 
-    function updateRaffleStartAt(uint256 _raffleStartAt) external onlyOwner {
-        require(block.timestamp < _raffleStartAt, "Invalid timestamp");
-        raffleStartAt = _raffleStartAt;
-    }
-
     function updateTotalWinnerTicketCount(uint256 _totalWinnerTicketCount) external onlyOwner {
         require(_totalWinnerTicketCount > 0, "Zero winner ticket count");
         totalWinnerTicketCount = _totalWinnerTicketCount;
@@ -165,10 +191,9 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     function distributeTicketsToCitadelKeyHolders(
         address[] calldata _holders,
         uint256[] calldata _keyCount
-    ) external onlyOwner {
+    ) external onlyDepositAllowed onlyOwner {
         uint256 holderCount = _holders.length;
         require(holderCount == _keyCount.length, "Invalid params");
-        require(block.timestamp < raffleStartAt, "Expired");
 
         // distribute 100 tickets to each Citadel Key holders
         for (uint256 i = 0; i < holderCount; ) {
@@ -181,14 +206,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
             // add the user if not exist
             _userList.add(holder);
 
-            // assign tickets (user <-> ticketId)
-            uint256 baseTicketId = totalTicketCount;
-            _assignTicketsToUser(holder, baseTicketId, userTicketCountToAssign);
-
-            emit TicketDistributed(holder, baseTicketId, baseTicketId + userTicketCountToAssign - 1);
-
-            // increase the total ticket count
-            totalTicketCount += userTicketCountToAssign;
+            emit TicketDistributed(holder, userTicketCountToAssign);
 
             unchecked {
                 ++i;
@@ -196,9 +214,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
         }
     }
 
-    function deposit(uint256 _amount) external {
-        require(block.timestamp < raffleStartAt, "Expired");
-
+    function deposit(uint256 _amount) external onlyDepositAllowed whenNotPaused {
         // burn NFTL tokens
         nftl.burnFrom(msg.sender, _amount);
 
@@ -208,35 +224,33 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
         // add the user if not exist
         _userList.add(msg.sender);
 
-        // assign tickets (user <-> ticketId)
-        uint256 userTicketCount = ticketCountByUser[msg.sender];
-        uint256 userTicketCountToAssign = userDeposits[msg.sender] / NFTL_AMOUNT_FOR_TICKET - userTicketCount;
-        uint256 baseTicketId = totalTicketCount;
-        _assignTicketsToUser(msg.sender, baseTicketId, userTicketCountToAssign);
-
-        // increase the total ticket count
-        totalTicketCount += userTicketCountToAssign;
-
         emit UserDeposited(msg.sender, _amount);
     }
 
-    function _assignTicketsToUser(address _user, uint256 _startTicketId, uint256 _count) private {
-        for (uint256 i = 0; i < _count; ) {
-            uint256 ticketIdToAssign = _startTicketId + i;
+    function assignTicketToUsers() external onlyDepositDisallowed onlyOwner {
+        require(!isTicketAssignedToUsers, "Already assigned");
+        isTicketAssignedToUsers = true;
 
-            // add the ticket Id
-            ticketIdList.push(ticketIdToAssign);
+        uint256 totalUserCount = getUserCount();
+        address[] memory users = getUserList();
+        uint256 currentTotalTicketCount = 0;
 
-            // ticket ID -> user
-            userByTicketId[ticketIdToAssign] = _user;
+        for (uint256 i = 0; i < totalUserCount; ) {
+            address user = users[i];
+            uint256 userTicketCountToAssign = userDeposits[user] / NFTL_AMOUNT_FOR_TICKET;
+            ticketRangeByUser[user] = TicketRange({
+                startTicketId: currentTotalTicketCount,
+                endTicketId: currentTotalTicketCount + userTicketCountToAssign - 1
+            });
 
             unchecked {
+                currentWinnerTicketCount += userTicketCountToAssign;
                 ++i;
             }
         }
 
-        // user -> ticket count
-        ticketCountByUser[_user] += _count;
+        // set the total ticket count
+        totalTicketCount = currentTotalTicketCount;
     }
 
     function manageConsumers(address _consumer, bool _add) external onlyOwner {
@@ -254,17 +268,26 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
         IERC20Upgradeable(LINK).safeTransfer(_to, IERC20Upgradeable(LINK).balanceOf(address(this)));
     }
 
-    function requestRandomWordsForWinnerSelection() external onlyOwner returns (uint256 requestId) {
-        require(raffleStartAt <= block.timestamp, "Pending period");
+    function requestRandomWordsForWinnerSelection()
+        external
+        onlyDepositDisallowed
+        onlyOwner
+        returns (uint256 requestId)
+    {
         require(currentWinnerTicketCount < totalWinnerTicketCount, "Request overflow");
-        require((totalWinnerTicketCount - currentWinnerTicketCount) <= ticketIdList.length, "Not enough depositors");
+        require(totalWinnerTicketCount <= totalTicketCount, "Not enough depositors");
 
-        uint256 winnerCountToRequest = 1;
-        currentWinnerTicketCount += winnerCountToRequest;
+        if (_randomWordList.length != 0) {
+            // select winners
+            bool isWinnerSelected = _selectWinners();
+            if (isWinnerSelected) return 0;
+        }
+
+        // request the random words ans select winners
+        uint256 winnerCountToRequest = totalWinnerTicketCount * 2;
         requestId = _requestRandomWords(uint32(winnerCountToRequest));
-        prizeNFTTokenIndex[requestId] = currentWinnerTicketCount - 1;
 
-        emit RandomWordsRequested(requestId, currentWinnerTicketCount - 1);
+        emit RandomWordsRequested(requestId, winnerCountToRequest);
     }
 
     function _requestRandomWords(uint32 _numWords) internal returns (uint256) {
@@ -284,6 +307,8 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     function rawFulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) external {
         require(msg.sender == vrfCoordinator, "Only VRF coordinator");
         _fulfillRandomWords(_requestId, _randomWords);
+
+        emit RandomWordsReceived(_requestId, _randomWords);
     }
 
     /**
@@ -301,40 +326,99 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
      * @param _randomWords the VRF output expanded to the requested number of words
      */
     function _fulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) internal {
-        _selectWinners(_requestId, _randomWords);
+        // since we'll use the random word in the reverse order, push the last random word first
+        for (uint256 i = _randomWords.length - 1; i >= 0; ) {
+            _randomWordList.push(_randomWords[i]);
+
+            unchecked {
+                --i;
+            }
+        }
+
+        // select winners
+        _selectWinners();
     }
 
-    function _selectWinners(uint256 _requestId, uint256[] memory _randomWords) internal {
+    function _selectWinners() internal returns (bool) {
+        // get the random word and remove it from the list
+        uint256 randomWord = _randomWordList[_randomWordList.length - 1];
+        _randomWordList.pop();
+
         // select the winner
-        uint256 winnerTicketIndex = _randomWords[0] % ticketIdList.length;
-        uint256 winnerTicketId = ticketIdList[winnerTicketIndex];
-        address winner = userByTicketId[winnerTicketId];
+        uint256 winnerTicketId;
+        while (true) {
+            winnerTicketId = randomWord % totalTicketCount;
+
+            if (isWinnerTicketId[winnerTicketId]) {
+                // winner ticket Id already selected
+                if (_randomWordList.length == 0) {
+                    return false;
+                } else {
+                    randomWord = _randomWordList[_randomWordList.length - 1];
+                    _randomWordList.pop();
+                }
+            } else {
+                break;
+            }
+        }
+
+        address[] memory users = getUserList();
+        uint256 statIndexToCheck = 0;
+        uint256 endIndexToCheck = getUserCount() - 1;
+        uint256 userIndexToCheck;
+        address userToCheck;
+        address winner;
+        while (true) {
+            userIndexToCheck = (statIndexToCheck + endIndexToCheck) / 2;
+            userToCheck = users[userIndexToCheck];
+
+            if (
+                ticketRangeByUser[userToCheck].startTicketId <= winnerTicketId &&
+                winnerTicketId <= ticketRangeByUser[userToCheck].endTicketId
+            ) {
+                winner = userToCheck;
+                break;
+            } else if (winnerTicketId < ticketRangeByUser[userToCheck].startTicketId) {
+                endIndexToCheck = userIndexToCheck - 1;
+            } else {
+                statIndexToCheck = userIndexToCheck + 1;
+            }
+        }
 
         // transfer the prize
-        uint256 prizeTokenId = prizeNFTokenIds[prizeNFTTokenIndex[_requestId]];
+        uint256 prizeTokenId = prizeNFTokenIds[currentWinnerTicketCount];
         prizeNFT.safeTransferFrom(address(this), winner, prizeTokenId, bytes(""));
+        isWinnerTicketId[winnerTicketId] = true;
 
         // store the winner
         winners.push(WinnerInfo({ ticketId: winnerTicketId, winner: winner, prizeTokenId: prizeTokenId }));
 
-        // remove the selected ticket Id from the list
-        ticketIdList[winnerTicketIndex] = ticketIdList[ticketIdList.length - 1];
-        ticketIdList.pop();
+        // increase the current winner ticket count
+        ++currentWinnerTicketCount;
 
         emit WinnerSelected(msg.sender, winner, winnerTicketId, prizeTokenId);
-        emit RandomWordsReceived(_requestId, _randomWords);
+
+        return true;
     }
 
     function getWinners() external view returns (WinnerInfo[] memory) {
         return winners;
     }
 
-    function getUserCount() external view returns (uint256) {
+    function getUserCount() public view returns (uint256) {
         return _userList.length();
     }
 
-    function getUserList() external view returns (address[] memory) {
+    function getUserList() public view returns (address[] memory) {
         return _userList.values();
+    }
+
+    function allowUserDeposit() external onlyOwner {
+        isUserDepositAllowed = true;
+    }
+
+    function disallowUserDeposit() external onlyOwner {
+        isUserDepositAllowed = false;
     }
 
     /**
