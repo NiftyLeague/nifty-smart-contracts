@@ -2,6 +2,7 @@ import { HardhatUserConfig, task } from 'hardhat/config';
 import '@nomicfoundation/hardhat-toolbox';
 import '@openzeppelin/hardhat-upgrades';
 import '@tenderly/hardhat-tenderly';
+import 'hardhat-gas-reporter';
 import 'hardhat-deploy';
 
 import { resolve } from 'path';
@@ -53,6 +54,11 @@ const config: HardhatUserConfig = {
       url: 'http://127.0.0.1:1248', // this is the RPC endpoint exposed by Frame
       deploy: ['deploy/ledger/'],
     },
+  },
+  gasReporter: {
+    enabled: true,
+    gasPrice: 50,
+    currency: 'USD',
   },
   mocha: {
     timeout: 100000000,
