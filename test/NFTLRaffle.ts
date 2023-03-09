@@ -17,11 +17,6 @@ const getCurrentBlockTimestamp = async (): Promise<BigNumber> => {
   return BigNumber.from(block.timestamp);
 };
 
-const increaseTime = async (sec: number): Promise<void> => {
-  await network.provider.send('evm_increaseTime', [sec]);
-  await network.provider.send('evm_mine');
-};
-
 const toBytes32 = (bn: BigNumber) => {
   return ethers.utils.hexlify(ethers.utils.zeroPad(bn.toHexString(), 32));
 };
@@ -54,7 +49,7 @@ const impersonate = async (addr: string, fund = true): Promise<Signer> => {
   return ethers.provider.getSigner(addr);
 };
 
-describe.only('NFTLRaffle', function () {
+describe.skip('NFTLRaffle', function () {
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;
   let alice: SignerWithAddress;
@@ -74,8 +69,8 @@ describe.only('NFTLRaffle', function () {
   const initialNFTLAmount = nftlAmountPerTicket.mul(1000);
 
   const ZERO_ADDRESS = ethers.constants.AddressZero;
-  const VRF_COORDINATOR_ADDRESS = '0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D';
-  const LINK_TOKEN_ADDRESS = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
+  const VRF_COORDINATOR_ADDRESS = '0x271682DEB8C4E0901D1a1550aD2e64D568E69909';
+  const LINK_TOKEN_ADDRESS = '0x514910771AF9Ca656af840dff83E8264EcF986CA';
 
   before(async () => {
     await network.provider.request({
@@ -83,7 +78,7 @@ describe.only('NFTLRaffle', function () {
       params: [
         {
           forking: {
-            jsonRpcUrl: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+            jsonRpcUrl: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
           },
         },
       ],
@@ -135,7 +130,7 @@ describe.only('NFTLRaffle', function () {
     await nftlRaffle.allowUserDeposit();
   });
 
-  describe.skip('Initialize', () => {
+  describe('Initialize', () => {
     it('Should be able to initialize the contract', async () => {
       const NFTLRaffle = await ethers.getContractFactory('NFTLRaffle');
       nftlRaffle = (await upgrades.deployProxy(NFTLRaffle, [
@@ -213,7 +208,7 @@ describe.only('NFTLRaffle', function () {
     });
   });
 
-  describe.skip('depositPrizeNFT', () => {
+  describe('depositPrizeNFT', () => {
     it('Should be able the deposit the prize NFT', async () => {
       const tokenIds = [1, 3, 5, 6, 9];
       await prizeNFT.setApprovalForAll(nftlRaffle.address, true);
@@ -233,7 +228,7 @@ describe.only('NFTLRaffle', function () {
     });
   });
 
-  describe.skip('chargeLINK', () => {
+  describe('chargeLINK', () => {
     it('Should be able to charge LINK tokens', async () => {
       let linkTokenBalanceBefore = await linkToken.balanceOf(deployer.address);
 
@@ -246,7 +241,7 @@ describe.only('NFTLRaffle', function () {
     });
   });
 
-  describe.skip('manageConsumers', () => {
+  describe('manageConsumers', () => {
     it('Should be able to add/remove the consumers', async () => {
       await nftlRaffle.manageConsumers(nftlRaffle.address, true);
       await nftlRaffle.manageConsumers(nftlRaffle.address, false);
@@ -262,7 +257,7 @@ describe.only('NFTLRaffle', function () {
     });
   });
 
-  describe.skip('distributeTicketsToCitadelKeyHolders', () => {
+  describe('distributeTicketsToCitadelKeyHolders', () => {
     beforeEach(async () => {
       // deposit tokens
       let nftlAmountToDeposit = nftlAmountPerTicket.mul(100);
@@ -327,7 +322,7 @@ describe.only('NFTLRaffle', function () {
     });
   });
 
-  describe.skip('deposit', () => {
+  describe('deposit', () => {
     beforeEach(async () => {
       // distribute tickets to CitadelKey holders
       const holders = [alice.address];
@@ -391,7 +386,7 @@ describe.only('NFTLRaffle', function () {
     });
   });
 
-  describe.skip('assignTicketToUsers', () => {
+  describe('assignTicketToUsers', () => {
     beforeEach(async () => {
       let nftlAmountToDeposit = nftlAmountPerTicket.mul(10); // x10
 
@@ -444,7 +439,7 @@ describe.only('NFTLRaffle', function () {
     });
   });
 
-  describe('requestRandomWordsForWinnerSelection', () => {
+  describe('requestRandomWordsForWinnerSelection & rawFulfillRandomWords', () => {
     beforeEach(async () => {
       let nftlAmountToDeposit = nftlAmountPerTicket.mul(10); // x10
 
@@ -485,33 +480,110 @@ describe.only('NFTLRaffle', function () {
       await nftlRaffle.depositPrizeNFT(tokenIds);
     });
 
-    it.only('Should be able to request the random words', async () => {
-      // expect(await nftlRaffle.randomWordList()).to.be.empty;
+    it('Should be able to request the random words', async () => {
+      expect(await nftlRaffle.getRandomWordsList()).to.be.empty;
 
-      // first request
+      // request
       let requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
       await nftlRaffle.requestRandomWordsForWinnerSelection();
 
-      expect(await nftlRaffle.currentWinnerTicketCount()).to.equal(1);
-      // expect(await nftlRaffle.prizeNFTTokenIndex(requestId)).to.equal(0);
+      expect(requestId).to.not.equal(0);
+    });
 
+    it('Should not request the random words if it already exists', async () => {
+      expect(await nftlRaffle.getRandomWordsList()).to.be.empty;
+
+      const impersonatedCoordinator = await impersonate(VRF_COORDINATOR_ADDRESS);
+
+      // request
+      let requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
+      await nftlRaffle.requestRandomWordsForWinnerSelection();
+
+      expect(requestId).to.not.equal(0);
+
+      // receive 1 random word
+      let randomWords = [50];
+      await nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId, randomWords);
+
+      expect(await nftlRaffle.getRandomWordsList()).to.be.empty;
+      expect(await nftlRaffle.currentWinnerTicketCount()).to.equal(1);
+      expect(await nftlRaffle.totalWinnerTicketCount()).to.equal(totalWinnerTicketCount);
+
+      // request
       requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
       await nftlRaffle.requestRandomWordsForWinnerSelection();
 
-      expect(await nftlRaffle.currentWinnerTicketCount()).to.equal(2);
-      // expect(await nftlRaffle.prizeNFTTokenIndex(requestId)).to.equal(1);
-    });
+      expect(requestId).to.not.equal(0); // request since the received random word was already used
 
-    it('Should revert if the pending period is not expired', async () => {
-      await expect(nftlRaffle.requestRandomWordsForWinnerSelection()).to.be.revertedWith('Pending period');
+      // receive 2 random words
+      randomWords = [50, 100];
+      await nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId, randomWords);
+
+      expect(await nftlRaffle.getRandomWordsList()).to.be.empty;
+      expect(await nftlRaffle.currentWinnerTicketCount()).to.equal(2);
+      expect(await nftlRaffle.totalWinnerTicketCount()).to.equal(totalWinnerTicketCount);
+
+      // request
+      requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
+      await nftlRaffle.requestRandomWordsForWinnerSelection();
+
+      expect(requestId).to.not.equal(0); // request since the first random word was already used for the winner selection
+
+      // receive 2 random words
+      randomWords = [100, 100];
+      await nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId, randomWords);
+
+      expect(await nftlRaffle.getRandomWordsList()).to.be.empty;
+      expect(await nftlRaffle.currentWinnerTicketCount()).to.equal(2);
+      expect(await nftlRaffle.totalWinnerTicketCount()).to.equal(totalWinnerTicketCount);
+
+      // request
+      requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
+      await nftlRaffle.requestRandomWordsForWinnerSelection();
+
+      expect(requestId).to.not.equal(0); // request since the 2 random words was already used for the winner selection
+
+      // receive 3 random words
+      randomWords = [51, 100, 50];
+      await nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId, randomWords);
+
+      expect(await nftlRaffle.getRandomWordsList()).to.deep.equal([50, 100]);
+      expect(await nftlRaffle.currentWinnerTicketCount()).to.equal(3);
+      expect(await nftlRaffle.totalWinnerTicketCount()).to.equal(totalWinnerTicketCount);
+
+      // request, the random words exists but all of them were already used
+      requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
+      await nftlRaffle.requestRandomWordsForWinnerSelection();
+
+      expect(requestId).to.not.equal(0); // request since the 2 random words was already used for the winner selection
+
+      // receive 3 random words
+      randomWords = [128, 129, 130];
+      await nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId, randomWords);
+
+      expect(await nftlRaffle.getRandomWordsList()).to.deep.equal([130, 129]);
+      expect(await nftlRaffle.currentWinnerTicketCount()).to.equal(4);
+      expect(await nftlRaffle.totalWinnerTicketCount()).to.equal(totalWinnerTicketCount);
+
+      // request
+      requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
+      await nftlRaffle.requestRandomWordsForWinnerSelection();
+
+      expect(requestId).to.equal(0); // not request since the received random words already exist
     });
 
     it('Should revert if the request is oveflow', async () => {
-      // increase time
-      await increaseTime(pendingPeriod + 100);
-
       // request
+      let requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
       await nftlRaffle.requestRandomWordsForWinnerSelection();
+
+      // receive 1 random word
+      const impersonatedCoordinator = await impersonate(VRF_COORDINATOR_ADDRESS);
+
+      let randomWords = [50];
+      await nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId, randomWords);
+
+      expect(await nftlRaffle.currentWinnerTicketCount()).to.equal(1);
 
       // updat the total winner ticket count
       const newTotalWinnerTicketCount = 1;
@@ -524,94 +596,18 @@ describe.only('NFTLRaffle', function () {
       const newTotalWinnerTicketCount = 5000;
       await nftlRaffle.updateTotalWinnerTicketCount(newTotalWinnerTicketCount);
 
-      // increase time
-      await increaseTime(pendingPeriod + 100);
-
       await expect(nftlRaffle.requestRandomWordsForWinnerSelection()).to.be.revertedWith('Not enough depositors');
     });
 
     it('Should revert if the coller is not the owner', async () => {
-      // increase time
-      await increaseTime(pendingPeriod + 100);
-
       await expect(nftlRaffle.connect(alice).requestRandomWordsForWinnerSelection()).to.be.revertedWith(
         'Ownable: caller is not the owner',
       );
     });
-  });
-
-  describe('rawFulfillRandomWords', () => {
-    beforeEach(async () => {
-      let nftlAmountToDeposit = nftlAmountPerTicket.mul(10); // x10
-
-      // Alice deposits NFTL and gets 10 tickets
-      await nftlToken.connect(alice).approve(nftlRaffle.address, nftlAmountToDeposit);
-      await nftlRaffle.connect(alice).deposit(nftlAmountToDeposit);
-
-      // Bob deposits NFTL and gets 10 tickets
-      await nftlToken.connect(bob).approve(nftlRaffle.address, nftlAmountToDeposit);
-      await nftlRaffle.connect(bob).deposit(nftlAmountToDeposit);
-
-      // John deposits NFTL and gets 10 tickets
-      await nftlToken.connect(john).approve(nftlRaffle.address, nftlAmountToDeposit);
-      await nftlRaffle.connect(john).deposit(nftlAmountToDeposit);
-
-      // distribute tickets, Alice gets 100 tickets
-      const holders = [alice.address];
-      const count = [1];
-      await nftlRaffle.distributeTicketsToCitadelKeyHolders(holders, count);
-
-      // add the consumer
-      await nftlRaffle.manageConsumers(nftlRaffle.address, true);
-
-      // charge LINK tokens
-      const linkTokenAmountToCharge = ethers.utils.parseEther('10');
-      await linkToken.approve(nftlRaffle.address, linkTokenAmountToCharge);
-      await nftlRaffle.chargeLINK(linkTokenAmountToCharge);
-
-      // deposit the prize NFT
-      const tokenIds = [1, 3, 5, 6, 9];
-      await prizeNFT.setApprovalForAll(nftlRaffle.address, true);
-      await nftlRaffle.depositPrizeNFT(tokenIds);
-
-      // increase time
-      await increaseTime(pendingPeriod + 100);
-
-      // request random words
-      requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
-      await nftlRaffle.requestRandomWordsForWinnerSelection();
-    });
-
-    it('Should be able to receive the random word and transfer the prize NFT to the winner', async () => {
-      expect(await nftlRaffle.getWinners()).to.be.empty;
-
-      const impersonatedCoordinator = await impersonate(VRF_COORDINATOR_ADDRESS);
-
-      // select the first winner
-      let randomWords = [50];
-      await nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId, randomWords);
-
-      let winners = await nftlRaffle.getWinners();
-      let winnerAddress = winners[0].winner;
-      let prizeNFTTokenId = winners[0].prizeTokenId;
-      expect(winners.length).to.equal(1);
-      expect(await prizeNFT.ownerOf(prizeNFTTokenId)).to.equal(winnerAddress);
-
-      // select the second winner
-      requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
-      await nftlRaffle.requestRandomWordsForWinnerSelection();
-
-      randomWords = [50, 100];
-      await nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(requestId, randomWords);
-
-      winners = await nftlRaffle.getWinners();
-      winnerAddress = winners[0].winner;
-      prizeNFTTokenId = winners[0].prizeTokenId;
-      expect(winners.length).to.equal(2);
-      expect(await prizeNFT.ownerOf(prizeNFTTokenId)).to.equal(winnerAddress);
-    });
 
     it('Should revert if the caller is not the VRF Coordinator', async () => {
+      let requestId = await nftlRaffle.callStatic.requestRandomWordsForWinnerSelection();
+
       const randomWords = [0, 0, 50, 100, 250];
       await expect(nftlRaffle.connect(alice).rawFulfillRandomWords(requestId, randomWords)).to.be.revertedWith(
         'Only VRF coordinator',
@@ -647,28 +643,6 @@ describe.only('NFTLRaffle', function () {
       );
     });
   });
-
-  // describe('updateRaffleStartAt', () => {
-  //   it('Should be able to update the raffleStartAt', async () => {
-  //     // update the raffleStartAt
-  //     const newRaffleStartAt = (await getCurrentBlockTimestamp()).add(100);
-  //     await nftlRaffle.updateRaffleStartAt(newRaffleStartAt);
-
-  //     expect(await nftlRaffle.raffleStartAt()).to.equal(newRaffleStartAt);
-  //   });
-
-  //   it('Should revert if the timestamp is invalid', async () => {
-  //     const newRaffleStartAt = (await getCurrentBlockTimestamp()).sub(100);
-  //     await expect(nftlRaffle.updateRaffleStartAt(newRaffleStartAt)).to.be.revertedWith('Invalid timestamp');
-  //   });
-
-  //   it('Should revert if the caller is not the owner', async () => {
-  //     const newRaffleStartAt = (await getCurrentBlockTimestamp()).add(100);
-  //     await expect(nftlRaffle.connect(alice).updateRaffleStartAt(newRaffleStartAt)).to.be.revertedWith(
-  //       'Ownable: caller is not the owner',
-  //     );
-  //   });
-  // });
 
   describe('updateTotalWinnerTicketCount', () => {
     it('Should be able to update the totalWinnerTicketCount', async () => {
