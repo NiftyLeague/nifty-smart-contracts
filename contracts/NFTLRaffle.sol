@@ -238,10 +238,12 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
         for (uint256 i = 0; i < totalUserCount; ) {
             address user = users[i];
             uint256 userTicketCountToAssign = userDeposits[user] / NFTL_AMOUNT_FOR_TICKET;
-            ticketRangeByUser[user] = TicketRange({
-                startTicketId: currentTotalTicketCount,
-                endTicketId: currentTotalTicketCount + userTicketCountToAssign - 1
-            });
+            if (userTicketCountToAssign != 0) {
+                ticketRangeByUser[user] = TicketRange({
+                    startTicketId: currentTotalTicketCount,
+                    endTicketId: currentTotalTicketCount + userTicketCountToAssign - 1
+                });
+            }
 
             unchecked {
                 currentTotalTicketCount += userTicketCountToAssign;
