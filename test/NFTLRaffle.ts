@@ -49,7 +49,7 @@ const impersonate = async (addr: string, fund = true): Promise<Signer> => {
   return ethers.provider.getSigner(addr);
 };
 
-describe.skip('NFTLRaffle', function () {
+describe.only('NFTLRaffle', function () {
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;
   let alice: SignerWithAddress;
@@ -319,6 +319,67 @@ describe.skip('NFTLRaffle', function () {
       await expect(
         nftlRaffle.connect(alice).distributeTicketsToCitadelKeyHolders(holders, keyCount),
       ).to.be.revertedWith('Ownable: caller is not the owner');
+    });
+  });
+
+  describe('distributeTicketsToUsers', () => {
+    beforeEach(async () => {
+      // deposit tokens
+      let nftlAmountToDeposit = nftlAmountPerTicket.mul(100);
+      await nftlToken.connect(alice).approve(nftlRaffle.address, nftlAmountToDeposit);
+      await nftlRaffle.connect(alice).deposit(nftlAmountToDeposit); // 100
+    });
+
+    it('Shoud be able to distribute tickets to users', async () => {
+      // distribute tickets
+      const users = [alice.address, bob.address];
+      const ticketCount = [1, 50];
+      await nftlRaffle.distributeTicketsToUsers(users, ticketCount); // 101, 50
+
+      let aliceDepositBefore = await nftlRaffle.userDeposits(alice.address);
+      let bobDepositBefore = await nftlRaffle.userDeposits(bob.address);
+      expect(aliceDepositBefore).to.equal(nftlAmountPerTicket.mul(101));
+      expect(bobDepositBefore).to.equal(nftlAmountPerTicket.mul(50));
+
+      // Alice deposits after distributing tickets
+      let nftlAmountToDeposit = nftlAmountPerTicket.mul(2).add(nftlAmountPerTicket.div(2)); // x2.5
+      await nftlToken.connect(alice).approve(nftlRaffle.address, nftlAmountToDeposit);
+      await nftlRaffle.connect(alice).deposit(nftlAmountToDeposit); // 103.5, 50
+
+      expect(await nftlRaffle.userDeposits(alice.address)).to.equal(
+        nftlAmountPerTicket.mul(103).add(nftlAmountPerTicket.div(2)),
+      );
+      expect(await nftlRaffle.userDeposits(bob.address)).to.equal(nftlAmountPerTicket.mul(50));
+
+      // Check the user status
+      expect(await nftlRaffle.getWinners()).to.be.empty; // No winner
+      expect(await nftlRaffle.getUserCount()).to.equal(2); // Alice, Bob
+      expect(await nftlRaffle.getUserList()).to.deep.equal([alice.address, bob.address]); // Alice, Bob
+      expect(await nftlRaffle.totalTicketCount()).to.equal(0);
+    });
+
+    it('Should revert if the user params are invalid', async () => {
+      const users = [alice.address, bob.address];
+      const ticketCount = [1, 1, 1];
+      await expect(nftlRaffle.distributeTicketsToUsers(users, ticketCount)).to.be.revertedWith('Invalid params');
+    });
+
+    it('Should revert if deposit is disallowed', async () => {
+      // disallow the deposit
+      await nftlRaffle.disallowUserDeposit();
+
+      // distribute tickets
+      const users = [alice.address, bob.address];
+      const ticketCount = [1, 1, 1];
+      await expect(nftlRaffle.distributeTicketsToUsers(users, ticketCount)).to.be.revertedWith('Only deposit allowed');
+    });
+
+    it('Should revert if the coller is not the owner', async () => {
+      const users = [alice.address, bob.address];
+      const ticketCount = [1, 1];
+      await expect(nftlRaffle.connect(alice).distributeTicketsToUsers(users, ticketCount)).to.be.revertedWith(
+        'Ownable: caller is not the owner',
+      );
     });
   });
 
