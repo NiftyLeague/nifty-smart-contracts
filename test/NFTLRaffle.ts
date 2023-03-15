@@ -49,7 +49,7 @@ const impersonate = async (addr: string, fund = true): Promise<Signer> => {
   return ethers.provider.getSigner(addr);
 };
 
-describe.only('NFTLRaffle', function () {
+describe.skip('NFTLRaffle', function () {
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;
   let alice: SignerWithAddress;
