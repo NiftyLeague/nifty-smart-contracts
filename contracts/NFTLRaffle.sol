@@ -214,6 +214,32 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
         }
     }
 
+    function distributeTicketsToUsers(
+        address[] calldata _users,
+        uint256[] calldata _ticketCount
+    ) external onlyDepositAllowed onlyOwner {
+        uint256 userCount = _users.length;
+        require(userCount == _ticketCount.length, "Invalid params");
+
+        // distribute tickets to users
+        for (uint256 i = 0; i < userCount; ) {
+            address user = _users[i];
+            uint256 userTicketCountToAssign = _ticketCount[i];
+
+            // mark as if the user deposited tokens for the userTicketCountToAssign calculation in deposit() function.
+            userDeposits[user] += userTicketCountToAssign * NFTL_AMOUNT_FOR_TICKET;
+
+            // add the user if not exist
+            _userList.add(user);
+
+            emit TicketDistributed(user, userTicketCountToAssign);
+
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
     function deposit(uint256 _amount) external onlyDepositAllowed whenNotPaused {
         // burn NFTL tokens
         nftl.burnFrom(msg.sender, _amount);
