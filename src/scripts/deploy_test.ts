@@ -11,8 +11,8 @@ async function main() {
     await mockERC20.getAddress(),
     NIFTY_LEDGER_DEPLOYER,
   ]);
-  await balanceManager.deployed();
-  console.log('BalanceManager deployed to:', balanceManager.address);
+  await balanceManager.waitForDeployment();
+  console.log('BalanceManager deployed to:', await balanceManager.getAddress());
 }
 
 // We recommend this pattern to be able to use async/await everywhere
