@@ -1,8 +1,8 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { getLedgerSigner } from '../../scripts/ledger';
-import { DEGEN_ADDRESS, NIFTY_DAO_LEDGER } from '../../constants/addresses';
-import { NetworkName } from '../../types';
+import { getLedgerSigner } from '~/scripts/ledger';
+import { DEGEN_ADDRESS, NIFTY_DAO_LEDGER } from '~/constants/addresses';
+import { NetworkName } from '~/types';
 
 const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
