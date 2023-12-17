@@ -1,6 +1,6 @@
 import { config, ethers } from 'hardhat';
 import fs from 'fs';
-import { Contract } from 'ethers';
+import { type Contract } from 'ethers';
 
 const airdropData: { [address: string]: { [page: string]: number } } = JSON.parse(
   fs.readFileSync('data/mintAirdrop.json', { encoding: 'utf8' }),
@@ -13,7 +13,7 @@ const getToken = async (contractName: string) => {
   //   const token = await ethers.getContractAt(contractName, tokenAddress, signer);
   const accounts = await ethers.getSigners();
   const token = await ethers.getContractAt(contractName, tokenAddress, accounts[0]);
-  await token.deployed();
+  await token.waitForDeployment();
   return token;
 };
 
@@ -32,8 +32,8 @@ const sendTx = async (
   const amounts = Object.values(values);
   const overrides = {
     //   nonce,
-    maxPriorityFeePerGas: ethers.utils.parseUnits('3', 'gwei'),
-    maxFeePerGas: ethers.utils.parseUnits('120', 'gwei'),
+    maxPriorityFeePerGas: ethers.parseUnits('3', 'gwei'),
+    maxFeePerGas: ethers.parseUnits('120', 'gwei'),
   };
   if (ids.length === 1) {
     return comics.mint(address, ids[0], amounts[0], data, overrides);
@@ -44,7 +44,7 @@ const sendTx = async (
 
 async function main() {
   const comics = await getToken('NiftyLaunchComics');
-  const data = ethers.utils.toUtf8Bytes('Collect 6 tribes or 6 comics...?');
+  const data = ethers.toUtf8Bytes('Collect 6 tribes or 6 comics...?');
   const holders = Object.entries(airdropData);
   // let nonce = 542;
   for (const [address, v] of holders) {

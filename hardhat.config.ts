@@ -2,8 +2,10 @@ import { HardhatUserConfig, task } from 'hardhat/config';
 import '@nomicfoundation/hardhat-toolbox';
 import '@openzeppelin/hardhat-upgrades';
 import '@tenderly/hardhat-tenderly';
+import '@nomicfoundation/hardhat-ethers';
 import 'hardhat-gas-reporter';
 import 'hardhat-deploy';
+import 'tsconfig-paths/register';
 
 import { resolve } from 'path';
 import { config as dotenvConfig } from 'dotenv';
@@ -28,6 +30,10 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 
 const config: HardhatUserConfig = {
   defaultNetwork,
+  paths: {
+    sources: './src/contracts',
+    tests: './src/tests',
+  },
   solidity: {
     compilers: [
       {
@@ -39,20 +45,20 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true,
-      deploy: ['deploy/hardhat/'],
+      deploy: ['src/deploy/hardhat/'],
     },
     local: {
       url: 'http://localhost:8545',
-      deploy: ['deploy/hardhat/'],
+      deploy: ['src/deploy/hardhat/'],
     },
     goerli: {
       url: `https://goerli.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-      deploy: ['deploy/remote/'],
+      deploy: ['src/deploy/remote/'],
     },
     mainnet: {
       url: 'http://127.0.0.1:1248', // this is the RPC endpoint exposed by Frame
-      deploy: ['deploy/ledger/'],
+      deploy: ['src/deploy/ledger/'],
     },
   },
   gasReporter: {
@@ -63,13 +69,19 @@ const config: HardhatUserConfig = {
   mocha: {
     timeout: 100000000,
   },
-  etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+  verify: {
+    etherscan: {
+      apiKey: process.env.ETHERSCAN_API_KEY,
+    },
   },
   namedAccounts: {
     deployer: {
       default: 0, // here this will by default take the first account as deployer
     },
+  },
+  typechain: {
+    outDir: 'src/types/typechain',
+    target: 'ethers-v6',
   },
 };
 

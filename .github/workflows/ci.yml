@@ -11,7 +11,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16.18.1
+          node-version: 18.17.0
           cache: 'yarn'
       - name: Install dependencies
         uses: borales/actions-yarn@v4
@@ -36,7 +36,7 @@ jobs:
       - name: Check TypeScript
         uses: borales/actions-yarn@v4
         with:
-          cmd: tsc --noEmit
+          cmd: check-types
       - name: Run Hardhat tests
         uses: borales/actions-yarn@v4
         with:
@@ -47,4 +47,4 @@ jobs:
           cmd: coverage
       - name: Test contract deployment
         continue-on-error: false
-        run: npx hardhat run --network hardhat scripts/deploy_test.ts
+        run: npx hardhat run --network hardhat src/scripts/deploy_test.ts

@@ -1,26 +1,25 @@
 import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
-import { constants } from 'ethers';
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
+import { type Signer } from 'ethers';
 
-import { BURN_PERCENTAGE, DAO_PERCENTAGE, TREASURY_PERCENTAGE } from '../constants/itemsSale';
-import type { NiftyItemSale, NiftyEquipment, MockERC20 } from '../typechain-types';
+import { BURN_PERCENTAGE, DAO_PERCENTAGE, TREASURY_PERCENTAGE } from '~/constants/itemsSale';
+import type { NiftyItemSale, NiftyEquipment, MockERC20 } from '~/types/typechain';
 
 describe('NiftySale', function () {
-  let accounts: SignerWithAddress[];
-  let deployer: SignerWithAddress;
-  let alice: SignerWithAddress;
-  let bob: SignerWithAddress;
-  let treasury: SignerWithAddress;
-  let dao: SignerWithAddress;
+  let accounts: Signer[];
+  let deployer: Signer;
+  let alice: Signer;
+  let bob: Signer;
+  let treasury: Signer;
+  let dao: Signer;
   let itemSale: NiftyItemSale;
   let items: NiftyEquipment;
   let nftl: MockERC20;
 
-  const ONE_ETHER = ethers.utils.parseEther('1');
+  const ONE_ETHER = ethers.parseEther('1');
 
   const toRole = (role: string) => {
-    return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(role));
+    return ethers.keccak256(ethers.toUtf8Bytes(role));
   };
 
   beforeEach(async () => {
@@ -29,32 +28,36 @@ describe('NiftySale', function () {
 
     // Deploy NiftyLaunchComics contracts
     const MockERC20 = await ethers.getContractFactory('MockERC20');
-    nftl = await MockERC20.deploy();
+    nftl = (await MockERC20.deploy()) as unknown as MockERC20;
 
     // Deploy NiftyItems contract
     const NiftyItems = await ethers.getContractFactory('NiftyEquipment');
-    items = await NiftyItems.deploy('Nifty Items', 'NLT', 'https://api.nifty-league.com/items/');
+    items = (await NiftyItems.deploy(
+      'Nifty Items',
+      'NLT',
+      'https://api.nifty-league.com/items/',
+    )) as unknown as NiftyEquipment;
 
     // Deploy NiftySale contract
     const NiftyItemSale = await ethers.getContractFactory('NiftyItemSale');
     itemSale = (await upgrades.deployProxy(NiftyItemSale, [
-      items.address,
-      nftl.address,
-      treasury.address,
-      dao.address,
+      await items.getAddress(),
+      await nftl.getAddress(),
+      await treasury.getAddress(),
+      await dao.getAddress(),
       BURN_PERCENTAGE,
       TREASURY_PERCENTAGE,
       DAO_PERCENTAGE,
-    ])) as NiftyItemSale;
+    ])) as unknown as NiftyItemSale;
 
     // grant "MINTER_ROLE" of "NiftyItems" contracts to "NiftyItemSale" contract
     const MINTER_ROLE = toRole('MINTER_ROLE');
-    await items.grantRole(MINTER_ROLE, itemSale.address);
+    await items.grantRole(MINTER_ROLE, await itemSale.getAddress());
 
     // transfer NFTL tokens to the users
-    await nftl.mint(deployer.address, ONE_ETHER.mul(10000000));
-    await nftl.transfer(alice.address, ONE_ETHER.mul(1000000)); // 1_000_000 NFTL
-    await nftl.transfer(bob.address, ONE_ETHER.mul(1000000)); // 1_000_000 NFTL
+    await nftl.mint(await deployer.getAddress(), ONE_ETHER * 10000000n);
+    await nftl.transfer(await alice.getAddress(), ONE_ETHER * 1000000n); // 1_000_000 NFTL
+    await nftl.transfer(await bob.getAddress(), ONE_ETHER * 1000000n); // 1_000_000 NFTL
   });
 
   describe('initialize', () => {
@@ -67,10 +70,10 @@ describe('NiftySale', function () {
       const NiftyItemSale = await ethers.getContractFactory('NiftyItemSale');
       await expect(
         upgrades.deployProxy(NiftyItemSale, [
-          items.address,
-          nftl.address,
-          treasury.address,
-          dao.address,
+          await items.getAddress(),
+          await nftl.getAddress(),
+          await treasury.getAddress(),
+          await dao.getAddress(),
           newBurnPercentage,
           newTreasuryPercentage,
           newDAOPercentage,
@@ -82,7 +85,7 @@ describe('NiftySale', function () {
   describe('setItemPrices', () => {
     it('Should be able to set itme prices', async () => {
       const tokenIds = [7, 8, 9];
-      const tokenPrices = [ONE_ETHER.mul(100), ONE_ETHER.mul(200), ONE_ETHER.mul(300)];
+      const tokenPrices = [ONE_ETHER * 100n, ONE_ETHER * 200n, ONE_ETHER * 300n];
 
       expect(await itemSale.itemPrices(tokenIds[0])).to.equal(0);
       expect(await itemSale.itemPrices(tokenIds[1])).to.equal(0);
@@ -99,7 +102,7 @@ describe('NiftySale', function () {
 
     it('Reverts if the params are mismatched', async () => {
       const tokenIds = [7, 8, 9, 10];
-      const tokenPrices = [ONE_ETHER.mul(100), ONE_ETHER.mul(200), ONE_ETHER.mul(300)];
+      const tokenPrices = [ONE_ETHER * 100n, ONE_ETHER * 200n, ONE_ETHER * 300n];
 
       // set item prices
       await expect(itemSale.setItemPrices(tokenIds, tokenPrices)).to.be.revertedWith('Mismatched params');
@@ -107,7 +110,7 @@ describe('NiftySale', function () {
 
     it('Reverts if token ID < 7', async () => {
       const tokenIds = [6, 8, 9];
-      const tokenPrices = [ONE_ETHER.mul(100), ONE_ETHER.mul(200), ONE_ETHER.mul(300)];
+      const tokenPrices = [ONE_ETHER * 100n, ONE_ETHER * 200n, ONE_ETHER * 300n];
 
       // set item prices
       await expect(itemSale.setItemPrices(tokenIds, tokenPrices)).to.be.revertedWith('Token ID less than 7');
@@ -115,7 +118,7 @@ describe('NiftySale', function () {
 
     it('Reverts if token price is less thatn 1 NFTL', async () => {
       const tokenIds = [7, 8, 9];
-      const tokenPrices = [ONE_ETHER.mul(100), 200, ONE_ETHER.mul(300)];
+      const tokenPrices = [ONE_ETHER * 100n, 200n, ONE_ETHER * 300n];
 
       // set item prices
       await expect(itemSale.setItemPrices(tokenIds, tokenPrices)).to.be.revertedWith('Price less than 1 NFTL');
@@ -125,7 +128,7 @@ describe('NiftySale', function () {
   describe('setItemMaxCounts', () => {
     it('Should be able to set item max counts', async () => {
       const tokenIds = [7, 8, 9];
-      const tokenMaxCount = [100, 200, 300];
+      const tokenMaxCount = [100n, 200n, 300n];
 
       expect(await itemSale.itemMaxCounts(tokenIds[0])).to.equal(0);
       expect(await itemSale.itemMaxCounts(tokenIds[1])).to.equal(0);
@@ -142,7 +145,7 @@ describe('NiftySale', function () {
 
     it('Reverts if the params are mismatched', async () => {
       const tokenIds = [7, 8, 9, 10];
-      const tokenMaxCount = [100, 200, 300];
+      const tokenMaxCount = [100n, 200n, 300n];
 
       // set item prices
       await expect(itemSale.setItemMaxCounts(tokenIds, tokenMaxCount)).to.be.revertedWith('Mismatched params');
@@ -150,7 +153,7 @@ describe('NiftySale', function () {
 
     it('Reverts if tokenID < 7', async () => {
       const tokenIds = [2, 8, 9];
-      const tokenMaxCount = [100, 200, 300];
+      const tokenMaxCount = [100n, 200n, 300n];
 
       // set item prices
       await expect(itemSale.setItemMaxCounts(tokenIds, tokenMaxCount)).to.be.revertedWith('Token ID less than 7');
@@ -161,7 +164,7 @@ describe('NiftySale', function () {
       const tokenMaxCount = [1, 2, 3];
 
       // mint some items
-      await items.mintBatch(alice.address, tokenIds, [10, 20, 30], constants.HashZero);
+      await items.mintBatch(await alice.getAddress(), tokenIds, [10, 20, 30], ethers.ZeroHash);
 
       // set item prices
       await expect(itemSale.setItemMaxCounts(tokenIds, tokenMaxCount)).to.be.revertedWith(
@@ -173,7 +176,7 @@ describe('NiftySale', function () {
   describe('purchaseItems', () => {
     beforeEach(async () => {
       const tokenIds = [7, 8, 9];
-      const tokenPrices = [ONE_ETHER.mul(100), ONE_ETHER.mul(200), ONE_ETHER.mul(300)];
+      const tokenPrices = [ONE_ETHER * 100n, ONE_ETHER * 200n, ONE_ETHER * 300n];
       const tokenMaxCount = [100, 200, 300];
 
       // set item prices
@@ -185,31 +188,31 @@ describe('NiftySale', function () {
 
     it('Should be able to purcahse items, no item limit', async () => {
       const tokenIds = [7, 8, 9];
-      const tokenAmounts = [1, 0, 5];
+      const tokenAmounts = [1n, 0n, 5n];
 
-      expect(await items.balanceOf(alice.address, tokenIds[0])).to.equal(0);
-      expect(await items.balanceOf(alice.address, tokenIds[1])).to.equal(0);
-      expect(await items.balanceOf(alice.address, tokenIds[2])).to.equal(0);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[0])).to.equal(0);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[1])).to.equal(0);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[2])).to.equal(0);
 
       // get the old NFTL balance
-      const aliceNFTLBalanceBefore = await nftl.balanceOf(alice.address);
+      const aliceNFTLBalanceBefore = await nftl.balanceOf(await alice.getAddress());
 
       // purchase items
-      await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
+      await nftl.connect(alice).approve(await itemSale.getAddress(), aliceNFTLBalanceBefore);
       await itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts);
 
       // get the total price
-      let totalPrice = ONE_ETHER.mul('0');
+      let totalPrice = ONE_ETHER * 0n;
       for (let i = 0; i < tokenIds.length; i++) {
-        totalPrice = totalPrice.add((await itemSale.itemPrices(tokenIds[i])).mul(tokenAmounts[i]));
+        totalPrice = totalPrice + (await itemSale.itemPrices(tokenIds[i])) * tokenAmounts[i];
       }
 
       // check balances
-      const aliceNFTLBalanceAfter = await nftl.balanceOf(alice.address);
-      expect(aliceNFTLBalanceAfter).to.equal(aliceNFTLBalanceBefore.sub(totalPrice));
-      expect(await items.balanceOf(alice.address, tokenIds[0])).to.equal(tokenAmounts[0]);
-      expect(await items.balanceOf(alice.address, tokenIds[1])).to.equal(tokenAmounts[1]);
-      expect(await items.balanceOf(alice.address, tokenIds[2])).to.equal(tokenAmounts[2]);
+      const aliceNFTLBalanceAfter = await nftl.balanceOf(await alice.getAddress());
+      expect(aliceNFTLBalanceAfter).to.equal(aliceNFTLBalanceBefore - totalPrice);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[0])).to.equal(tokenAmounts[0]);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[1])).to.equal(tokenAmounts[1]);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[2])).to.equal(tokenAmounts[2]);
     });
 
     it('Reverts if params are mismatched, no item limit', async () => {
@@ -217,10 +220,10 @@ describe('NiftySale', function () {
       const tokenAmounts = [1, 0, 5];
 
       // get the old NFTL balance
-      const aliceNFTLBalanceBefore = await nftl.balanceOf(alice.address);
+      const aliceNFTLBalanceBefore = await nftl.balanceOf(await alice.getAddress());
 
       // purchase items
-      await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
+      await nftl.connect(alice).approve(await itemSale.getAddress(), aliceNFTLBalanceBefore);
       await expect(itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts)).to.be.revertedWith(
         'Mismatched params',
       );
@@ -231,10 +234,10 @@ describe('NiftySale', function () {
       const tokenAmounts = [1, 0, 5, 10];
 
       // get the old NFTL balance
-      const aliceNFTLBalanceBefore = await nftl.balanceOf(alice.address);
+      const aliceNFTLBalanceBefore = await nftl.balanceOf(await alice.getAddress());
 
       // purchase items
-      await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
+      await nftl.connect(alice).approve(await itemSale.getAddress(), aliceNFTLBalanceBefore);
       await expect(itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts)).to.be.revertedWith('Zero price');
     });
 
@@ -243,10 +246,10 @@ describe('NiftySale', function () {
       const tokenAmounts = [1, 0, 301];
 
       // get the old NFTL balance
-      const aliceNFTLBalanceBefore = await nftl.balanceOf(alice.address);
+      const aliceNFTLBalanceBefore = await nftl.balanceOf(await alice.getAddress());
 
       // purchase items
-      await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
+      await nftl.connect(alice).approve(await itemSale.getAddress(), aliceNFTLBalanceBefore);
       await expect(itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts)).to.be.revertedWith(
         'Remaining count overflow',
       );
@@ -254,16 +257,16 @@ describe('NiftySale', function () {
 
     it('Reverts if the item price was set, the item max count wasn not set, and token amount to purcahse is exceeded, no item limit', async () => {
       // add additiaion item price
-      await itemSale.setItemPrices([10], [ONE_ETHER.mul(100)]);
+      await itemSale.setItemPrices([10], [ONE_ETHER * 100n]);
 
       const tokenIds = [7, 8, 9, 10];
       const tokenAmounts = [1, 0, 301, 10];
 
       // get the old NFTL balance
-      const aliceNFTLBalanceBefore = await nftl.balanceOf(alice.address);
+      const aliceNFTLBalanceBefore = await nftl.balanceOf(await alice.getAddress());
 
       // purchase items
-      await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
+      await nftl.connect(alice).approve(await itemSale.getAddress(), aliceNFTLBalanceBefore);
       await expect(itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts)).to.be.revertedWith(
         'Remaining count overflow',
       );
@@ -277,31 +280,31 @@ describe('NiftySale', function () {
       await itemSale.setItemLimit(tokenId, limitCount);
 
       const tokenIds = [7, 8, 9];
-      const tokenAmounts = [1, 0, 5];
+      const tokenAmounts = [1n, 0n, 5n];
 
-      expect(await items.balanceOf(alice.address, tokenIds[0])).to.equal(0);
-      expect(await items.balanceOf(alice.address, tokenIds[1])).to.equal(0);
-      expect(await items.balanceOf(alice.address, tokenIds[2])).to.equal(0);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[0])).to.equal(0);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[1])).to.equal(0);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[2])).to.equal(0);
 
       // get the old NFTL balance
-      const aliceNFTLBalanceBefore = await nftl.balanceOf(alice.address);
+      const aliceNFTLBalanceBefore = await nftl.balanceOf(await alice.getAddress());
 
       // purchase items
-      await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
+      await nftl.connect(alice).approve(await itemSale.getAddress(), aliceNFTLBalanceBefore);
       await itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts);
 
       // get the total price
-      let totalPrice = ONE_ETHER.mul('0');
+      let totalPrice = ONE_ETHER * 0n;
       for (let i = 0; i < tokenIds.length; i++) {
-        totalPrice = totalPrice.add((await itemSale.itemPrices(tokenIds[i])).mul(tokenAmounts[i]));
+        totalPrice = totalPrice + (await itemSale.itemPrices(tokenIds[i])) * tokenAmounts[i];
       }
 
       // check balances
-      const aliceNFTLBalanceAfter = await nftl.balanceOf(alice.address);
-      expect(aliceNFTLBalanceAfter).to.equal(aliceNFTLBalanceBefore.sub(totalPrice));
-      expect(await items.balanceOf(alice.address, tokenIds[0])).to.equal(tokenAmounts[0]);
-      expect(await items.balanceOf(alice.address, tokenIds[1])).to.equal(tokenAmounts[1]);
-      expect(await items.balanceOf(alice.address, tokenIds[2])).to.equal(tokenAmounts[2]);
+      const aliceNFTLBalanceAfter = await nftl.balanceOf(await alice.getAddress());
+      expect(aliceNFTLBalanceAfter).to.equal(aliceNFTLBalanceBefore - totalPrice);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[0])).to.equal(tokenAmounts[0]);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[1])).to.equal(tokenAmounts[1]);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[2])).to.equal(tokenAmounts[2]);
     });
 
     it('Revert if item limit > 0 and the item count to purcahse is valid', async () => {
@@ -314,15 +317,15 @@ describe('NiftySale', function () {
       const tokenIds = [7, 8, 9];
       const tokenAmounts = [2, 0, 5];
 
-      expect(await items.balanceOf(alice.address, tokenIds[0])).to.equal(0);
-      expect(await items.balanceOf(alice.address, tokenIds[1])).to.equal(0);
-      expect(await items.balanceOf(alice.address, tokenIds[2])).to.equal(0);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[0])).to.equal(0);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[1])).to.equal(0);
+      expect(await items.balanceOf(await alice.getAddress(), tokenIds[2])).to.equal(0);
 
       // get the old NFTL balance
-      const aliceNFTLBalanceBefore = await nftl.balanceOf(alice.address);
+      const aliceNFTLBalanceBefore = await nftl.balanceOf(await alice.getAddress());
 
       // purchase items
-      await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
+      await nftl.connect(alice).approve(await itemSale.getAddress(), aliceNFTLBalanceBefore);
       await expect(itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts)).to.be.revertedWith(
         'Item limit overflow',
       );
@@ -363,7 +366,7 @@ describe('NiftySale', function () {
   describe('getRemainingItemCount', () => {
     beforeEach(async () => {
       const tokenIds = [7, 8, 9];
-      const tokenPrices = [ONE_ETHER.mul(100), ONE_ETHER.mul(200), ONE_ETHER.mul(300)];
+      const tokenPrices = [ONE_ETHER * 100n, ONE_ETHER * 200n, ONE_ETHER * 300n];
       const tokenMaxCount = [100, 0, 300];
 
       // set item prices
@@ -383,10 +386,10 @@ describe('NiftySale', function () {
       expect(await itemSale.getRemainingItemCount(tokenIds[2])).to.equal(300);
 
       // get the old NFTL balance
-      const aliceNFTLBalanceBefore = await nftl.balanceOf(alice.address);
+      const aliceNFTLBalanceBefore = await nftl.balanceOf(await alice.getAddress());
 
       // purchase items
-      await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
+      await nftl.connect(alice).approve(await itemSale.getAddress(), aliceNFTLBalanceBefore);
       await itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts);
 
       // check new remaining item count
@@ -415,7 +418,7 @@ describe('NiftySale', function () {
   describe('withdraw', () => {
     beforeEach(async () => {
       const tokenIds = [7, 8, 9];
-      const tokenPrices = [ONE_ETHER.mul(100), ONE_ETHER.mul(200), ONE_ETHER.mul(300)];
+      const tokenPrices = [ONE_ETHER * 100n, ONE_ETHER * 200n, ONE_ETHER * 300n];
       const tokenAmounts = [1, 0, 5];
       const tokenMaxCount = [100, 200, 300];
 
@@ -426,34 +429,34 @@ describe('NiftySale', function () {
       await itemSale.setItemMaxCounts(tokenIds, tokenMaxCount);
 
       // purchase items
-      const aliceNFTLBalanceBefore = await nftl.balanceOf(alice.address);
-      await nftl.connect(alice).approve(itemSale.address, aliceNFTLBalanceBefore);
+      const aliceNFTLBalanceBefore = await nftl.balanceOf(await alice.getAddress());
+      await nftl.connect(alice).approve(await itemSale.getAddress(), aliceNFTLBalanceBefore);
       await itemSale.connect(alice).purchaseItems(tokenIds, tokenAmounts);
     });
 
     it('Should withdraw NFTL tokens', async () => {
       const tokenIds = [7, 8, 9];
-      const tokenAmounts = [1, 0, 5];
+      const tokenAmounts = [1n, 0n, 5n];
 
       // get the NFTL token total supply
       const totalSupply = await nftl.totalSupply();
 
-      expect(await nftl.balanceOf(treasury.address)).to.equal(0);
-      expect(await nftl.balanceOf(dao.address)).to.equal(0);
+      expect(await nftl.balanceOf(await treasury.getAddress())).to.equal(0);
+      expect(await nftl.balanceOf(await dao.getAddress())).to.equal(0);
 
       // get the total price
-      let totalPrice = ONE_ETHER.mul('0');
+      let totalPrice = ONE_ETHER * 0n;
       for (let i = 0; i < tokenIds.length; i++) {
-        totalPrice = totalPrice.add((await itemSale.itemPrices(tokenIds[i])).mul(tokenAmounts[i]));
+        totalPrice = totalPrice + (await itemSale.itemPrices(tokenIds[i])) * tokenAmounts[i];
       }
 
       // withdraw NFTL tokens
       await itemSale.withdraw();
 
       // check the balances
-      expect(await nftl.totalSupply()).to.equal(totalSupply.sub(totalPrice.mul(BURN_PERCENTAGE).div(1000)));
-      expect(await nftl.balanceOf(treasury.address)).to.equal(totalPrice.mul(TREASURY_PERCENTAGE).div(1000));
-      expect(await nftl.balanceOf(dao.address)).to.equal(totalPrice.mul(DAO_PERCENTAGE).div(1000));
+      expect(await nftl.totalSupply()).to.equal((totalSupply - totalPrice * BURN_PERCENTAGE) / 1000n);
+      expect(await nftl.balanceOf(await treasury.getAddress())).to.equal((totalPrice * TREASURY_PERCENTAGE) / 1000n);
+      expect(await nftl.balanceOf(await dao.getAddress())).to.equal((totalPrice * DAO_PERCENTAGE) / 1000n);
     });
 
     it('Reverts if the params are mismatched', async () => {});

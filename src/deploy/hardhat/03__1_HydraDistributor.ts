@@ -1,13 +1,15 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
+import { NIFTY_DAO_LEDGER } from '~/constants/addresses';
 
-const STARK_CONTRACT_ADDRESS = '0x7917eDb51ecD6CdB3F9854c3cc593F33de10c623';
-
-const NiftyItemL2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
-  await deploy('NiftyItemL2', {
+  // get contracts
+  const MockERC721 = await hre.deployments.get('MockERC721');
+
+  await deploy('HydraDistributor', {
     from: deployer,
     args: [],
     log: true,
@@ -17,11 +19,11 @@ const NiftyItemL2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
       execute: {
         init: {
           methodName: 'initialize',
-          args: [STARK_CONTRACT_ADDRESS],
+          args: [MockERC721.address, NIFTY_DAO_LEDGER],
         },
       },
     },
   });
 };
-module.exports = NiftyItemL2;
-NiftyItemL2.tags = ['NiftyItemL2'];
+module.exports = deployHydraDistributor;
+deployHydraDistributor.tags = ['HydraDistributor'];
