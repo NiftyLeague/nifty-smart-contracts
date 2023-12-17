@@ -9,7 +9,6 @@ package-lock.json
 cache
 artifacts
 typechain
-typechain-types
 deployments/localhost
 deployments.json
 

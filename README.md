@@ -35,14 +35,14 @@ npx hardhat node
 npx hardhat help
 REPORT_GAS=true npx hardhat test
 npx hardhat coverage
-npx hardhat run scripts/deploy.ts
-TS_NODE_FILES=true npx ts-node scripts/deploy.ts
+npx hardhat run src/scripts/deploy.ts
+TS_NODE_FILES=true npx ts-node src/scripts/deploy.ts
 npx eslint '**/*.{js,ts}'
 npx eslint '**/*.{js,ts}' --fix
 npx prettier '**/*.{json,sol,md}' --check
 npx prettier '**/*.{json,sol,md}' --write
-npx solhint 'contracts/**/*.sol'
-npx solhint 'contracts/**/*.sol' --fix
+npx solhint 'src/contracts/**/*.sol'
+npx solhint 'src/contracts/**/*.sol' --fix
 ```
 
 ## Etherscan verification
@@ -52,7 +52,7 @@ To try out Etherscan verification, you first need to deploy a contract to an Eth
 In this project, copy the .env.example file to a file named .env, and then edit it to fill in the details. Enter your Etherscan API key, your Ropsten node URL (eg from Alchemy), and the private key of the account which will send the deployment transaction. With a valid .env file in place, first deploy your contract:
 
 ```shell
-hardhat run --network ropsten scripts/sample-script.ts
+hardhat run --network ropsten src/scripts/sample-script.ts
 ```
 
 Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:

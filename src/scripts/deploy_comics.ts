@@ -6,10 +6,9 @@
 import { config, ethers, network, tenderly, run } from 'hardhat';
 import chalk from 'chalk';
 import fs from 'fs';
-import { BigNumber } from '@ethersproject/bignumber';
+import { NetworkName } from '~/types';
 import { abiEncodeArgs, tenderlyVerify } from './utils';
 import { getLedgerSigner } from './ledger';
-import { NetworkName } from '../types';
 
 const targetNetwork = network.name as NetworkName;
 
@@ -22,26 +21,26 @@ const deploy = async (contractName: string, _args: unknown[] = [], overrides = {
   const contractFactory = await ethers.getContractFactory(contractName, args);
   const deployedContract = await contractFactory.deploy(...contractArgs, overrides);
   const encoded = abiEncodeArgs(deployedContract, contractArgs);
-  fs.writeFileSync(`${config.paths.artifacts}/${contractName}.address`, deployedContract.address);
+  const deployedContractAddress = await deployedContract.getAddress();
+  fs.writeFileSync(`${config.paths.artifacts}/${contractName}.address`, deployedContractAddress);
   let extraGasInfo = '';
-  if (deployedContract && deployedContract.deployTransaction) {
+  const deployTransaction = await deployedContract.deploymentTransaction();
+  if (deployedContract && deployTransaction) {
     // wait for 5 confirmations for byte data to populate
-    await deployedContract.deployTransaction.wait(5);
-    const gasUsed = deployedContract.deployTransaction.gasLimit.mul(
-      deployedContract.deployTransaction.gasPrice as BigNumber,
-    );
-    extraGasInfo = `${ethers.utils.formatEther(gasUsed)} ETH, tx hash ${deployedContract.deployTransaction.hash}`;
+    await deployTransaction.wait(5);
+    const gasUsed = deployTransaction.gasLimit * deployTransaction.gasPrice;
+    extraGasInfo = `${ethers.formatEther(gasUsed)} ETH, tx hash ${deployTransaction.hash}`;
   }
 
-  console.log(' 📄', chalk.cyan(contractName), 'deployed to:', chalk.magenta(deployedContract.address));
+  console.log(' 📄', chalk.cyan(contractName), 'deployed to:', chalk.magenta(deployedContractAddress));
   console.log(' ⛽', chalk.grey(extraGasInfo));
 
   await tenderly.persistArtifacts({
     name: contractName,
-    address: deployedContract.address,
+    address: deployedContractAddress,
   });
 
-  await deployedContract.deployed();
+  await deployedContract.waitForDeployment();
 
   if (!encoded || encoded.length <= 2) return deployedContract;
   fs.writeFileSync(`${config.paths.artifacts}/${contractName}.args`, encoded.slice(2));
@@ -59,14 +58,15 @@ async function main() {
   // We get the contract to deploy
   const uri = `https://api.nifty-league.com/${targetNetwork}/launch-comics/{id}`;
   const comics = await deploy('NiftyLaunchComics', [uri]);
+  const comicsAddress = await comics.getAddress();
 
   await tenderlyVerify({
     contractName: 'NiftyLaunchComics',
-    contractAddress: comics.address,
+    contractAddress: comicsAddress,
   });
 
-  console.log(chalk.blue(` 📁 Attempting etherscan verification of ${comics.address} on ${targetNetwork}`));
-  await run('verify:verify', { address: comics.address, constructorArguments: [uri] });
+  console.log(chalk.blue(` 📁 Attempting etherscan verification of ${comicsAddress} on ${targetNetwork}`));
+  await run('verify:verify', { address: comicsAddress, constructorArguments: [uri] });
 }
 
 // We recommend this pattern to be able to use async/await everywhere

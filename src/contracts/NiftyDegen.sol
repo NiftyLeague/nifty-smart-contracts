@@ -6,8 +6,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "./NameableCharacter.sol";
 import "./AllowedColorsStorage.sol";
 
-import "hardhat/console.sol";
-
 /**
  * @title NiftyDegen NFT (The OG NFTs of the Nifty League on Ethereum)
  * @dev Extends NameableCharacter and NiftyLeagueCharacter (ERC721)
