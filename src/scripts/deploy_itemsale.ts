@@ -4,16 +4,15 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 import * as dotenv from 'dotenv';
-
 import { config, ethers, network, tenderly, run, upgrades } from 'hardhat';
 import chalk from 'chalk';
 import fs from 'fs';
-import { BigNumber } from '@ethersproject/bignumber';
+
+import { NetworkName } from '~/types';
+import { NFTL_TOKEN_ADDRESS, NIFTY_DAO_SAFE, NIFTY_ITEM_L2_ADDRESS, NIFTY_TEAM_SAFE } from '~/constants/addresses';
+import { BURN_PERCENTAGE, DAO_PERCENTAGE, TREASURY_PERCENTAGE } from '~/constants/itemsSale';
 import { abiEncodeArgs, tenderlyVerify } from './utils';
 import { getLedgerSigner } from './ledger';
-import { NFTL_TOKEN_ADDRESS, NIFTY_DAO_SAFE, NIFTY_ITEM_L2_ADDRESS, NIFTY_TEAM_SAFE } from '../constants/addresses';
-import { BURN_PERCENTAGE, DAO_PERCENTAGE, TREASURY_PERCENTAGE } from '../constants/itemsSale';
-import { NetworkName } from '../types';
 
 dotenv.config();
 
@@ -35,31 +34,34 @@ const deploy = async (contractName: string, _args: unknown[] = [], contractType:
   }
 
   let extraGasInfo = '';
-  if (deployedContract && deployedContract.deployTransaction) {
+  const deployTransaction = await deployedContract.deploymentTransaction();
+  if (deployedContract && deployTransaction) {
     // wait for 5 confirmations for byte data to populate
-    await deployedContract.deployTransaction.wait(5);
-    const gasUsed = deployedContract.deployTransaction.gasLimit.mul(
-      deployedContract.deployTransaction.gasPrice as BigNumber,
-    );
-    extraGasInfo = `${ethers.utils.formatEther(gasUsed)} ETH, tx hash ${deployedContract.deployTransaction.hash}`;
+    await deployTransaction.wait(5);
+    const gasUsed = deployTransaction.gasLimit * deployTransaction.gasPrice;
+    extraGasInfo = `${ethers.formatEther(gasUsed)} ETH, tx hash ${deployTransaction.hash}`;
   }
-  fs.writeFileSync(`${config.paths.artifacts}/${contractName}.address`, deployedContract.address);
+  const deployedContractAddress = await deployedContract.getAddress();
+  fs.writeFileSync(`${config.paths.artifacts}/${contractName}.address`, deployedContractAddress);
 
-  console.log(' 📄', chalk.cyan(contractName), 'deployed to:', chalk.magenta(deployedContract.address));
+  console.log(' 📄', chalk.cyan(contractName), 'deployed to:', chalk.magenta(deployedContractAddress));
   console.log(' ⛽', chalk.grey(extraGasInfo));
 
   await tenderly.persistArtifacts({
     name: contractName,
-    address: deployedContract.address,
+    address: deployedContractAddress,
   });
 
-  await deployedContract.deployed();
+  await deployedContract.waitForDeployment();
 
   let encoded;
   if (contractType == 0) {
     encoded = abiEncodeArgs(deployedContract, contractArgs, contractType);
   } else {
-    const impl = await (await upgrades.admin.getInstance()).getProxyImplementation(deployedContract.address);
+    // TODO: verify this still works
+    const implementationAddress = await upgrades.erc1967.getImplementationAddress(deployedContractAddress);
+    const impl = await ethers.getContractAt(contractName, implementationAddress);
+    // const impl = await (await upgrades.admin.getInstance()).getProxyImplementation(deployedContractAddress);
     encoded = abiEncodeArgs(impl, contractArgs, contractType);
   }
 
@@ -90,15 +92,16 @@ async function main() {
     [items, nftl, treasury, dao, burnPercentage, treasuryPercentage, daoPercentage],
     1,
   );
+  const itemSaleAddress = await itemSale.getAddress();
 
   // Verify the contracts
   await tenderlyVerify({
     contractName: 'NiftyItemSale',
-    contractAddress: itemSale.address,
+    contractAddress: itemSaleAddress,
   });
-  console.log(chalk.blue(` 📁 Attempting etherscan verification of ${itemSale.address} on ${targetNetwork}`));
+  console.log(chalk.blue(` 📁 Attempting etherscan verification of ${itemSaleAddress} on ${targetNetwork}`));
   await run('verify:verify', {
-    address: itemSale.address,
+    address: itemSaleAddress,
     constructorArguments: [items, nftl, treasury, dao, burnPercentage, treasuryPercentage, daoPercentage],
     contract: 'contracts/NiftyItemSale.sol:NiftyItemSale',
   });

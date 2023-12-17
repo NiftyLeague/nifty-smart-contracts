@@ -1,6 +1,6 @@
 module.exports = {
   // Type check TypeScript files
-  '**/*.ts': () => 'yarn tsc --noEmit',
+  '**/*.ts': () => 'npx hardhat test --typecheck',
 
   // Lint then format TypeScript and JavaScript files
   '**/*.(ts|js)': filenames => [
@@ -12,5 +12,5 @@ module.exports = {
   '**/*.(md|json)': filenames => `yarn prettier --write ${filenames.join(' ')}`,
 
   // Lint then formatSolidity
-  '**/*.sol': filenames => [`yarn solhint ${filenames.join(' ')}`, `yarn prettier --write ${filenames.join(' ')}`],
+  '**/*.sol': filenames => [`yarn solhint ${filenames.join(' ')}`],
 };

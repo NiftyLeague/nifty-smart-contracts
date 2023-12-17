@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { BALANCE_MANAGER_MAINTAINER } from '../../constants/addresses';
+import { BALANCE_MANAGER_MAINTAINER } from '~/constants/addresses';
 
 const deployBalanceManager: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;

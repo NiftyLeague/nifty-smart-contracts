@@ -1,12 +1,8 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { getLedgerSigner } from '../../scripts/ledger';
-import { NFTL_TOKEN_ADDRESS, DEGEN_ADDRESS, VRF_COORDINATOR_ADDRESS } from '../../constants/addresses';
-import { NetworkName } from '../../types';
-import { config as dotenvConfig } from 'dotenv';
-import path from 'path';
-
-dotenvConfig({ path: path.resolve(__dirname, '../.env') });
+import { getLedgerSigner } from '~/scripts/ledger';
+import { NFTL_TOKEN_ADDRESS, DEGEN_ADDRESS, VRF_COORDINATOR_ADDRESS } from '~/constants/addresses';
+import { NetworkName } from '~/types';
 
 const deployNFTLRaffle: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;

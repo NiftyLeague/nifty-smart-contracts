@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { NFTL_TOKEN_ADDRESS, BALANCE_MANAGER_MAINTAINER } from '../../constants/addresses';
-import { NetworkName } from '../../types';
+import { NFTL_TOKEN_ADDRESS, BALANCE_MANAGER_MAINTAINER } from '~/constants/addresses';
+import { NetworkName } from '~/types';
 
 const deployBalanceManager = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;

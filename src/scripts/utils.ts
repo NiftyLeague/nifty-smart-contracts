@@ -1,8 +1,8 @@
 import { ethers, network, tenderly } from 'hardhat';
-import { Contract } from '@ethersproject/contracts';
+import { type BaseContract } from 'ethers';
 import chalk from 'chalk';
 import R from 'ramda';
-import { NetworkName } from '../types';
+import { NetworkName } from '~/types';
 
 const targetNetwork = network.name as NetworkName;
 
@@ -36,16 +36,17 @@ export const tenderlyVerify = async ({
 // abi encodes contract arguments
 // useful when you want to manually verify the contracts
 // for example, on Etherscan
-export const abiEncodeArgs = (deployed: Contract, contractArgs: unknown[], contractType = 0) => {
+export const abiEncodeArgs = (deployed: BaseContract, contractArgs: unknown[], contractType = 0) => {
   // not writing abi encoded args if this does not pass
   if (!contractArgs || !deployed || !R.hasPath(['interface', 'deploy'], deployed)) {
     return '';
   }
   let encoded;
   if (contractType == 0) {
-    encoded = ethers.utils.defaultAbiCoder.encode(deployed.interface.deploy.inputs, contractArgs);
+    encoded = ethers.AbiCoder.defaultAbiCoder().encode(deployed.interface.deploy.inputs, contractArgs);
   } else {
-    encoded = ethers.utils.defaultAbiCoder.encode(deployed.interface.functions['initialize'].inputs, contractArgs);
+    const init = deployed.interface.getFunction('initialize');
+    if (init) encoded = ethers.AbiCoder.defaultAbiCoder().encode(init.inputs, contractArgs);
   }
   return encoded;
 };
