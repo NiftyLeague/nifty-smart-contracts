@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16.18.1
+          node-version: 18.17.0
           cache: 'yarn'
       - name: Install dependencies
         uses: borales/actions-yarn@v4
@@ -28,8 +28,8 @@ jobs:
         uses: crytic/slither-action@v0.2.0
         id: slither
         with:
-          node-version: 16.18.1
-          target: 'contracts/'
+          node-version: 18.17.0
+          target: 'src/contracts/'
           sarif: results.sarif
           fail-on: none
       - name: Upload SARIF file
