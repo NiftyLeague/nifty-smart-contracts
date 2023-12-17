@@ -13,7 +13,7 @@ const getToken = async (contractName: string) => {
   //   const token = await ethers.getContractAt(contractName, tokenAddress, signer);
   const accounts = await ethers.getSigners();
   const token = await ethers.getContractAt(contractName, tokenAddress, accounts[0]);
-  await token.deployed();
+  await token.waitForDeployment();
   return token;
 };
 
