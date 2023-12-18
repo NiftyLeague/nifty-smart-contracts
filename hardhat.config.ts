@@ -40,7 +40,15 @@ const config: HardhatUserConfig = {
         version: '0.8.11',
         settings: { optimizer: { enabled: true, runs: 200 } },
       },
+      {
+        version: '0.4.18',
+      },
     ],
+    overrides: {
+      'src/contracts/WETH.sol': {
+        version: '0.4.18',
+      },
+    },
   },
   networks: {
     hardhat: {

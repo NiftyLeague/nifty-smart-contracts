@@ -13,7 +13,7 @@
     "url": "https://github.com/NiftyLeague/NiftySmartContracts/issues"
   },
   "scripts": {
-    "lint:sol": "solhint \"src/contracts/**/*.sol\"",
+    "lint:sol": "solhint \"src/contracts/**/*.sol\" --ignore-path .solhintignore",
     "lint": "eslint --ignore-path .eslintignore . --ext .ts,.js",
     "lint:fix": "eslint --ignore-path .eslintignore . --ext .ts,.js --fix",
     "format": "prettier --ignore-path .prettierignore --check .",
