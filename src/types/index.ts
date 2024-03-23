@@ -1,4 +1,5 @@
-import { Address } from 'hardhat-deploy/types';
+import type { HardhatRuntimeEnvironment } from 'hardhat/types';
+import type { Address, DeployResult } from 'hardhat-deploy/types';
 
 export enum NetworkName {
   Mainnet = 'mainnet',
@@ -15,3 +16,11 @@ export type DegenPurchaseArgs = [
   accessories: [bigint, bigint, bigint, bigint, bigint, bigint],
   items: [bigint, bigint],
 ];
+
+export interface DeployFunctionExt {
+  (hre: HardhatRuntimeEnvironment, deployer: Address): Promise<DeployResult>;
+}
+
+export interface PostDeployFunction {
+  (hre: HardhatRuntimeEnvironment, deployer: Address, deployResult?: DeployResult): Promise<void>;
+}

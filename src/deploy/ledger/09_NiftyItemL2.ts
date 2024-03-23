@@ -1,11 +1,12 @@
 import type { HardhatRuntimeEnvironment } from 'hardhat/types';
 import type { DeployFunction } from 'hardhat-deploy/types';
-import { deployNFTLRaffle } from '~/scripts/deploy';
+import { deployNiftyItemL2 } from '~/scripts/deploy';
+import { getLedgerSigner } from '~/scripts/ledger';
 
 const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deployer } = await hre.getNamedAccounts();
-  await deployNFTLRaffle(hre, deployer);
+  const { address: deployer } = await getLedgerSigner();
+  await deployNiftyItemL2(hre, deployer);
 };
 
 module.exports = deployFunction;
-deployFunction.tags = ['NFTLRaffle'];
+deployFunction.tags = ['NiftyItemL2'];
