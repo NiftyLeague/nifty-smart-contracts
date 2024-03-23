@@ -16,36 +16,75 @@ export const BALANCE_MANAGER_MAINTAINER = '0xD540805EEe3Ab4551040ba7b50D8Dc4c892
 
 export const NIFTY_DAO_LEDGER = '0x217580dDDFD4e96CfD05A611378ba920FfcE3cb8';
 
+export const NIFTY_MARKETING = '0x5c009bc2037AF68ee9C0474DDb028927eD814B65';
+
+export const NIFTY_ANDY = '0x594f49b52400DB1D87c7dB3F784Be20D50972ae0';
+
+export const SNARFY = '0xB970e591772F2CEb482bcD03a8d2f1924a4044Ce';
+
+export const NIFTY_SPIKE = '0x1ee7D52a08A7e481c93769492ac728dA07508990';
+
+export const MINT_TARGETS = [
+  NIFTY_DAO_SAFE,
+  NIFTY_TEAM_SAFE,
+  NIFTY_LEDGER_DEPLOYER,
+  NIFTY_HOT_DEPLOYER,
+  NIFTY_ANDY,
+  SNARFY,
+  NIFTY_SPIKE,
+];
+
 /*
  TOKENS / CONTRACTS
 */
 
+// NIFTY LEAGUE
+
 export const NFTL_TOKEN_ADDRESS: ContractAddressRecord = {
   mainnet: '0x3c8D2FCE49906e11e71cB16Fa0fFeB2B16C29638',
-  goerli: '0x5803033a15f49da0664ff8b0775a6e578422cafd',
+  sepolia: '',
 };
 
 export const DEGEN_ADDRESS: ContractAddressRecord = {
   mainnet: '0x986aea67C7d6A15036e18678065eb663Fc5BE883',
-  goerli: '0x08d49340c8d3bfe1cead341d8597bd07b959eaab',
+  sepolia: '',
 };
 
 export const NIFTY_LAUNCH_COMICS_ADDRESS: ContractAddressRecord = {
   mainnet: '0xBc8542e65ab801f7c9e3edd23238d37a2e3972d6',
-  goerli: '0xabd074430d0b06366bbc72f5cb62d965eae1881d',
+  sepolia: '',
 };
 
 export const NIFTY_ITEM_L2_ADDRESS: ContractAddressRecord = {
   mainnet: '0xc21909b7E596000C01318668293A7DFB4B37A578',
-  goerli: '0xbf1238C6aF46C19169c921e6058E330a97040CFD',
+  sepolia: '',
 };
+
+// IMX
 
 export const STARK_CONTRACT_ADDRESS: ContractAddressRecord = {
   mainnet: '0x5FDCCA53617f4d2b9134B29090C87D01058e27e9',
-  goerli: '0x7917eDb51ecD6CdB3F9854c3cc593F33de10c623',
+  sepolia: '0x2d5C349fD8464DA06a3f90b4B0E9195F3d1b7F98',
+};
+
+export const STARK_REGISTRATION_ADDRESS: ContractAddressRecord = {
+  mainnet: '0x72a06bf2a1CE5e39cBA06c0CAb824960B587d64c',
+  sepolia: '0xDbA6129C02E69405622fAdc3d5A7f8d23eac3b97',
+};
+
+// CHAINLINK
+
+export const LINK_TOKEN_ADDRESS: ContractAddressRecord = {
+  mainnet: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
+  sepolia: '0x779877A7B0D9E8603169DdbD7836e478b4624789',
+};
+
+export const VRF_WRAPPER_ADDRESS: ContractAddressRecord = {
+  mainnet: '0x5A861794B927983406fCE1D062e00b9368d97Df6',
+  sepolia: '0xab18414CD93297B0d12ac29E63Ca20f515b3DB46',
 };
 
 export const VRF_COORDINATOR_ADDRESS: ContractAddressRecord = {
   mainnet: '0x271682DEB8C4E0901D1a1550aD2e64D568E69909',
-  goerli: '0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D',
+  sepolia: '0x8103B0A8A00be2DDC778e6e7eaa21791Cd364625',
 };

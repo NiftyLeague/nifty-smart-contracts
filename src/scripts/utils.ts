@@ -1,4 +1,4 @@
-import { ethers, network, tenderly } from 'hardhat';
+import { ethers, network, run, tenderly } from 'hardhat';
 import { type BaseContract } from 'ethers';
 import chalk from 'chalk';
 import R from 'ramda';
@@ -15,7 +15,7 @@ export const tenderlyVerify = async ({
   contractName: string;
   contractAddress: string;
 }) => {
-  const tenderlyNetworks = ['kovan', 'goerli', 'mainnet', 'rinkeby', 'ropsten', 'matic', 'mumbai', 'xDai', 'POA'];
+  const tenderlyNetworks = ['sepolia', 'mainnet', 'matic', 'mumbai', 'xDai', 'POA'];
 
   if (tenderlyNetworks.includes(targetNetwork)) {
     console.log(chalk.blue(` 📁 Attempting tenderly verification of ${contractName} on ${targetNetwork}`));
@@ -31,6 +31,22 @@ export const tenderlyVerify = async ({
     return verification;
   }
   console.log(chalk.grey(` 🧐 Contract verification not supported on ${targetNetwork}`));
+};
+
+// If you want to verify on https://etherscan.io/
+export const etherscanVerify = async ({
+  address,
+  constructorArguments = [],
+}: {
+  address: string;
+  constructorArguments?: any[];
+}) => {
+  try {
+    console.log(chalk.blue(` 📁 Attempting etherscan verification of ${address} on ${targetNetwork}`));
+    return await run('verify:verify', { address, constructorArguments });
+  } catch (e) {
+    return e;
+  }
 };
 
 // abi encodes contract arguments
@@ -50,3 +66,16 @@ export const abiEncodeArgs = (deployed: BaseContract, contractArgs: unknown[], c
   }
   return encoded;
 };
+
+// checks if it is a Solidity file
+export const isSolidity = (fileName: string) =>
+  fileName.indexOf('.sol') >= 0 && fileName.indexOf('.swp') < 0 && fileName.indexOf('.swap') < 0;
+
+/**
+ * Pauses the execution for the specified number of milliseconds.
+ * @param ms - The number of milliseconds to sleep.
+ * @returns A Promise that resolves after the specified number of milliseconds.
+ */
+export function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
