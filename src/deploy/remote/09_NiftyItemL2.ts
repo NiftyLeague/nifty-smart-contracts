@@ -1,28 +1,11 @@
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { DeployFunction } from 'hardhat-deploy/types';
-import { STARK_CONTRACT_ADDRESS } from '~/constants/addresses';
-import { NetworkName } from '~/types';
+import type { HardhatRuntimeEnvironment } from 'hardhat/types';
+import type { DeployFunction } from 'hardhat-deploy/types';
+import { deployNiftyItemL2 } from '~/scripts/deploy';
 
-const NiftyItemL2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deploy } = hre.deployments;
+const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployer } = await hre.getNamedAccounts();
-
-  await deploy('NiftyItemL2', {
-    from: deployer,
-    args: [],
-    log: true,
-    proxy: {
-      proxyContract: 'OpenZeppelinTransparentProxy',
-      viaAdminContract: 'DefaultProxyAdmin',
-      execute: {
-        init: {
-          methodName: 'initialize',
-          args: [STARK_CONTRACT_ADDRESS[hre.network.name as NetworkName]],
-        },
-      },
-    },
-  });
+  await deployNiftyItemL2(hre, deployer);
 };
 
-module.exports = NiftyItemL2;
-NiftyItemL2.tags = ['NiftyItemL2'];
+module.exports = deployFunction;
+deployFunction.tags = ['NiftyItemL2'];

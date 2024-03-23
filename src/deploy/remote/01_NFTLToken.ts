@@ -1,33 +1,13 @@
 import type { HardhatRuntimeEnvironment } from 'hardhat/types';
-import type { Address, DeployFunction } from 'hardhat-deploy/types';
-import { NFTL_EMISSION_START } from '~/constants/other';
-import { MINT_TARGETS } from '~/constants/addresses';
+import type { DeployFunction } from 'hardhat-deploy/types';
+import { deployNFTLToken } from '~/scripts/deploy';
+import { initNFTLToken } from '~/scripts/post-deploy';
 
-const mintNFTL = async (hre: HardhatRuntimeEnvironment, from: Address, args: [to: Address, amount: bigint]) => {
-  const { execute } = hre.deployments;
-  await execute('NFTLToken', { from, log: true }, 'mint', ...args);
-};
-
-const deployNFTLToken: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deploy } = hre.deployments;
+const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployer } = await hre.getNamedAccounts();
-
-  const emissionStartTimestamp = NFTL_EMISSION_START; // Math.floor(Date.now() / 1000);
-
-  const deployResult = await deploy('NFTLToken', {
-    from: deployer,
-    args: [emissionStartTimestamp],
-    log: true,
-    skipIfAlreadyDeployed: true,
-  });
-
-  if (deployResult.newlyDeployed) {
-    const allocation = hre.ethers.parseEther('100000000');
-    for (const address of MINT_TARGETS) {
-      await mintNFTL(hre, deployer, [address, allocation]);
-    }
-  }
+  const deployResult = await deployNFTLToken(hre, deployer);
+  if (deployResult.newlyDeployed) await initNFTLToken(hre, deployer);
 };
 
-module.exports = deployNFTLToken;
-deployNFTLToken.tags = ['NFTLToken'];
+module.exports = deployFunction;
+deployFunction.tags = ['NFTLToken'];

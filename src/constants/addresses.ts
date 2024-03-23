@@ -42,22 +42,22 @@ export const MINT_TARGETS = [
 
 export const NFTL_TOKEN_ADDRESS: ContractAddressRecord = {
   mainnet: '0x3c8D2FCE49906e11e71cB16Fa0fFeB2B16C29638',
-  sepolia: '',
+  sepolia: '0x0d312E74ba71bff163A07DdD2b6847CefF49dD1e',
 };
 
 export const DEGEN_ADDRESS: ContractAddressRecord = {
   mainnet: '0x986aea67C7d6A15036e18678065eb663Fc5BE883',
-  sepolia: '',
+  sepolia: '0x6adFF2BB4A465A885425e3bd4304A78BB659B12e',
 };
 
 export const NIFTY_LAUNCH_COMICS_ADDRESS: ContractAddressRecord = {
   mainnet: '0xBc8542e65ab801f7c9e3edd23238d37a2e3972d6',
-  sepolia: '',
+  sepolia: '0x4b2B807881794A50b6C236DB50D4702b20d76449',
 };
 
 export const NIFTY_ITEM_L2_ADDRESS: ContractAddressRecord = {
   mainnet: '0xc21909b7E596000C01318668293A7DFB4B37A578',
-  sepolia: '',
+  sepolia: '0xF1863D85095AA932de5BccEBE02Dac0b67303383',
 };
 
 // IMX

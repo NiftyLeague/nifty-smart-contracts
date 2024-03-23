@@ -1,29 +1,11 @@
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { DeployFunction } from 'hardhat-deploy/types';
-import { NIFTY_DAO_LEDGER } from '~/constants/addresses';
+import type { HardhatRuntimeEnvironment } from 'hardhat/types';
+import type { DeployFunction } from 'hardhat-deploy/types';
+import { deployHydraDistributor } from '~/scripts/deploy';
 
-const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deploy } = hre.deployments;
+const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployer } = await hre.getNamedAccounts();
-  const degenContract = await hre.ethers.getContract('NiftyDegen');
-
-  await deploy('HydraDistributor', {
-    from: deployer,
-    args: [],
-    log: true,
-    skipIfAlreadyDeployed: true,
-    proxy: {
-      proxyContract: 'OpenZeppelinTransparentProxy',
-      viaAdminContract: 'DefaultProxyAdmin',
-      execute: {
-        init: {
-          methodName: 'initialize',
-          args: [await degenContract.getAddress(), NIFTY_DAO_LEDGER],
-        },
-      },
-    },
-  });
+  await deployHydraDistributor(hre, deployer);
 };
 
-module.exports = deployHydraDistributor;
-deployHydraDistributor.tags = ['HydraDistributor'];
+module.exports = deployFunction;
+deployFunction.tags = ['HydraDistributor'];

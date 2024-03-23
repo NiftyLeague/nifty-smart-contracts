@@ -1,27 +1,11 @@
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { DeployFunction } from 'hardhat-deploy/types';
+import type { HardhatRuntimeEnvironment } from 'hardhat/types';
+import type { DeployFunction } from 'hardhat-deploy/types';
+import { deployNiftyBurningComicsL2 } from '~/scripts/deploy';
 
-const NiftyBurningComicsL2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deploy } = hre.deployments;
+const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployer } = await hre.getNamedAccounts();
-  const comicsContract = await hre.ethers.getContract('NiftyLaunchComics');
-
-  await deploy('NiftyBurningComicsL2', {
-    from: deployer,
-    args: [],
-    log: true,
-    proxy: {
-      proxyContract: 'OpenZeppelinTransparentProxy',
-      viaAdminContract: 'DefaultProxyAdmin',
-      execute: {
-        init: {
-          methodName: 'initialize',
-          args: [await comicsContract.getAddress()],
-        },
-      },
-    },
-  });
+  await deployNiftyBurningComicsL2(hre, deployer);
 };
 
-module.exports = NiftyBurningComicsL2;
-NiftyBurningComicsL2.tags = ['NiftyBurningComicsL2'];
+module.exports = deployFunction;
+deployFunction.tags = ['NiftyBurningComicsL2'];

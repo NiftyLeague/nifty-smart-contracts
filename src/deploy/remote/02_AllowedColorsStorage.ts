@@ -1,25 +1,13 @@
 import type { HardhatRuntimeEnvironment } from 'hardhat/types';
 import type { DeployFunction } from 'hardhat-deploy/types';
-import { ALLOWED_COLORS } from '~/constants/allowedColors';
+import { deployColorsStorage } from '~/scripts/deploy';
+import { initColorsStorage } from '~/scripts/post-deploy';
 
-const deployStorage: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deploy, execute } = hre.deployments;
+const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployer } = await hre.getNamedAccounts();
-
-  const deployResult = await deploy('AllowedColorsStorage', {
-    from: deployer,
-    args: [],
-    log: true,
-    skipIfAlreadyDeployed: true,
-  });
-
-  if (deployResult.newlyDeployed) {
-    for (const [i, traits] of ALLOWED_COLORS.entries()) {
-      const args = [i + 1, traits, true];
-      await execute('AllowedColorsStorage', { from: deployer, log: true }, 'setAllowedColorsOnTribe', ...args);
-    }
-  }
+  const deployResult = await deployColorsStorage(hre, deployer);
+  if (deployResult.newlyDeployed) await initColorsStorage(hre, deployer);
 };
 
-module.exports = deployStorage;
-deployStorage.tags = ['AllowedColorsStorage'];
+module.exports = deployFunction;
+deployFunction.tags = ['AllowedColorsStorage'];
