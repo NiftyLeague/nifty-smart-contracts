@@ -10,19 +10,19 @@ This project demonstrates an advanced Hardhat use case, integrating other tools 
 
 #### Compile code
 
-- `yarn run compile` (Compiles the entire project, building all artifacts)
+- `yarn compile` (Compiles the entire project, building all artifacts)
 
 #### Run tests
 
-- `yarn run test ./test/{desired_test_script}`
+- `yarn test ./test/{desired_test_script}`
 
 #### Deploy code
 
 For mainnet deployment we use [Frame](https://frame.sh/) to deploy with a Ledger signer.
 
 - `npx hardhat node` (Starts a JSON-RPC server on top of Hardhat Network)
-- `yarn run deploy:hardhat` (Deploy the contracts on Harhdat Network)
-- `yarn run deploy:remote {network}` (Deploy the contracts on the Mainnet or Testnet)
+- `yarn deploy:hardhat` (Deploy the contracts on Harhdat Network)
+- `yarn deploy:remote {network}` (Deploy the contracts on the Mainnet or Testnet)
 
 Try running some of the following tasks:
 

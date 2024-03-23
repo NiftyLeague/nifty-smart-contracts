@@ -2,13 +2,12 @@ import { HardhatUserConfig, task } from 'hardhat/config';
 import '@nomicfoundation/hardhat-toolbox';
 import '@openzeppelin/hardhat-upgrades';
 import '@tenderly/hardhat-tenderly';
-import '@nomicfoundation/hardhat-ethers';
-import 'hardhat-gas-reporter';
+import 'hardhat-deploy-ethers';
 import 'hardhat-deploy';
-import 'tsconfig-paths/register';
 
 import { resolve } from 'path';
 import { config as dotenvConfig } from 'dotenv';
+import 'tsconfig-paths/register';
 
 dotenvConfig({ path: resolve(__dirname, './.env') });
 
@@ -40,27 +39,24 @@ const config: HardhatUserConfig = {
         version: '0.8.11',
         settings: { optimizer: { enabled: true, runs: 200 } },
       },
-      {
-        version: '0.4.18',
-      },
     ],
     overrides: {
-      'src/contracts/WETH.sol': {
+      'src/contracts/external/WETH.sol': {
         version: '0.4.18',
       },
     },
   },
   networks: {
-    hardhat: {
-      allowUnlimitedContractSize: true,
-      deploy: ['src/deploy/hardhat/'],
-    },
     local: {
       url: 'http://localhost:8545',
       deploy: ['src/deploy/hardhat/'],
     },
-    goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
+    hardhat: {
+      allowUnlimitedContractSize: true,
+      deploy: ['src/deploy/hardhat/'],
+    },
+    sepolia: {
+      url: `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
       deploy: ['src/deploy/remote/'],
     },
@@ -77,10 +73,12 @@ const config: HardhatUserConfig = {
   mocha: {
     timeout: 100000000,
   },
-  verify: {
-    etherscan: {
-      apiKey: process.env.ETHERSCAN_API_KEY,
-    },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY,
+  },
+  defender: {
+    apiKey: `${process.env.OZ_DEFENDER_API_KEY}`,
+    apiSecret: `${process.env.OZ_DEFENDER_API_SECRET}`,
   },
   namedAccounts: {
     deployer: {
