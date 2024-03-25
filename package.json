@@ -24,7 +24,7 @@
     "export:sepolia": "hardhat deploy --export --network sepolia ./exports/deployments.sepolia.ts",
     "export:mainnet": "hardhat deploy --export --network mainnet ./exports/deployments.mainnet.ts",
     "export": "npm run export:sepolia && npm run export:mainnet && prettier --ignore-path .prettierignore --write ./exports/*.ts",
-    "coverage": "hardhat coverage --network hardhat",
+    "coverage": "hardhat coverage",
     "test": "hardhat test",
     "deploy": "hardhat deploy",
     "deploy:hardhat": "hardhat deploy --deploy-scripts ./src/deploy/hardhat --network hardhat",
