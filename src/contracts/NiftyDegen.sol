@@ -123,7 +123,7 @@ contract NiftyDegen is NameableCharacter {
             "Sale has already ended"
         );
         // 1 - 3 free for core team members, 9901 - 10000 free special community giveaway characters
-        if (currentSupply < 3 || currentSupply >= 9900) return 0;
+        if (_msgSender() == owner()) return 0;
         // fallback option to override price floors only if necessary. Minimum value of 0.08 ETH
         if (_manualMintPrice >= 80000000000000000) return _manualMintPrice;
         if (currentSupply >= 9500) return 280000000000000000; // 9500 - 9900 0.28 ETH
@@ -235,7 +235,7 @@ contract NiftyDegen is NameableCharacter {
         Character memory newChar;
         newChar.traits = traitCombo;
         _characters[newCharId] = newChar;
-        _removeRandomTrait(newCharId, traitCombo);
+        // _removeRandomTrait(newCharId, traitCombo); // disabled for test networks
         _safeMint(_msgSender(), newCharId);
     }
 

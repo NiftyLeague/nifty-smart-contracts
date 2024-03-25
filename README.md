@@ -4,25 +4,79 @@ This project demonstrates an advanced Hardhat use case, integrating other tools 
 
 ## Developer instructions
 
-#### Install dependencies
+### Install dependencies
 
-`yarn install`
+```bash
+yarn install
+```
 
-#### Compile code
+### Set up environment variables
 
-- `yarn run compile` (Compiles the entire project, building all artifacts)
+Copy the `.env.example` file in this directory to `.env.local` (which will be ignored by Git):
 
-#### Run tests
+```bash
+cp .env.example .env.local
+```
 
-- `yarn run test ./test/{desired_test_script}`
+### Compile code
 
-#### Deploy code
+Compiles the entire project, building all artifacts
+
+```bash
+yarn build
+```
+
+### Run tests
+
+```bash
+yarn test ./test/{desired_test_script}
+```
+
+### Deploy code
+
+For deployment we use the [hardhat-deploy](https://github.com/wighawag/hardhat-deploy) plugin. This plugin allows you to write deploy scripts in the `src/deploy` folder and declare nested deploy environments. Each deploy script in the selected build environment will run sequentially.
+
+#### Local Development:
+
+Start a JSON-RPC server on top of Hardhat Network:
+
+```bash
+npx hardhat node
+```
+
+Deploy test contracts on Hardhat Network (this will deploy scripts sequentially in `src/deploy/hardhat`):
+
+```bash
+yarn deploy:hardhat
+```
+
+#### Testnet:
+
+To deploy contracts using an account `PRIVATE_KEY` defined in `.env` on Testnet or Mainnet use:
+
+```bash
+yarn deploy:remote {network}
+```
+
+#### Mainnet:
 
 For mainnet deployment we use [Frame](https://frame.sh/) to deploy with a Ledger signer.
 
-- `npx hardhat node` (Starts a JSON-RPC server on top of Hardhat Network)
-- `yarn run deploy:hardhat` (Deploy the contracts on Harhdat Network)
-- `yarn run deploy:remote {network}` (Deploy the contracts on the Mainnet or Testnet)
+```bash
+yarn deploy:ledger mainnet
+```
+
+### Export contracts
+
+To export contracts for use in client repositories, run:
+
+```bash
+yarn export
+```
+
+This will create deployment files in `exports/` for both mainnet & sepolia which are git-ignored.
+
+### Other scripts
 
 Try running some of the following tasks:
 
@@ -47,23 +101,31 @@ npx solhint 'src/contracts/**/*.sol' --fix
 
 ## Etherscan verification
 
-To try out Etherscan verification, you first need to deploy a contract to an Ethereum network that's supported by Etherscan, such as Ropsten.
+To try out Etherscan verification, you first need to deploy a contract to an Ethereum network that's supported by Etherscan.
 
-In this project, copy the .env.example file to a file named .env, and then edit it to fill in the details. Enter your Etherscan API key, your Ropsten node URL (eg from Alchemy), and the private key of the account which will send the deployment transaction. With a valid .env file in place, first deploy your contract:
+Copy the .env.example file to a file named .env, and then edit it to fill in the details. Enter your Etherscan API key, your node URL (eg from Alchemy), and the private key of the account which will send the deployment transaction. With a valid .env file in place, first follow the instructions above to deploy your contract(s).
 
-```shell
-hardhat run --network ropsten src/scripts/sample-script.ts
+#### Verify all deployments
+
+To verify all deployments on your selected network, run:
+
+```bash
+yarn verify
 ```
+
+This will use the `etherscan-verify` script from [hardhat-deploy](https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#4-hardhat-etherscan-verify) to quickly verify all deployments!
+
+- `npx hardhat --network {network} etherscan-verify --api-key {etherscan_api_key}`
+
+#### Verify specific deployment
+
+If you instead want to target a specific deployment to verify:
 
 Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:
 
 ```shell
-npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
+npx hardhat verify --network {network} DEPLOYED_CONTRACT_ADDRESS
 ```
-
-#### Etherscan verification script
-
-- `npx hardhat --network {network} etherscan-verify --api-key {etherscan_api_key}`
 
 ## Performance optimizations
 
