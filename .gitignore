@@ -11,6 +11,7 @@ artifacts
 typechain
 deployments/localhost
 exports/
+.pendingTransactions
 
 #Coverage
 coverage
