@@ -2,15 +2,17 @@
 
 pragma solidity ^0.8.11;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import { SafeERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import { IERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
+import { ERC721HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
+import { EnumerableSetUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
+import { SafeERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import { LinkTokenInterface } from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
+import { VRFCoordinatorV2Interface } from "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 
 interface IERC20BurnableUpgradeable is IERC20Upgradeable {
     function burnFrom(address account, uint256 amount) external;
@@ -38,10 +40,10 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     /// @dev Chainlink VRF params
     address private vrfCoordinator; // etherscan: 0x271682DEB8C4E0901D1a1550aD2e64D568E69909
     address private constant LINK = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
-    bytes32 private constant s_keyHash = 0x8af398995b04c28e9951adb9721ef74c74f93e6a478f39e7e0777be13527e7ef;
-    uint16 private constant s_requestConfirmations = 3;
-    uint32 private constant s_callbackGasLimit = 2500000;
-    uint64 public s_subscriptionId;
+    bytes32 private constant S_KEY_HASH = 0x8af398995b04c28e9951adb9721ef74c74f93e6a478f39e7e0777be13527e7ef;
+    uint16 private constant S_REQUEST_CONFIRMATIONS = 3;
+    uint32 private constant S_CALLBACK_GAS_LIMIT = 2500000;
+    uint64 public subscriptionId;
 
     /// @dev Prize NFT (NiftyDegen) address
     IERC721Upgradeable public prizeNFT;
@@ -174,13 +176,13 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 
     // Create a new subscription when the contract is initially deployed.
     function _createNewSubscription() private {
-        s_subscriptionId = VRFCoordinatorV2Interface(vrfCoordinator).createSubscription();
-        VRFCoordinatorV2Interface(vrfCoordinator).addConsumer(s_subscriptionId, address(this));
+        subscriptionId = VRFCoordinatorV2Interface(vrfCoordinator).createSubscription();
+        VRFCoordinatorV2Interface(vrfCoordinator).addConsumer(subscriptionId, address(this));
     }
 
     function cancelSubscription() external onlyOwner {
-        VRFCoordinatorV2Interface(vrfCoordinator).cancelSubscription(s_subscriptionId, owner());
-        s_subscriptionId = 0;
+        VRFCoordinatorV2Interface(vrfCoordinator).cancelSubscription(subscriptionId, owner());
+        subscriptionId = 0;
     }
 
     function updateTotalWinnerTicketCount(uint256 _totalWinnerTicketCount) external onlyOwner {
@@ -283,13 +285,13 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 
     function manageConsumers(address _consumer, bool _add) external onlyOwner {
         _add
-            ? VRFCoordinatorV2Interface(vrfCoordinator).addConsumer(s_subscriptionId, _consumer)
-            : VRFCoordinatorV2Interface(vrfCoordinator).removeConsumer(s_subscriptionId, _consumer);
+            ? VRFCoordinatorV2Interface(vrfCoordinator).addConsumer(subscriptionId, _consumer)
+            : VRFCoordinatorV2Interface(vrfCoordinator).removeConsumer(subscriptionId, _consumer);
     }
 
     function chargeLINK(uint256 _amount) external {
         IERC20Upgradeable(LINK).safeTransferFrom(msg.sender, address(this), _amount);
-        LinkTokenInterface(LINK).transferAndCall(vrfCoordinator, _amount, abi.encode(s_subscriptionId));
+        LinkTokenInterface(LINK).transferAndCall(vrfCoordinator, _amount, abi.encode(subscriptionId));
     }
 
     function withdrawLINK(address _to) external onlyOwner {
@@ -321,10 +323,10 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     function _requestRandomWords(uint32 _numWords) internal returns (uint256) {
         return
             VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
-                s_keyHash,
-                s_subscriptionId,
-                s_requestConfirmations,
-                s_callbackGasLimit,
+                S_KEY_HASH,
+                subscriptionId,
+                S_REQUEST_CONFIRMATIONS,
+                S_CALLBACK_GAS_LIMIT,
                 _numWords
             );
     }
@@ -350,10 +352,9 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
      * @dev associated with the randomness. (It is triggered via a call to
      * @dev rawFulfillRandomness, below.)
      *
-     * @param _requestId The Id initially returned by requestRandomWords
      * @param _randomWords the VRF output expanded to the requested number of words
      */
-    function _fulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) internal {
+    function _fulfillRandomWords(uint256 /*_requestId*/, uint256[] memory _randomWords) internal {
         // since we'll use the random word in the reverse order, push the last random word first
         for (uint256 i = 0; i < _randomWords.length; ) {
             randomWordList.push(_randomWords[_randomWords.length - 1 - i]);

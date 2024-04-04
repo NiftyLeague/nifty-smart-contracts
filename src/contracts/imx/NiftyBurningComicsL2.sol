@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.11;
 
-pragma solidity 0.8.11;
-
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "../interfaces/INiftyLaunchComics.sol";
+import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import { ReentrancyGuardUpgradeable } from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import { INiftyLaunchComics } from "../interfaces/INiftyLaunchComics.sol";
 
 contract NiftyBurningComicsL2 is OwnableUpgradeable, ReentrancyGuardUpgradeable, PausableUpgradeable {
     event ComicsBurned(address indexed by, uint256[] tokenIds, uint256[] values);

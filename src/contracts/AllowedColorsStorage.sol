@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.11;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title AllowedColorsStorage
@@ -11,8 +11,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract AllowedColorsStorage is Ownable {
     /// @dev Mapping if color is allowed for selected tribe
     mapping(uint256 => mapping(uint256 => bool)) private _tribeColorAllowed;
-
-    constructor() {}
 
     /**
      * @notice Set allowed on a given a list of colors
