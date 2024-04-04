@@ -2,12 +2,10 @@
 
 pragma solidity ^0.8.11;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { Pausable } from "@openzeppelin/contracts/security/Pausable.sol";
+import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
  * @title NiftyLeagueCharacter (Base NFT for Nifty League characters)
@@ -65,14 +63,14 @@ contract NiftyLeagueCharacter is ERC721, Ownable, Pausable {
     uint16[] internal removedTraits;
 
     /// @dev Nifty League NFTL token address
-    address internal immutable _nftlAddress;
+    address internal immutable _NFTL_ADDRESS;
 
     /**
      * @notice Construct the Nifty League NFTs
      * @param nftlAddress Address of verified Nifty League NFTL contract
      */
     constructor(address nftlAddress, string memory name, string memory symbol) ERC721(name, symbol) {
-        _nftlAddress = nftlAddress;
+        _NFTL_ADDRESS = nftlAddress;
     }
 
     // External functions

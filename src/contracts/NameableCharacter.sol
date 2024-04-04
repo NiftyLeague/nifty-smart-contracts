@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.11;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./NiftyLeagueCharacter.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { NiftyLeagueCharacter } from "./NiftyLeagueCharacter.sol";
 
 interface INFTL is IERC20 {
     function burnFrom(address account, uint256 amount) external;
@@ -48,7 +48,7 @@ abstract contract NameableCharacter is NiftyLeagueCharacter {
         require(validateName(newName), "Name is not allowed");
         require(!isNameReserved(newName), "Name already reserved");
 
-        INFTL(_nftlAddress).burnFrom(_msgSender(), NAME_CHANGE_PRICE);
+        INFTL(_NFTL_ADDRESS).burnFrom(_msgSender(), NAME_CHANGE_PRICE);
         if (bytes(_characters[tokenId].name).length > 0) {
             _toggleReserveName(_characters[tokenId].name, false);
         }

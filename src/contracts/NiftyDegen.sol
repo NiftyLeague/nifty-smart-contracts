@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.11;
 
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "./NameableCharacter.sol";
-import "./AllowedColorsStorage.sol";
+import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
+import { NameableCharacter, NiftyLeagueCharacter } from "./NameableCharacter.sol";
+import { AllowedColorsStorage } from "./AllowedColorsStorage.sol";
 
 /**
  * @title NiftyDegen NFT (The OG NFTs of the Nifty League on Ethereum)
@@ -23,7 +23,7 @@ contract NiftyDegen is NameableCharacter {
     uint256 public constant SPECIAL_CHARACTERS = 100;
 
     /// @dev Available traits storage address
-    address internal immutable _storageAddress;
+    address internal immutable _STORAGE_ADDRESS;
 
     /// @dev Mapping trait indexes to pool size of available traits
     mapping(uint256 => uint256) internal _originalPoolSizes;
@@ -40,7 +40,7 @@ contract NiftyDegen is NameableCharacter {
      * @param storageAddress Address of verified Allowed Colors Storage
      */
     constructor(address nftlAddress, address storageAddress) NiftyLeagueCharacter(nftlAddress, "NiftyDegen", "DEGEN") {
-        _storageAddress = storageAddress;
+        _STORAGE_ADDRESS = storageAddress;
     }
 
     // External functions
@@ -145,7 +145,7 @@ contract NiftyDegen is NameableCharacter {
     function isAvailableAndAllowedTrait(uint256 tribe, uint256 trait) public view returns (bool) {
         if (trait == EMPTY_TRAIT) return true;
         if (trait >= 150) return isAvailableTrait(trait);
-        AllowedColorsStorage colorsStorage = AllowedColorsStorage(_storageAddress);
+        AllowedColorsStorage colorsStorage = AllowedColorsStorage(_STORAGE_ADDRESS);
         return colorsStorage.isAllowedColor(tribe, trait);
     }
 

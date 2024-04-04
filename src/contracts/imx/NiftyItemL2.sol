@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.11;
 
-pragma solidity 0.8.11;
+import { ERC721EnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import { StringsUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-
-import "@imtbl/imx-contracts/contracts/Mintable.sol";
-import "@imtbl/imx-contracts/contracts/utils/Minting.sol";
+import { IMintable } from "@imtbl/imx-contracts/contracts/IMintable.sol";
+import { Bytes } from "@imtbl/imx-contracts/contracts/utils/Bytes.sol";
+import { Minting } from "@imtbl/imx-contracts/contracts/utils/Minting.sol";
 
 /**
  * @dev {ERC721} token, including:
@@ -28,7 +29,7 @@ contract NiftyItemL2 is ERC721EnumerableUpgradeable, OwnableUpgradeable, Pausabl
     event AssetMinted(address to, uint256 id, bytes blueprint);
 
     modifier onlyOwnerOrIMX() {
-        require(msg.sender == imx || msg.sender == owner(), "Function can only be called by owner or IMX");
+        require(msg.sender == imx || msg.sender == owner(), "Must be called by owner or IMX");
         _;
     }
 

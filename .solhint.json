@@ -3,7 +3,8 @@
   "plugins": [],
   "rules": {
     "compiler-version": ["warn", "0.8.11"],
-    "max-states-count": ["warn", 21],
-    "func-visibility": ["warn", { "ignoreConstructors": true }]
+    "max-states-count": ["warn", 23],
+    "func-visibility": ["warn", { "ignoreConstructors": true }],
+    "gas-custom-errors": "off"
   }
 }

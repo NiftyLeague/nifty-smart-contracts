@@ -2,10 +2,11 @@
 
 pragma solidity ^0.8.11;
 
-import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
+import { ERC1155 } from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import { ERC1155Supply } from "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { Pausable } from "@openzeppelin/contracts/security/Pausable.sol";
+import { Context } from "@openzeppelin/contracts/utils/Context.sol";
 
 /**
  * @dev {ERC1155} token, including:
@@ -32,6 +33,7 @@ contract NiftyEquipment is Context, AccessControl, ERC1155Supply, Pausable {
      * @dev Grants `DEFAULT_ADMIN_ROLE`, `MINTER_ROLE`, and `PAUSER_ROLE` to the account that
      * deploys the contract.
      */
+
     constructor(string memory _name, string memory _symbol, string memory _uri) ERC1155(_uri) {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
