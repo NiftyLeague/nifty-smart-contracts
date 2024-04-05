@@ -685,13 +685,13 @@ describe.skip('NFTLRaffle', function () {
     });
 
     it('Should be able to cancel the subscription', async () => {
-      expect(await nftlRaffle.s_subscriptionId()).to.not.equal(0);
+      expect(await nftlRaffle.subscriptionId()).to.not.equal(0);
       let deployerLinkTokenAmountBefore = await linkToken.balanceOf(await deployer.getAddress());
 
       // cancel the subscription
       await nftlRaffle.cancelSubscription();
 
-      expect(await nftlRaffle.s_subscriptionId()).to.equal(0);
+      expect(await nftlRaffle.subscriptionId()).to.equal(0);
       expect(await linkToken.balanceOf(await deployer.getAddress())).to.equal(
         deployerLinkTokenAmountBefore + linkTokenAmountToCharge,
       );

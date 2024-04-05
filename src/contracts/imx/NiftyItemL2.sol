@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.25;
 
-pragma solidity 0.8.11;
+import { ERC721EnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import { StringsUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-
-import "@imtbl/imx-contracts/contracts/Mintable.sol";
-import "@imtbl/imx-contracts/contracts/utils/Minting.sol";
+import { IMintable } from "@imtbl/imx-contracts/contracts/IMintable.sol";
+import { Bytes } from "@imtbl/imx-contracts/contracts/utils/Bytes.sol";
+import { Minting } from "@imtbl/imx-contracts/contracts/utils/Minting.sol";
 
 /**
  * @dev {ERC721} token, including:
@@ -23,16 +24,23 @@ contract NiftyItemL2 is ERC721EnumerableUpgradeable, OwnableUpgradeable, Pausabl
 
     /// @dev TokenID -> Item ID
     /// @dev ItemID1 - item 1, ItemID 2 - item 2, ,,,, ItemID 6 - item6, ItemID 7 - key
-    mapping(uint256 => uint256) public itemIdByTokenId;
+    mapping(uint256 tokenId => uint256 itemId) public itemIdByTokenId;
 
     event AssetMinted(address to, uint256 id, bytes blueprint);
 
+    error AccessError(string message);
+    error AddressError(string message);
+    error MintError(string message);
+
     modifier onlyOwnerOrIMX() {
-        require(msg.sender == imx || msg.sender == owner(), "Function can only be called by owner or IMX");
+        if (msg.sender != imx && msg.sender != owner()) {
+            revert AccessError("Must be called by owner or IMX");
+        }
         _;
     }
 
     function initialize(address _imx) external initializer {
+        if (_imx == address(0)) revert AddressError("Invalid IMX address");
         __ERC721_init("NiftyItemL2", "NiftyItemL2");
         __Ownable_init();
         __Pausable_init();
@@ -45,11 +53,27 @@ contract NiftyItemL2 is ERC721EnumerableUpgradeable, OwnableUpgradeable, Pausabl
         uint256 _quantity,
         bytes calldata _mintingBlob
     ) external override onlyOwnerOrIMX whenNotPaused {
-        require(_quantity == 1, "Amount must be 1");
+        if (_quantity != 1) revert MintError("Amount must be 1");
         (uint256 id, bytes memory blueprint) = Minting.split(_mintingBlob);
         _mint(_to, id, blueprint);
 
         emit AssetMinted(_to, id, blueprint);
+    }
+
+    function burn(uint256 _tokenId) external whenNotPaused {
+        _burn(_tokenId);
+    }
+
+    function setURI(string calldata _uri) external onlyOwner {
+        uri = _uri;
+    }
+
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
     }
 
     function _mint(address _to, uint256 _tokenId, bytes memory blueprint) internal {
@@ -59,23 +83,7 @@ contract NiftyItemL2 is ERC721EnumerableUpgradeable, OwnableUpgradeable, Pausabl
         _safeMint(_to, _tokenId);
     }
 
-    function setURI(string calldata _uri) external onlyOwner {
-        uri = _uri;
-    }
-
-    function _baseURI() internal view virtual override returns (string memory) {
+    function _baseURI() internal view virtual override returns (string memory baseUri) {
         return uri;
-    }
-
-    function burn(uint256 _tokenId) external whenNotPaused {
-        _burn(_tokenId);
-    }
-
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    function unpause() public onlyOwner {
-        _unpause();
     }
 }

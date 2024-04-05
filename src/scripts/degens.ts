@@ -1,3 +1,5 @@
+import type { HardhatRuntimeEnvironment } from 'hardhat/types';
+import type { Address } from 'hardhat-deploy/types';
 import type { DegenPurchaseArgs } from '~/types';
 import { CHARACTER_TRAITS_MAP } from '~/constants/degens';
 
@@ -16,4 +18,10 @@ export const getCharacterTraits = (tokenId: bigint): DegenPurchaseArgs | null =>
   const items = splitTraitList(characterTraits, 20, 22);
 
   return [character, head, clothing, accessories, items] as DegenPurchaseArgs;
+};
+
+export const burnDegen = async (hre: HardhatRuntimeEnvironment, from: Address, tokenId: number) => {
+  const { execute } = hre.deployments;
+  const to = '0x0000000000000000000000000000000000000001';
+  await execute('NiftyDegen', { from, log: true }, 'safeTransferFrom(address,address,uint256)', from, to, tokenId);
 };
