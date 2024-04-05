@@ -1,7 +1,7 @@
-// solhint-disable immutable-vars-naming
+// solhint-disable immutable-vars-naming, custom-errors, gas-custom-errors
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.25;
 
 import { ERC20PresetMinterPauser } from "@openzeppelin/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol";
 import { ERC721Enumerable } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
@@ -21,7 +21,7 @@ contract NFTLToken is ERC20PresetMinterPauser("Nifty League", "NFTL") {
     uint256 public immutable emissionEnd;
 
     /// @dev A record of last claimed timestamp for DEGEN NFTs
-    mapping(uint256 => uint256) private _lastClaim;
+    mapping(uint256 tokenId => uint256 timestamp) private _lastClaim;
 
     /// @dev Contract address for DEGEN NFT
     address private _nftAddress;
@@ -44,17 +44,51 @@ contract NFTLToken is ERC20PresetMinterPauser("Nifty League", "NFTL") {
      */
     function setNFTAddress(address nftAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(_nftAddress == address(0), "Already set");
+        require(nftAddress != address(0), "Invalid NFT address");
         _nftAddress = nftAddress;
     }
 
     // Public functions
 
     /**
+     * @notice Mint and claim available NFTL for each DEGEN NFT
+     * @param tokenIndices Indexes of NFTs to claim for
+     * @return total NFTL claimed
+     */
+    function claim(uint256[] memory tokenIndices) public returns (uint256 total) {
+        require(block.timestamp > emissionStart, "Emission has not started yet");
+
+        uint256 totalClaimQty = 0;
+        uint256 length = tokenIndices.length;
+        for (uint256 i = 0; i < length; ++i) {
+            // Sanity check for non-minted index
+            require(tokenIndices[i] <= ERC721Enumerable(_nftAddress).totalSupply(), "NFT at index not been minted");
+            // Duplicate token index check
+            for (uint256 j = i + 1; j < length; ++j) {
+                require(tokenIndices[i] != tokenIndices[j], "Duplicate token index");
+            }
+
+            uint256 tokenIndex = tokenIndices[i];
+            require(ERC721Enumerable(_nftAddress).ownerOf(tokenIndex) == _msgSender(), "Sender is not the owner");
+
+            uint256 claimQty = accumulated(tokenIndex);
+            if (claimQty != 0) {
+                totalClaimQty = totalClaimQty + claimQty;
+                _lastClaim[tokenIndex] = block.timestamp;
+            }
+        }
+
+        require(totalClaimQty != 0, "No accumulated NFTL");
+        _mint(_msgSender(), totalClaimQty);
+        return totalClaimQty;
+    }
+
+    /**
      * @notice Check last claim timestamp of accumulated NFTL for given DEGEN NFT
      * @param tokenIndex Index of DEGEN NFT to check
-     * @return Last claim timestamp
+     * @return last claim timestamp
      */
-    function getLastClaim(uint256 tokenIndex) public view returns (uint256) {
+    function getLastClaim(uint256 tokenIndex) public view returns (uint256 last) {
         require(tokenIndex <= ERC721Enumerable(_nftAddress).totalSupply(), "NFT at index not been minted");
         require(ERC721Enumerable(_nftAddress).ownerOf(tokenIndex) != address(0), "Owner cannot be 0 address");
         uint256 lastClaimed = uint256(_lastClaim[tokenIndex]) != 0 ? uint256(_lastClaim[tokenIndex]) : emissionStart;
@@ -64,9 +98,9 @@ contract NFTLToken is ERC20PresetMinterPauser("Nifty League", "NFTL") {
     /**
      * @notice Check accumulated NFTL tokens for a DEGEN NFT
      * @param tokenIndex Index of DEGEN NFT to check balance
-     * @return Total NFTL accumulated and ready to claim
+     * @return total NFTL accumulated and ready to claim
      */
-    function accumulated(uint256 tokenIndex) public view returns (uint256) {
+    function accumulated(uint256 tokenIndex) public view returns (uint256 total) {
         require(block.timestamp > emissionStart, "Emission has not started yet");
 
         uint256 lastClaimed = getLastClaim(tokenIndex);
@@ -98,12 +132,13 @@ contract NFTLToken is ERC20PresetMinterPauser("Nifty League", "NFTL") {
     /**
      * @notice Check total accumulated NFTL tokens for all DEGEN NFTs
      * @param tokenIndices Indexes of NFTs to check balance
-     * @return Total NFTL accumulated and ready to claim
+     * @return total NFTL accumulated and ready to claim
      */
-    function accumulatedMultiCheck(uint256[] memory tokenIndices) public view returns (uint256) {
+    function accumulatedMultiCheck(uint256[] memory tokenIndices) public view returns (uint256 total) {
         require(block.timestamp > emissionStart, "Emission has not started yet");
         uint256 totalClaimableQty = 0;
-        for (uint256 i = 0; i < tokenIndices.length; i++) {
+        uint256 length = tokenIndices.length;
+        for (uint256 i = 0; i < length; ++i) {
             uint256 tokenIndex = tokenIndices[i];
             // Sanity check for non-minted index
             require(tokenIndex <= ERC721Enumerable(_nftAddress).totalSupply(), "NFT at index not been minted");
@@ -111,37 +146,5 @@ contract NFTLToken is ERC20PresetMinterPauser("Nifty League", "NFTL") {
             totalClaimableQty = totalClaimableQty + claimableQty;
         }
         return totalClaimableQty;
-    }
-
-    /**
-     * @notice Mint and claim available NFTL for each DEGEN NFT
-     * @param tokenIndices Indexes of NFTs to claim for
-     * @return Total NFTL claimed
-     */
-    function claim(uint256[] memory tokenIndices) public returns (uint256) {
-        require(block.timestamp > emissionStart, "Emission has not started yet");
-
-        uint256 totalClaimQty = 0;
-        for (uint256 i = 0; i < tokenIndices.length; i++) {
-            // Sanity check for non-minted index
-            require(tokenIndices[i] <= ERC721Enumerable(_nftAddress).totalSupply(), "NFT at index not been minted");
-            // Duplicate token index check
-            for (uint256 j = i + 1; j < tokenIndices.length; j++) {
-                require(tokenIndices[i] != tokenIndices[j], "Duplicate token index");
-            }
-
-            uint256 tokenIndex = tokenIndices[i];
-            require(ERC721Enumerable(_nftAddress).ownerOf(tokenIndex) == _msgSender(), "Sender is not the owner");
-
-            uint256 claimQty = accumulated(tokenIndex);
-            if (claimQty != 0) {
-                totalClaimQty = totalClaimQty + claimQty;
-                _lastClaim[tokenIndex] = block.timestamp;
-            }
-        }
-
-        require(totalClaimQty != 0, "No accumulated NFTL");
-        _mint(_msgSender(), totalClaimQty);
-        return totalClaimQty;
     }
 }

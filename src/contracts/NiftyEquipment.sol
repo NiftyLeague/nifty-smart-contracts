@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.25;
 
 import { ERC1155 } from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import { ERC1155Supply } from "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
 import { Pausable } from "@openzeppelin/contracts/security/Pausable.sol";
 import { Context } from "@openzeppelin/contracts/utils/Context.sol";
+import { INiftyEquipment } from "./interfaces/INiftyEquipment.sol";
 
 /**
  * @dev {ERC1155} token, including:
@@ -22,12 +23,14 @@ import { Context } from "@openzeppelin/contracts/utils/Context.sol";
  * roles, as well as the default admin role, which will let it grant both minter
  * and pauser roles to other accounts.
  */
-contract NiftyEquipment is Context, AccessControl, ERC1155Supply, Pausable {
+contract NiftyEquipment is Context, AccessControl, ERC1155Supply, Pausable, INiftyEquipment {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
     string public name;
     string public symbol;
+
+    error AccessError(string message);
 
     /**
      * @dev Grants `DEFAULT_ADMIN_ROLE`, `MINTER_ROLE`, and `PAUSER_ROLE` to the account that
@@ -53,7 +56,7 @@ contract NiftyEquipment is Context, AccessControl, ERC1155Supply, Pausable {
      *
      * - the caller must have the `DEFAULT_ADMIN_ROLE`.
      */
-    function setURI(string memory newuri) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setURI(string calldata newuri) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _setURI(newuri);
     }
 
@@ -68,7 +71,8 @@ contract NiftyEquipment is Context, AccessControl, ERC1155Supply, Pausable {
      * - burning must not be paused.
      */
     function burn(address account, uint256 id, uint256 value) public whenNotPaused {
-        require(account == _msgSender() || isApprovedForAll(account, _msgSender()), "Caller is not owner nor approved");
+        if (!(account == _msgSender() || isApprovedForAll(account, _msgSender())))
+            revert AccessError("Caller is not owner nor approved");
 
         _burn(account, id, value);
     }
@@ -77,7 +81,8 @@ contract NiftyEquipment is Context, AccessControl, ERC1155Supply, Pausable {
      * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] variant of {burn}.
      */
     function burnBatch(address account, uint256[] memory ids, uint256[] memory values) public whenNotPaused {
-        require(account == _msgSender() || isApprovedForAll(account, _msgSender()), "Caller is not owner nor approved");
+        if (!(account == _msgSender() || isApprovedForAll(account, _msgSender())))
+            revert AccessError("Caller is not owner nor approved");
 
         _burnBatch(account, ids, values);
     }
@@ -136,7 +141,9 @@ contract NiftyEquipment is Context, AccessControl, ERC1155Supply, Pausable {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControl, ERC1155) returns (bool) {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(AccessControl, ERC1155) returns (bool supported) {
         return super.supportsInterface(interfaceId);
     }
 }

@@ -1,6 +1,7 @@
+// solhint-disable custom-errors, gas-custom-errors
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.25;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { Pausable } from "@openzeppelin/contracts/security/Pausable.sol";
@@ -48,19 +49,19 @@ contract NiftyLeagueCharacter is ERC721, Ownable, Pausable {
         uint16 rightItem;
     }
     /// @dev Mapping of created character structs from token ID
-    mapping(uint256 => Character) internal _characters;
+    mapping(uint256 tokenId => Character character) internal _characters;
 
     /// @dev Expected uint if no specific trait is selected
-    uint256 internal constant EMPTY_TRAIT = 0;
+    uint256 internal constant _EMPTY_TRAIT = 0;
 
     /// @dev Mapping if character trait combination exist
-    mapping(uint256 => bool) internal _existMap;
+    mapping(uint256 traitCombo => bool exists) internal _existMap;
 
     /// @dev Mapping if character trait has been removed
-    mapping(uint256 => bool) internal _removedTraitsMap;
+    mapping(uint256 traitId => bool isRemoved) internal _removedTraitsMap;
 
     /// @dev Array initialized in order to return removed trait list
-    uint16[] internal removedTraits;
+    uint16[] internal _removedTraits;
 
     /// @dev Nifty League NFTL token address
     address internal immutable _NFTL_ADDRESS;
@@ -70,6 +71,7 @@ contract NiftyLeagueCharacter is ERC721, Ownable, Pausable {
      * @param nftlAddress Address of verified Nifty League NFTL contract
      */
     constructor(address nftlAddress, string memory name, string memory symbol) ERC721(name, symbol) {
+        require(nftlAddress != address(0), "Invalid NFTL token address");
         _NFTL_ADDRESS = nftlAddress;
     }
 
@@ -103,8 +105,8 @@ contract NiftyLeagueCharacter is ERC721, Ownable, Pausable {
      * @notice Retrieve a list of removed character traits
      * @return removedTraits - list of unavailable character traits
      */
-    function getRemovedTraits() external view returns (uint16[] memory) {
-        return removedTraits;
+    function getRemovedTraits() external view returns (uint16[] memory removedTraits) {
+        return _removedTraits;
     }
 
     /**
@@ -145,18 +147,18 @@ contract NiftyLeagueCharacter is ERC721, Ownable, Pausable {
     /**
      * @notice Check whether trait combo is unique
      * @param traitCombo Generated trait combo packed into uint256
-     * @return True if combo is unique and available
+     * @return unique true if combo is unique and available
      */
-    function isUnique(uint256 traitCombo) public view returns (bool) {
+    function isUnique(uint256 traitCombo) public view returns (bool unique) {
         return !_existMap[traitCombo];
     }
 
     /**
      * @notice Check whether trait is still available
      * @param trait ID of trait
-     * @return True if trait has not been removed
+     * @return available true if trait has not been removed
      */
-    function isAvailableTrait(uint256 trait) public view returns (bool) {
+    function isAvailableTrait(uint256 trait) public view returns (bool available) {
         return !_removedTraitsMap[trait];
     }
 
@@ -165,9 +167,9 @@ contract NiftyLeagueCharacter is ERC721, Ownable, Pausable {
     /**
      * @notice Unpack trait id from trait list
      * @param traits Section within trait combo
-     * @return Trait ID
+     * @return trait ID
      */
-    function _unpackUint10(uint256 traits) internal pure returns (uint16) {
+    function _unpackUint10(uint256 traits) internal pure returns (uint16 trait) {
         return uint16(traits) & 0x03FF;
     }
 
@@ -179,7 +181,7 @@ contract NiftyLeagueCharacter is ERC721, Ownable, Pausable {
      * @param accessories Indexed list of accessories
      * @param items Indexed list of items
      * @dev Each trait is stored in 10 bits
-     * @return Trait combo packed into uint256
+     * @return traitCombo combo packed into uint256
      */
     function _generateTraitCombo(
         uint256[5] memory character,
@@ -187,7 +189,7 @@ contract NiftyLeagueCharacter is ERC721, Ownable, Pausable {
         uint256[6] memory clothing,
         uint256[6] memory accessories,
         uint256[2] memory items
-    ) internal pure returns (uint256) {
+    ) internal pure returns (uint256 traitCombo) {
         uint256 traits = character[0];
         traits |= character[1] << 10;
         traits |= character[2] << 20;

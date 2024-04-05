@@ -14,18 +14,18 @@ jobs:
       security-events: write
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.18.0
           cache: 'yarn'
       - name: Install dependencies
-        uses: borales/actions-yarn@v4
+        uses: borales/actions-yarn@v5
         with:
           cmd: install
       - name: Run Slither
-        uses: crytic/slither-action@v0.2.0
+        uses: crytic/slither-action@v0.3.2
         id: slither
         with:
           node-version: 18.18.0
@@ -33,6 +33,6 @@ jobs:
           sarif: results.sarif
           fail-on: none
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ${{ steps.slither.outputs.sarif }}

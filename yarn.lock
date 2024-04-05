@@ -1331,6 +1331,11 @@
     "@pnpm/network.ca-file" "^1.0.1"
     config-chain "^1.1.11"
 
+"@prettier/sync@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@prettier/sync/-/sync-0.3.0.tgz#91f2cfc23490a21586d1cf89c6f72157c000ca1e"
+  integrity sha512-3dcmCyAxIcxy036h1I7MQU/uEEBq8oLwf1CE3xeze+MPlgkdlb/+w6rGR/1dhp6Hqi17fRS6nvwnOzkESxEkOw==
+
 "@scure/base@~1.1.0", "@scure/base@~1.1.2", "@scure/base@~1.1.4":
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.1.6.tgz#8ce5d304b436e4c84f896e0550c83e4d88cb917d"
@@ -2876,9 +2881,9 @@ eastasianwidth@^0.2.0:
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
 
 electron-to-chromium@^1.4.668:
-  version "1.4.726"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.726.tgz#9ca95f19e9a0d63675e838b24681182203e40a30"
-  integrity sha512-xtjfBXn53RORwkbyKvDfTajtnTp0OJoPOIBzXvkNbb7+YYvCHJflba3L7Txyx/6Fov3ov2bGPr/n5MTixmPhdQ==
+  version "1.4.727"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.727.tgz#a97fb29fdc8c83a604d5b69f650e823c1986ca34"
+  integrity sha512-brpv4KTeC4g0Fx2FeIKytLd4UGn1zBQq5Lauy7zEWT9oqkaj5mgsxblEZIAOf1HHLlXxzr6adGViiBy5Z39/CA==
 
 elliptic@6.5.4:
   version "6.5.4"
@@ -6211,6 +6216,14 @@ solc@0.7.3:
     semver "^5.5.0"
     tmp "0.0.33"
 
+solhint-plugin-prettier@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/solhint-plugin-prettier/-/solhint-plugin-prettier-0.1.0.tgz#2f46999e26d6c6bc80281c22a7a21e381175bef7"
+  integrity sha512-SDOTSM6tZxZ6hamrzl3GUgzF77FM6jZplgL2plFBclj/OjKP8Z3eIPojKU73gRr0MvOS8ACZILn8a5g0VTz/Gw==
+  dependencies:
+    "@prettier/sync" "^0.3.0"
+    prettier-linter-helpers "^1.0.0"
+
 solhint@^4.5.2:
   version "4.5.2"
   resolved "https://registry.yarnpkg.com/solhint/-/solhint-4.5.2.tgz#a3fa101366dd1fb37009d24a9f16c99a4a745b5d"
@@ -6828,9 +6841,9 @@ types-ramda@^0.29.10:
     ts-toolbelt "^9.6.0"
 
 typescript@^5.2.2, typescript@^5.4.3:
-  version "5.4.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.3.tgz#5c6fedd4c87bee01cd7a528a30145521f8e0feff"
-  integrity sha512-KrPd3PKaCLr78MalgiwJnA25Nm8HAmdwN3mYUYZgG/wizIo9EainNVQI9/yDavtVFRN2h3k8uf3GLHuhDMgEHg==
+  version "5.4.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.4.tgz#eb2471e7b0a5f1377523700a21669dce30c2d952"
+  integrity sha512-dGE2Vv8cpVvw28v8HCPqyb08EzbBURxDpuhJvTrusShUfGnhHBafDsLdS1EhhxyL6BJQE+2cT3dDPAv+MQ6oLw==
 
 typical@^4.0.0:
   version "4.0.0"
@@ -7398,9 +7411,9 @@ yocto-queue@^0.1.0:
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
 zksync-ethers@^5.0.0:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/zksync-ethers/-/zksync-ethers-5.6.0.tgz#3d70b4d98426768c3d70650a9e50cd1f11df2d4c"
-  integrity sha512-+lw1dhURpVZos6+g82HdXVw2i/OI+S2nTqyNvBK2xwnQYv8vqxv0Ux/cMPV2AflswTG1/zrMmseRp+UJUCaw9g==
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/zksync-ethers/-/zksync-ethers-5.7.0.tgz#edf465eb564ed60d6a1cc3de5978b8bd8481c230"
+  integrity sha512-X99c5APICTlRzyXXjfwkEjRzOPp3Jwo62+z2DVGaZbe+b9Apbizcd2UGV4NGomoAR2GXPbeiSqi1cf3Hbo3cQw==
   dependencies:
     ethers "~5.7.0"
 

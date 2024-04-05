@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.25;
 
 import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import { ReentrancyGuardUpgradeable } from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
@@ -14,21 +14,6 @@ import { INiftyEquipment } from "./interfaces/INiftyEquipment.sol";
 contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, PausableUpgradeable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    event ItemPurchased(address indexed by, uint256[] itemIds, uint256[] amounts);
-    event ItemPriceSet(address indexed by, uint256 itemId, uint256 oldItemPrice, uint256 newItemPrice);
-    event ItemMaxCountSet(address indexed by, uint256 itemId, uint256 oldItemMaxCount, uint256 newItemMaxCount);
-    event TokenPercentagesUpdated(
-        address indexed by,
-        uint256 oldBurnPercentage,
-        uint256 oldTreasuryPercentage,
-        uint256 oldDAOPercentage,
-        uint256 newBurnPercentage,
-        uint256 newTreasuryPercentage,
-        uint256 newDAOPercentage
-    );
-    event ItemLimitUpdated(address indexed by, uint256 itemId, uint256 oldLimitCount, uint256 newLimitCount);
-    event NFTLWitdraw(address indexed by, uint256 burnAmount, uint256 treasuryAmount, uint256 daoAmount);
-
     /// @dev NiftyItems address
     address public items;
 
@@ -36,13 +21,13 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
     address public nftl;
 
     /// @dev ItemID -> NFTL token amount (price)
-    mapping(uint256 => uint256) public itemPrices;
+    mapping(uint256 itemId => uint256 amount) public itemPrices;
 
     /// @dev ItemID -> Max count
-    mapping(uint256 => uint256) public itemMaxCounts;
+    mapping(uint256 itemId => uint256 count) public itemMaxCounts;
 
     /// @dev ItemID -> Item count limit per address
-    mapping(uint256 => uint256) public itemLimitPerAdress;
+    mapping(uint256 itemId => uint256 limit) public itemLimitPerAdress;
 
     /// @dev Treasury address
     address public treasury;
@@ -59,6 +44,24 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
     /// @dev NFTL token percentage to the DAO
     uint256 public daoPercentage;
 
+    event ItemPurchased(address indexed by, uint256[] itemIds, uint256[] amounts);
+    event ItemPriceSet(address indexed by, uint256 itemId, uint256 oldItemPrice, uint256 newItemPrice);
+    event ItemMaxCountSet(address indexed by, uint256 itemId, uint256 oldItemMaxCount, uint256 newItemMaxCount);
+    event TokenPercentagesUpdated(
+        address indexed by,
+        uint256 oldBurnPercentage,
+        uint256 oldTreasuryPercentage,
+        uint256 oldDAOPercentage,
+        uint256 newBurnPercentage,
+        uint256 newTreasuryPercentage,
+        uint256 newDAOPercentage
+    );
+    event ItemLimitUpdated(address indexed by, uint256 itemId, uint256 oldLimitCount, uint256 newLimitCount);
+    event NFTLWithdraw(address indexed by, uint256 burnAmount, uint256 treasuryAmount, uint256 daoAmount);
+
+    error AddressError(string message);
+    error InputError(string message);
+
     function initialize(
         address _items,
         address _nftl,
@@ -72,7 +75,12 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
         __ReentrancyGuard_init();
         __Pausable_init();
 
-        require(_burnPercentage + _treasuryPercentage + _daoPercentage == 1000, "Invalid percentages");
+        if (_burnPercentage + _treasuryPercentage + _daoPercentage != 1000) revert InputError("Invalid percentages");
+
+        if (_items == address(0)) revert AddressError("Invalid items address");
+        if (_nftl == address(0)) revert AddressError("Invalid nftl address");
+        if (_treasury == address(0)) revert AddressError("Invalid treasury address");
+        if (_dao == address(0)) revert AddressError("Invalid dao address");
 
         items = _items;
         nftl = _nftl;
@@ -95,25 +103,26 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
         uint256[] calldata _itemIds,
         uint256[] calldata _amounts
     ) external nonReentrant whenNotPaused {
-        require(_itemIds.length == _amounts.length, "Mismatched params");
+        uint256 length = _itemIds.length;
+        if (length != _amounts.length) revert InputError("Mismatched params");
 
         // get total price and check the limit
         uint256 totalPrice;
         uint256 itemId;
         uint256 amount;
-        for (uint256 i; i < _itemIds.length; i++) {
+        for (uint256 i; i < length; ++i) {
             itemId = _itemIds[i];
             amount = _amounts[i];
 
             // check the price and max count
-            require(itemPrices[itemId] > 0, "Zero price");
-            require(amount <= getRemainingItemCount(itemId), "Remaining count overflow");
+            if (itemPrices[itemId] == 0) revert InputError("Zero price");
+            if (amount > getRemainingItemCount(itemId)) revert InputError("Remaining count overflow");
 
             // check the item limit if it's set
             uint256 itemLimitCount = itemLimitPerAdress[itemId];
             if (itemLimitCount > 0) {
                 uint256 userBalance = IERC1155SupplyUpgradeable(items).balanceOf(msg.sender, itemId);
-                require(userBalance + amount <= itemLimitCount, "Item limit overflow");
+                if (userBalance + amount > itemLimitCount) revert InputError("Item limit overflow");
             }
 
             totalPrice += itemPrices[itemId] * amount;
@@ -135,12 +144,13 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
      * @param _nftlAmounts Item price list specified by the NFTL token amounts
      */
     function setItemPrices(uint256[] calldata _itemIds, uint256[] calldata _nftlAmounts) external onlyOwner {
-        require(_itemIds.length == _nftlAmounts.length, "Mismatched params");
+        uint256 length = _itemIds.length;
+        if (length != _nftlAmounts.length) revert InputError("Mismatched params");
 
         // set the item price
-        for (uint256 i; i < _itemIds.length; i++) {
-            require(_itemIds[i] > 6, "Token ID less than 7");
-            require(_nftlAmounts[i] >= 10 ** 18, "Price less than 1 NFTL");
+        for (uint256 i; i < length; ++i) {
+            if (_itemIds[i] <= 6) revert InputError("Token ID less than 7");
+            if (_nftlAmounts[i] < 10 ** 18) revert InputError("Price less than 1 NFTL");
 
             emit ItemPriceSet(msg.sender, _itemIds[i], itemPrices[_itemIds[i]], _nftlAmounts[i]);
 
@@ -157,18 +167,17 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
      * @param _maxCounts Item max count list
      */
     function setItemMaxCounts(uint256[] calldata _itemIds, uint256[] calldata _maxCounts) external onlyOwner {
-        require(_itemIds.length == _maxCounts.length, "Mismatched params");
+        uint256 length = _itemIds.length;
+        if (length != _maxCounts.length) revert InputError("Mismatched params");
 
         // set the item max count
-        for (uint256 i; i < _itemIds.length; i++) {
+        for (uint256 i; i < length; ++i) {
             // check item ID
-            require(_itemIds[i] > 6, "Token ID less than 7");
+            if (_itemIds[i] <= 6) revert InputError("Token ID less than 7");
 
             // check if the max count is smaller than the current total supply
-            require(
-                _maxCounts[i] >= IERC1155SupplyUpgradeable(items).totalSupply(_itemIds[i]),
-                "Max count less than total supply"
-            );
+            if (_maxCounts[i] < IERC1155SupplyUpgradeable(items).totalSupply(_itemIds[i]))
+                revert InputError("Max count less than total supply");
 
             emit ItemMaxCountSet(msg.sender, _itemIds[i], itemMaxCounts[_itemIds[i]], _maxCounts[i]);
 
@@ -189,7 +198,7 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
         uint256 _treasuryPercentage,
         uint256 _daoPercentage
     ) external onlyOwner {
-        require(_burnPercentage + _treasuryPercentage + _daoPercentage == 1000, "Invalid percentages");
+        if (_burnPercentage + _treasuryPercentage + _daoPercentage != 1000) revert InputError("Invalid percentages");
 
         emit TokenPercentagesUpdated(
             msg.sender,
@@ -205,15 +214,6 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
         burnPercentage = _burnPercentage;
         treasuryPercentage = _treasuryPercentage;
         daoPercentage = _daoPercentage;
-    }
-
-    /**
-     * @notice Get the remaining item count to be able to purchase
-     * @param _itemId Item ID
-     * @return (uint256) Remaining item amount to be able to purchase
-     */
-    function getRemainingItemCount(uint256 _itemId) public view returns (uint256) {
-        return itemMaxCounts[_itemId] - IERC1155SupplyUpgradeable(items).totalSupply(_itemId);
     }
 
     /**
@@ -242,12 +242,12 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
         uint256 treasuryAmount = (nftlBalance * treasuryPercentage) / 1000;
         uint256 daoAmount = nftlBalance - burnAmount - treasuryAmount;
 
+        emit NFTLWithdraw(msg.sender, burnAmount, treasuryAmount, daoAmount);
+
         // trasnfer tokens
         IERC20PresetMinterPauserUpgradeable(nftl).burn(burnAmount);
         IERC20Upgradeable(nftl).safeTransfer(treasury, treasuryAmount);
         IERC20Upgradeable(nftl).safeTransfer(dao, daoAmount);
-
-        emit NFTLWitdraw(msg.sender, burnAmount, treasuryAmount, daoAmount);
     }
 
     /**
@@ -264,5 +264,14 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
      */
     function unpause() external onlyOwner {
         _unpause();
+    }
+
+    /**
+     * @notice Get the remaining item count to be able to purchase
+     * @param _itemId Item ID
+     * @return count (uint256) Remaining item amount able to purchase
+     */
+    function getRemainingItemCount(uint256 _itemId) public view returns (uint256 count) {
+        return itemMaxCounts[_itemId] - IERC1155SupplyUpgradeable(items).totalSupply(_itemId);
     }
 }

@@ -7,42 +7,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.18.0
           cache: 'yarn'
       - name: Install dependencies
-        uses: borales/actions-yarn@v4
+        uses: borales/actions-yarn@v5
         with:
           cmd: install
       - name: Hardhat compile
-        uses: borales/actions-yarn@v4
+        uses: borales/actions-yarn@v5
         with:
           cmd: build
-      - name: Run prettier
-        uses: borales/actions-yarn@v4
+      - name: Run Prettier
+        uses: borales/actions-yarn@v5
         with:
           cmd: format
-      - name: Lint JS files
-        uses: borales/actions-yarn@v4
+      - name: Lint TS Scripts
+        uses: borales/actions-yarn@v5
         with:
-          cmd: lint
+          cmd: lint:ts
       - name: Lint Solidity files
-        uses: borales/actions-yarn@v4
+        uses: borales/actions-yarn@v5
         with:
           cmd: lint:sol
       - name: Check TypeScript
-        uses: borales/actions-yarn@v4
+        uses: borales/actions-yarn@v5
         with:
           cmd: type-check
       - name: Run Hardhat tests
-        uses: borales/actions-yarn@v4
+        uses: borales/actions-yarn@v5
         with:
           cmd: test
       - name: Check Solidity coverage
-        uses: borales/actions-yarn@v4
+        uses: borales/actions-yarn@v5
         with:
           cmd: coverage
       - name: Test contract deployment

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.25;
 
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -36,6 +36,9 @@ contract HydraDistributor is
     event NiftyWalletSet(address indexed niftyWallet);
     event HydraClaimed(address indexed user, uint256[] tokenIdsBurned, uint256 hydraTokenId);
 
+    error AddressError(string message);
+    error BurnCountError(uint256 count, string message);
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -46,8 +49,9 @@ contract HydraDistributor is
         __Pausable_init();
         __ReentrancyGuard_init();
 
-        require(_niftyDegen != address(0), "Zero address");
-        require(_niftyWallet != address(0), "Zero address");
+        if (_niftyDegen == address(0) || _niftyWallet == address(0)) {
+            revert AddressError("Zero address");
+        }
 
         niftyDegen = IERC721Upgradeable(_niftyDegen);
         niftyWallet = _niftyWallet;
@@ -58,7 +62,7 @@ contract HydraDistributor is
      * @param _niftyDegen NiftyDegen NFT address
      */
     function updateNiftyDegen(address _niftyDegen) external onlyOwner {
-        require(_niftyDegen != address(0), "Zero address");
+        if (_niftyDegen == address(0)) revert AddressError("Zero address");
 
         niftyDegen = IERC721Upgradeable(_niftyDegen);
 
@@ -70,7 +74,7 @@ contract HydraDistributor is
      * @param _niftyWallet NiftyLeague wallet address
      */
     function updateNiftyWallet(address _niftyWallet) external onlyOwner {
-        require(_niftyWallet != address(0), "Zero address");
+        if (_niftyWallet == address(0)) revert AddressError("Zero address");
 
         niftyWallet = _niftyWallet;
 
@@ -82,7 +86,8 @@ contract HydraDistributor is
      * @param _hydraTokenIdList Token Ids of the Hydra to deposit
      */
     function depositHydra(uint256[] calldata _hydraTokenIdList) external onlyOwner {
-        for (uint256 i = 0; i < _hydraTokenIdList.length; ) {
+        uint256 length = _hydraTokenIdList.length;
+        for (uint256 i = 0; i < length; ) {
             uint256 tokenId = _hydraTokenIdList[i];
 
             hydraTokenIds.push(tokenId);
@@ -92,7 +97,7 @@ contract HydraDistributor is
             }
         }
 
-        for (uint256 i = 0; i < _hydraTokenIdList.length; ) {
+        for (uint256 i = 0; i < length; ) {
             uint256 tokenId = _hydraTokenIdList[i];
 
             niftyDegen.safeTransferFrom(msg.sender, address(this), tokenId, bytes(""));
@@ -113,10 +118,10 @@ contract HydraDistributor is
     function claimRandomHydra(uint256[] calldata _degenTokenIdList) external nonReentrant whenNotPaused {
         uint256 degenCountToBurn = _degenTokenIdList.length;
 
-        if (msg.sender == niftyWallet) {
-            require(degenCountToBurn == 12, "Need 12 degens");
-        } else {
-            require(degenCountToBurn == 8, "Need 8 degens");
+        if (msg.sender == niftyWallet && degenCountToBurn != 12) {
+            revert BurnCountError(degenCountToBurn, "Need 12 degens");
+        } else if (msg.sender != niftyWallet && degenCountToBurn != 8) {
+            revert BurnCountError(degenCountToBurn, "Need 8 degens");
         }
 
         // get the random Hydra tokenId
@@ -129,7 +134,7 @@ contract HydraDistributor is
         }
 
         bytes32 randomHash = keccak256(
-            abi.encodePacked(_prevHash, randomValue, msg.sender, block.timestamp, block.difficulty)
+            abi.encodePacked(_prevHash, randomValue, msg.sender, block.timestamp, block.basefee)
         );
         uint256 hydraCount = hydraTokenIds.length;
         uint256 hydraIndex = uint256(randomHash) % hydraCount;
@@ -158,19 +163,12 @@ contract HydraDistributor is
     }
 
     /**
-     * @notice Returns the number of the Hydra in the contract
-     * @return hydraCount Number of Hydra in the contract
-     */
-    function getHydraCount() external view returns (uint256 hydraCount) {
-        hydraCount = hydraTokenIds.length;
-    }
-
-    /**
      * @notice Withdraw all Hydra
      * @param _to Address to receive the Hydra
      */
     function withdrawAllHydra(address _to) external onlyOwner {
-        for (uint256 i = 0; i < hydraTokenIds.length; ) {
+        uint256 length = hydraTokenIds.length;
+        for (uint256 i = 0; i < length; ) {
             uint256 tokenId = hydraTokenIds[i];
 
             niftyDegen.safeTransferFrom(address(this), _to, tokenId, bytes(""));
@@ -195,7 +193,15 @@ contract HydraDistributor is
         _unpause();
     }
 
-    function getHydraTokenIds() external view returns (uint256[] memory) {
+    /**
+     * @notice Returns the number of the Hydra in the contract
+     * @return hydraCount Number of Hydra in the contract
+     */
+    function getHydraCount() external view returns (uint256 hydraCount) {
+        hydraCount = hydraTokenIds.length;
+    }
+
+    function getHydraTokenIds() external view returns (uint256[] memory tokenIds) {
         return hydraTokenIds;
     }
 }

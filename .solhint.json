@@ -1,10 +1,22 @@
 {
   "extends": ["solhint:recommended"],
-  "plugins": [],
+  "plugins": ["prettier"],
   "rules": {
-    "compiler-version": ["warn", "0.8.11"],
-    "max-states-count": ["warn", 23],
+    "compiler-version": ["warn", "^0.8.25"],
     "func-visibility": ["warn", { "ignoreConstructors": true }],
-    "gas-custom-errors": "off"
+    "gas-calldata-parameters": "warn",
+    "gas-custom-errors": "warn",
+    "gas-increment-by-one": "warn",
+    "gas-length-in-loops": "warn",
+    "gas-named-return-values": "warn",
+    "gas-small-strings": "warn",
+    "gas-struct-packing": "warn",
+    "interface-starts-with-i": "warn",
+    "max-states-count": ["warn", 23],
+    "named-parameters-mapping": "warn",
+    "not-rely-on-time": "off",
+    "ordering": "warn",
+    "prettier/prettier": "error",
+    "private-vars-leading-underscore": ["warn", { "strict": false }]
   }
 }

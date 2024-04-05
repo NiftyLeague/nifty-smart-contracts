@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.25;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -10,7 +10,9 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
  */
 contract AllowedColorsStorage is Ownable {
     /// @dev Mapping if color is allowed for selected tribe
-    mapping(uint256 => mapping(uint256 => bool)) private _tribeColorAllowed;
+    mapping(uint256 tribe => mapping(uint256 color => bool allowed)) private _tribeColorAllowed;
+
+    error InvalidTribe(uint256 tribe, string message);
 
     /**
      * @notice Set allowed on a given a list of colors
@@ -18,11 +20,24 @@ contract AllowedColorsStorage is Ownable {
      * @param colors List of colors to set for tribe
      * @param allowed Bool if the color list should be made allowed or not
      */
-    function setAllowedColorsOnTribe(uint256 tribe, uint256[] memory colors, bool allowed) external onlyOwner {
-        require(tribe > 0 && tribe < 10, "Invalid tribe provided");
-        for (uint256 i = 0; i < colors.length; i++) {
+    function setAllowedColorsOnTribe(uint256 tribe, uint256[] calldata colors, bool allowed) external onlyOwner {
+        if (tribe < 1 || tribe > 9) {
+            revert InvalidTribe(tribe, "Invalid tribe provided");
+        }
+        uint256 length = colors.length;
+        for (uint256 i = 0; i < length; ++i) {
             _toggleColorAllowed(tribe, colors[i], allowed);
         }
+    }
+
+    /**
+     * @notice Check if color is allowed for a tribe
+     * @param tribe Tribe ID
+     * @param color Trait ID
+     * @return allowed if color is allowed for tribe
+     */
+    function isAllowedColor(uint256 tribe, uint256 color) public view returns (bool allowed) {
+        return _tribeColorAllowed[tribe][color];
     }
 
     /**
@@ -34,15 +49,5 @@ contract AllowedColorsStorage is Ownable {
      */
     function _toggleColorAllowed(uint256 tribe, uint256 color, bool allowed) private {
         _tribeColorAllowed[tribe][color] = allowed;
-    }
-
-    /**
-     * @notice Check if color is allowed for a tribe
-     * @param tribe Tribe ID
-     * @param color Trait ID
-     * @return True if color is allowed for tribe
-     */
-    function isAllowedColor(uint256 tribe, uint256 color) public view returns (bool) {
-        return _tribeColorAllowed[tribe][color];
     }
 }
