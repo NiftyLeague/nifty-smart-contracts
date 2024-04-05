@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.25;
 
-import { ERC721EnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
-import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import { StringsUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
+import { ERC721EnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/v4/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/v4/access/OwnableUpgradeable.sol";
+import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/v4/security/PausableUpgradeable.sol";
+import { StringsUpgradeable } from "@openzeppelin/contracts-upgradeable/v4/utils/StringsUpgradeable.sol";
 
 import { IMintable } from "@imtbl/imx-contracts/contracts/IMintable.sol";
 import { Bytes } from "@imtbl/imx-contracts/contracts/utils/Bytes.sol";
