@@ -4,13 +4,13 @@
   "description": "Nifty League Smart Contracts",
   "author": "Nifty Andy",
   "license": "MIT",
-  "homepage": "https://github.com/NiftyLeague/NiftySmartContracts#readme",
+  "homepage": "https://github.com/NiftyLeague/nifty-smart-contracts#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NiftyLeague/NiftySmartContracts"
+    "url": "git+https://github.com/NiftyLeague/nifty-smart-contracts"
   },
   "bugs": {
-    "url": "https://github.com/NiftyLeague/NiftySmartContracts/issues"
+    "url": "https://github.com/NiftyLeague/nifty-smart-contracts/issues"
   },
   "scripts": {
     "lint:ts": "eslint --ignore-path .eslintignore . --ext .ts,.js --fix",
