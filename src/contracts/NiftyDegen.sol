@@ -3,7 +3,7 @@
 
 pragma solidity ^0.8.25;
 
-import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
+import { Counters } from "@openzeppelin/contracts/v4/utils/Counters.sol";
 import { NameableCharacter, NiftyLeagueCharacter } from "./NameableCharacter.sol";
 import { AllowedColorsStorage } from "./AllowedColorsStorage.sol";
 
