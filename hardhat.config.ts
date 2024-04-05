@@ -1,15 +1,12 @@
 import { HardhatUserConfig, task } from 'hardhat/config';
 import '@nomicfoundation/hardhat-toolbox';
 import '@openzeppelin/hardhat-upgrades';
-import '@tenderly/hardhat-tenderly';
 import 'hardhat-deploy-ethers';
 import 'hardhat-deploy';
 
-import { resolve } from 'path';
-import { config as dotenvConfig } from 'dotenv';
+import { config as dotEnvConfig } from 'dotenv';
 import 'tsconfig-paths/register';
-
-dotenvConfig({ path: resolve(__dirname, './.env') });
+dotEnvConfig();
 
 // Select the network you want to deploy to here:
 const defaultNetwork = process.env.HARDHAT_NETWORK;
@@ -55,9 +52,15 @@ const config: HardhatUserConfig = {
       allowUnlimitedContractSize: true,
       deploy: ['src/deploy/hardhat/'],
     },
+    tenderly: {
+      url: `https://rpc.vnet.tenderly.co/devnet/${process.env.TENDERLY_DEV_NET}`,
+      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      deploy: ['src/deploy/remote/'],
+    },
     sepolia: {
       // url: `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
-      url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      // url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://sepolia.gateway.tenderly.co/${process.env.TENDERLY_ACCESS_KEY}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
       deploy: ['src/deploy/remote/'],
     },

@@ -2,17 +2,17 @@
 
 pragma solidity ^0.8.25;
 
-import { Initializable } from "@openzeppelin/contracts-upgradeable/v4/proxy/utils/Initializable.sol";
-import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/v4/access/OwnableUpgradeable.sol";
-import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/v4/security/PausableUpgradeable.sol";
-import { IERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/v4/token/ERC20/IERC20Upgradeable.sol";
-import { SafeERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/v4/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import { IERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/v4/token/ERC721/IERC721Upgradeable.sol";
-import { ERC721HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/v4/token/ERC721/utils/ERC721HolderUpgradeable.sol";
-import { EnumerableSetUpgradeable } from "@openzeppelin/contracts-upgradeable/v4/utils/structs/EnumerableSetUpgradeable.sol";
-import { SafeERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/v4/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import { LinkTokenInterface } from "@chainlink/contracts/src/v0.8/shared/interfaces/LinkTokenInterface.sol";
-import { VRFCoordinatorV2Interface } from "@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/v4/proxy/utils/Initializable.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/v4/access/OwnableUpgradeable.sol";
+import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/v4/security/PausableUpgradeable.sol";
+import {IERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/v4/token/ERC20/IERC20Upgradeable.sol";
+import {SafeERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/v4/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import {IERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/v4/token/ERC721/IERC721Upgradeable.sol";
+import {ERC721HolderUpgradeable} from "@openzeppelin/contracts-upgradeable/v4/token/ERC721/utils/ERC721HolderUpgradeable.sol";
+import {EnumerableSetUpgradeable} from "@openzeppelin/contracts-upgradeable/v4/utils/structs/EnumerableSetUpgradeable.sol";
+import {SafeERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/v4/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/shared/interfaces/LinkTokenInterface.sol";
+import {VRFCoordinatorV2Interface} from "@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol";
 
 interface IERC20BurnableUpgradeable is IERC20Upgradeable {
     function burnFrom(address account, uint256 amount) external;
@@ -452,7 +452,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
         isWinnerTicketId[winnerTicketId] = true;
 
         // store the winner
-        winners.push(WinnerInfo({ ticketId: winnerTicketId, winner: winner, prizeTokenId: prizeTokenId }));
+        winners.push(WinnerInfo({ticketId: winnerTicketId, winner: winner, prizeTokenId: prizeTokenId}));
 
         emit WinnerSelected(msg.sender, winner, winnerTicketId, prizeTokenId);
 
