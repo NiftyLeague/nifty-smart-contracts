@@ -1,6 +1,7 @@
+// solhint-disable custom-errors, gas-custom-errors
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.25;
 
 import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
 import { NameableCharacter, NiftyLeagueCharacter } from "./NameableCharacter.sol";
@@ -26,7 +27,7 @@ contract NiftyDegen is NameableCharacter {
     address internal immutable _STORAGE_ADDRESS;
 
     /// @dev Mapping trait indexes to pool size of available traits
-    mapping(uint256 => uint256) internal _originalPoolSizes;
+    mapping(uint256 trait => uint256 poolSize) internal _originalPoolSizes;
 
     /// @dev Set if we want to override semi-fomo ramp pricing
     uint256 private _manualMintPrice;
@@ -34,12 +35,15 @@ contract NiftyDegen is NameableCharacter {
     /// @dev Base URI used for token metadata
     string private _baseTokenUri = "";
 
+    event PriceChanged(uint256 newPrice);
+
     /**
      * @notice Construct the Nifty League NFTs
      * @param nftlAddress Address of verified Nifty League NFTL contract
      * @param storageAddress Address of verified Allowed Colors Storage
      */
     constructor(address nftlAddress, address storageAddress) NiftyLeagueCharacter(nftlAddress, "NiftyDegen", "DEGEN") {
+        require(storageAddress != address(0), "Invalid storage address");
         _STORAGE_ADDRESS = storageAddress;
     }
 
@@ -55,11 +59,11 @@ contract NiftyDegen is NameableCharacter {
      * @dev Order is based on character selector indexes
      */
     function purchase(
-        uint256[5] memory character,
-        uint256[3] memory head,
-        uint256[6] memory clothing,
-        uint256[6] memory accessories,
-        uint256[2] memory items
+        uint256[5] calldata character,
+        uint256[3] calldata head,
+        uint256[6] calldata clothing,
+        uint256[6] calldata accessories,
+        uint256[2] calldata items
     ) external payable whenNotPaused {
         uint256 currentSupply = totalSupply.current();
         require(currentSupply >= 3 || _msgSender() == owner(), "Sale has not started");
@@ -100,6 +104,7 @@ contract NiftyDegen is NameableCharacter {
      */
     function overrideMintPrice(uint256 newPrice) external onlyOwner {
         _manualMintPrice = newPrice;
+        emit PriceChanged(newPrice);
     }
 
     /**
@@ -114,9 +119,9 @@ contract NiftyDegen is NameableCharacter {
 
     /**
      * @notice Gets current NFT Price based on current supply
-     * @return Current price to mint 1 NFT
+     * @return price to mint 1 NFT
      */
-    function getNFTPrice() public view returns (uint256) {
+    function getNFTPrice() public view returns (uint256 price) {
         uint256 currentSupply = totalSupply.current();
         require(
             currentSupply < MAX_SUPPLY - SPECIAL_CHARACTERS || (_msgSender() == owner() && currentSupply < MAX_SUPPLY),
@@ -130,7 +135,7 @@ contract NiftyDegen is NameableCharacter {
         if (currentSupply >= 8500) return 250000000000000000; // 8501 - 9500 0.25 ETH
         if (currentSupply >= 6500) return 220000000000000000; // 6501 - 8500 0.22 ETH
         if (currentSupply >= 4500) return 190000000000000000; // 4501 - 6500 0.18 ETH
-        if (currentSupply >= 2500) return 160000000000000000; // 2501 - 4500 0.15 ETH
+        if (currentSupply >= 2500) return 150000000000000000; // 2501 - 4500 0.15 ETH
         if (currentSupply >= 1000) return 130000000000000000; // 1001 - 2500 0.13 ETH
         return 100000000000000000; // 4 - 1000 0.1 ETH
     }
@@ -140,10 +145,10 @@ contract NiftyDegen is NameableCharacter {
      * @param tribe Tribe ID
      * @param trait Trait ID
      * @dev Trait types are restricted per tribe before deploy in AllowedColorsStorage
-     * @return True if trait is available and allowed for tribe
+     * @return allowed if trait is available and allowed for tribe
      */
-    function isAvailableAndAllowedTrait(uint256 tribe, uint256 trait) public view returns (bool) {
-        if (trait == EMPTY_TRAIT) return true;
+    function isAvailableAndAllowedTrait(uint256 tribe, uint256 trait) public view returns (bool allowed) {
+        if (trait == _EMPTY_TRAIT) return true;
         if (trait >= 150) return isAvailableTrait(trait);
         AllowedColorsStorage colorsStorage = AllowedColorsStorage(_STORAGE_ADDRESS);
         return colorsStorage.isAllowedColor(tribe, trait);
@@ -153,13 +158,55 @@ contract NiftyDegen is NameableCharacter {
 
     /**
      * @notice Base URI for computing {tokenURI}. Overrides ERC721 default
-     * @return Base token URI linked to IPFS metadata
+     * @return base token URI linked to IPFS metadata
      */
-    function _baseURI() internal view virtual override returns (string memory) {
+    function _baseURI() internal view virtual override returns (string memory base) {
         return _baseTokenUri;
     }
 
     // Private functions
+
+    /**
+     * @notice Mints NFT if unique and attempts to remove a random trait
+     * @param traitCombo Trait combo provided from _generateTraitCombo
+     */
+    function _storeNewCharacter(uint256 traitCombo) private {
+        require(isUnique(traitCombo), "NFT trait combo already exists");
+        _existMap[traitCombo] = true;
+        totalSupply.increment();
+        uint256 newCharId = totalSupply.current();
+        Character memory newChar = Character(traitCombo, "");
+        _characters[newCharId] = newChar;
+        _removeRandomTrait(newCharId, traitCombo);
+        _safeMint(_msgSender(), newCharId);
+    }
+
+    /**
+     * @notice Attempts to remove a random trait from availability
+     * @param newCharId ID of newly generated NFT
+     * @param traitCombo Trait combo provided from _generateTraitCombo
+     * @dev Any trait id besides 0, tribe ids, or body/eye colors can be removed
+     */
+    function _removeRandomTrait(uint256 newCharId, uint256 traitCombo) private {
+        uint256 numRemoved = _removedTraits.length;
+        if (
+            (numRemoved < 100 && newCharId % 7 == 0) ||
+            (numRemoved >= 100 && numRemoved < 200 && newCharId % 9 == 0) ||
+            (numRemoved >= 200 && numRemoved < 300 && newCharId % 11 == 0) ||
+            (numRemoved >= 300 && numRemoved < 400 && newCharId % 13 == 0)
+        ) {
+            uint256 randomIndex = _rngIndex(newCharId);
+            uint16 randomTrait = _unpackUint10(traitCombo >> (randomIndex * 10));
+            if (randomTrait != 0) {
+                uint256 poolSize = _originalPoolSizes[randomIndex];
+                bool skip = _rngSkip(poolSize);
+                if (!skip) {
+                    _removedTraits.push(randomTrait);
+                    _removedTraitsMap[randomTrait] = true;
+                }
+            }
+        }
+    }
 
     /**
      * @notice Validate character traits
@@ -224,56 +271,13 @@ contract NiftyDegen is NameableCharacter {
     }
 
     /**
-     * @notice Mints NFT if unique and attempts to remove a random trait
-     * @param traitCombo Trait combo provided from _generateTraitCombo
-     */
-    function _storeNewCharacter(uint256 traitCombo) private {
-        require(isUnique(traitCombo), "NFT trait combo already exists");
-        _existMap[traitCombo] = true;
-        totalSupply.increment();
-        uint256 newCharId = totalSupply.current();
-        Character memory newChar;
-        newChar.traits = traitCombo;
-        _characters[newCharId] = newChar;
-        // _removeRandomTrait(newCharId, traitCombo); // disabled for test networks
-        _safeMint(_msgSender(), newCharId);
-    }
-
-    /**
-     * @notice Attempts to remove a random trait from availability
-     * @param newCharId ID of newly generated NFT
-     * @param traitCombo Trait combo provided from _generateTraitCombo
-     * @dev Any trait id besides 0, tribe ids, or body/eye colors can be removed
-     */
-    function _removeRandomTrait(uint256 newCharId, uint256 traitCombo) private {
-        uint256 numRemoved = removedTraits.length;
-        if (
-            (numRemoved < 100 && newCharId % 7 == 0) ||
-            (numRemoved >= 100 && numRemoved < 200 && newCharId % 9 == 0) ||
-            (numRemoved >= 200 && numRemoved < 300 && newCharId % 11 == 0) ||
-            (numRemoved >= 300 && numRemoved < 400 && newCharId % 13 == 0)
-        ) {
-            uint256 randomIndex = _rngIndex(newCharId);
-            uint16 randomTrait = _unpackUint10(traitCombo >> (randomIndex * 10));
-            if (randomTrait != 0) {
-                uint256 poolSize = _originalPoolSizes[randomIndex];
-                bool skip = _rngSkip(poolSize);
-                if (!skip) {
-                    removedTraits.push(randomTrait);
-                    _removedTraitsMap[randomTrait] = true;
-                }
-            }
-        }
-    }
-
-    /**
      * @notice Simulate randomness for token index to attempt to remove excluding tribes and colors
      * @param tokenId ID of newly generated NFT
      * @dev Randomness can be anticipated and exploited but is not crucial to NFT sale
-     * @return Number from 5-21
+     * @return index from 5-21
      */
-    function _rngIndex(uint256 tokenId) private view returns (uint256) {
-        uint256 randomHash = uint256(keccak256(abi.encodePacked(tokenId, block.timestamp, block.difficulty)));
+    function _rngIndex(uint256 tokenId) private view returns (uint256 index) {
+        uint256 randomHash = uint256(keccak256(abi.encodePacked(tokenId, block.timestamp, block.basefee)));
         return (randomHash % 17) + 5;
     }
 
@@ -281,10 +285,10 @@ contract NiftyDegen is NameableCharacter {
      * @notice Simulate randomness to decide to skip removing trait based on pool size
      * @param poolSize Number of trait options for a specific trait type
      * @dev Randomness can be anticipated and exploited but is not crucial to NFT sale
-     * @return True if should skip this trait removal
+     * @return skip true if should skip this trait removal
      */
-    function _rngSkip(uint256 poolSize) private view returns (bool) {
-        uint256 randomHash = uint256(keccak256(abi.encodePacked(poolSize, block.timestamp, block.difficulty)));
+    function _rngSkip(uint256 poolSize) private view returns (bool skip) {
+        uint256 randomHash = uint256(keccak256(abi.encodePacked(poolSize, block.timestamp, block.basefee)));
         int256 odds = 70 - int256(randomHash % 61);
         return odds < int256(500 / poolSize);
     }
@@ -293,9 +297,9 @@ contract NiftyDegen is NameableCharacter {
      * @notice Checks whether trait id is in range of lower/upper bounds
      * @param lower lower range-bound
      * @param upper upper range-bound
-     * @return True if in range
+     * @return inRange true if in range
      */
-    function _isTraitInRange(uint256 trait, uint256 lower, uint256 upper) private pure returns (bool) {
-        return trait == EMPTY_TRAIT || (trait >= lower && trait <= upper);
+    function _isTraitInRange(uint256 trait, uint256 lower, uint256 upper) private pure returns (bool inRange) {
+        return trait == _EMPTY_TRAIT || (trait >= lower && trait <= upper);
     }
 }
