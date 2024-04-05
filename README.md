@@ -97,6 +97,7 @@ npx prettier '**/*.{json,sol,md}' --check
 npx prettier '**/*.{json,sol,md}' --write
 npx solhint 'src/contracts/**/*.sol'
 npx solhint 'src/contracts/**/*.sol' --fix
+slither . --checklist
 ```
 
 ## Etherscan verification

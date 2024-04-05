@@ -79,3 +79,9 @@ export const isSolidity = (fileName: string) =>
 export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+/**
+ * Generates a random Ethereum address.
+ * @returns {`0x${string}`} The randomly generated Ethereum address.
+ */
+export const generateRandomAddress = () => '0x' + Math.random().toString(16).substr(2, 40);

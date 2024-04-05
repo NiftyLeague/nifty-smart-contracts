@@ -36,7 +36,7 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.8.11',
+        version: '0.8.25',
         settings: { optimizer: { enabled: true, runs: 200 } },
       },
     ],
@@ -56,7 +56,8 @@ const config: HardhatUserConfig = {
       deploy: ['src/deploy/hardhat/'],
     },
     sepolia: {
-      url: `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
+      // url: `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
+      url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
       deploy: ['src/deploy/remote/'],
     },

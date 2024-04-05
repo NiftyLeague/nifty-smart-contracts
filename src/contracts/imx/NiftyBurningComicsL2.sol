@@ -1,17 +1,12 @@
 // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.25;
 
-pragma solidity 0.8.11;
-
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "../interfaces/INiftyLaunchComics.sol";
+import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import { ReentrancyGuardUpgradeable } from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import { INiftyLaunchComics } from "../interfaces/INiftyLaunchComics.sol";
 
 contract NiftyBurningComicsL2 is OwnableUpgradeable, ReentrancyGuardUpgradeable, PausableUpgradeable {
-    event ComicsBurned(address indexed by, uint256[] tokenIds, uint256[] values);
-    event KeyMinted(address indexed by, uint256 tokenId, uint256 value, uint256 startIdForIMX);
-    event ItemMinted(address indexed by, uint256[] tokenIds, uint256[] values, uint256[] startIdForIMX);
-
     /// @dev NiftyLaunchComics address
     address public comics;
 
@@ -19,9 +14,17 @@ contract NiftyBurningComicsL2 is OwnableUpgradeable, ReentrancyGuardUpgradeable,
     uint256 public itemIndex;
 
     /// @dev Token ID -> Item ID
-    mapping(uint256 => uint256) public itemIdByTokenId;
+    mapping(uint256 tokenId => uint256 itemId) public itemIdByTokenId;
+
+    event ComicsBurned(address indexed by, uint256[] tokenIds, uint256[] values);
+    event KeyMinted(address indexed by, uint256 tokenId, uint256 value, uint256 startIdForIMX);
+    event ItemMinted(address indexed by, uint256[] tokenIds, uint256[] values, uint256[] startIdForIMX);
+
+    error AddressError(string message);
+    error InputError(uint256 length, string message);
 
     function initialize(address _comics) public initializer {
+        if (_comics == address(0)) revert AddressError("Invalid comics address");
         __Ownable_init();
         __ReentrancyGuard_init();
         __Pausable_init();
@@ -38,8 +41,9 @@ contract NiftyBurningComicsL2 is OwnableUpgradeable, ReentrancyGuardUpgradeable,
      * @param _values Number of comics to burn, nth value means the number of nth comics(tokenId = n) to burn
      */
     function burnComics(uint256[] calldata _values) external nonReentrant whenNotPaused {
+        uint256 length = _values.length;
         // check _values param
-        require(_values.length == 6, "Invalid length");
+        if (length != 6) revert InputError(length, "Invalid length");
 
         // tokenIds and values to be minted
         uint256[] memory tokenIds = new uint256[](6);
@@ -48,7 +52,7 @@ contract NiftyBurningComicsL2 is OwnableUpgradeable, ReentrancyGuardUpgradeable,
 
         // get tokenIds and the number of keys to mint
         uint256 valueForKeys = type(uint256).max;
-        for (uint256 i; i < _values.length; i++) {
+        for (uint256 i; i < length; ++i) {
             // burning comics for keys
             // get the min value in _values
             if (_values[i] < valueForKeys) valueForKeys = _values[i];
@@ -59,7 +63,7 @@ contract NiftyBurningComicsL2 is OwnableUpgradeable, ReentrancyGuardUpgradeable,
 
         // in case of the keys should be minted, set the number of items to be minted
         if (valueForKeys != 0) {
-            for (uint256 i; i < _values.length; i++) {
+            for (uint256 i; i < length; ++i) {
                 tokenNumbersForItems[i] = _values[i] - valueForKeys;
             }
         }
@@ -74,17 +78,17 @@ contract NiftyBurningComicsL2 is OwnableUpgradeable, ReentrancyGuardUpgradeable,
             emit KeyMinted(msg.sender, 1, valueForKeys, itemIndex);
 
             // set the itemId by the tokenId
-            for (uint256 i; i < valueForKeys; i++) {
+            for (uint256 i; i < valueForKeys; ++i) {
                 itemIdByTokenId[itemIndex + i] = 7; // 7: Key
             }
 
             // increase the itemIndex for next items
             itemIndex += valueForKeys;
 
-            for (uint256 i; i < _values.length; i++) {
+            for (uint256 i; i < length; ++i) {
                 tokenItemIndexs[i] = itemIndex;
 
-                for (uint256 j; j < _values.length; j++) {
+                for (uint256 j; j < length; ++j) {
                     itemIdByTokenId[tokenItemIndexs[i] + j] = i + 1; // 1: Item1, 2: Item2, ..., 6 : Item6
                 }
 
@@ -95,11 +99,11 @@ contract NiftyBurningComicsL2 is OwnableUpgradeable, ReentrancyGuardUpgradeable,
             emit ItemMinted(msg.sender, tokenIds, tokenNumbersForItems, tokenItemIndexs);
         } else {
             // mint items
-            for (uint256 i; i < _values.length; i++) {
+            for (uint256 i; i < length; ++i) {
                 tokenItemIndexs[i] = itemIndex;
 
                 // set the itemId by the tokenId
-                for (uint256 j; j < _values[i]; j++) {
+                for (uint256 j; j < _values[i]; ++j) {
                     itemIdByTokenId[tokenItemIndexs[i] + j] = i + 1; // 1: Item1, 2: Item2, ..., 6 : Item6
                 }
 
