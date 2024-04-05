@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.25;
 
-import { IERC20 } from "@openzeppelin/contracts/v4/token/ERC20/IERC20.sol";
-import { NiftyLeagueCharacter } from "./NiftyLeagueCharacter.sol";
+import {IERC20} from "@openzeppelin/contracts/v4/token/ERC20/IERC20.sol";
+import {NiftyLeagueCharacter} from "./NiftyLeagueCharacter.sol";
 
 interface INFTL is IERC20 {
     function burnFrom(address account, uint256 amount) external;

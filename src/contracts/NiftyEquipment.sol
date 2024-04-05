@@ -2,12 +2,12 @@
 
 pragma solidity ^0.8.25;
 
-import { ERC1155 } from "@openzeppelin/contracts/v4/token/ERC1155/ERC1155.sol";
-import { ERC1155Supply } from "@openzeppelin/contracts/v4/token/ERC1155/extensions/ERC1155Supply.sol";
-import { AccessControl } from "@openzeppelin/contracts/v4/access/AccessControl.sol";
-import { Pausable } from "@openzeppelin/contracts/v4/security/Pausable.sol";
-import { Context } from "@openzeppelin/contracts/v4/utils/Context.sol";
-import { INiftyEquipment } from "./interfaces/INiftyEquipment.sol";
+import {ERC1155} from "@openzeppelin/contracts/v4/token/ERC1155/ERC1155.sol";
+import {ERC1155Supply} from "@openzeppelin/contracts/v4/token/ERC1155/extensions/ERC1155Supply.sol";
+import {AccessControl} from "@openzeppelin/contracts/v4/access/AccessControl.sol";
+import {Pausable} from "@openzeppelin/contracts/v4/security/Pausable.sol";
+import {Context} from "@openzeppelin/contracts/v4/utils/Context.sol";
+import {INiftyEquipment} from "./interfaces/INiftyEquipment.sol";
 
 /**
  * @dev {ERC1155} token, including:

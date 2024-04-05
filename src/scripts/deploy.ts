@@ -1,5 +1,5 @@
 import type { NiftyDegen, AllowedColorsStorage, NFTLToken, NiftyLaunchComics } from '~/types/typechain';
-import type { NetworkName, DeployFunctionExt } from '~/types';
+import { NetworkName, DeployFunctionExt } from '~/types';
 
 import { BASE_COMICS_URI, NFTL_EMISSION_START, PENDING_PERIOD, TOTAL_WINNER_TICKET_COUNT } from '~/constants/other';
 import {
@@ -100,10 +100,29 @@ export const deployHydraDistributor: DeployFunctionExt = async (hre, deployer) =
   });
 };
 
+export const deployMockVRFCoordinator: DeployFunctionExt = async (hre, deployer) => {
+  const { deploy } = hre.deployments;
+  return await deploy('MockVRFCoordinator', {
+    from: deployer,
+    args: [],
+    log: true,
+    skipIfAlreadyDeployed: true,
+  });
+};
+
 export const deployNFTLRaffle: DeployFunctionExt = async (hre, deployer) => {
   const { deploy } = hre.deployments;
   const nftlToken = await hre.ethers.getContract<NFTLToken>('NFTLToken');
   const degenContract = await hre.ethers.getContract<NiftyDegen>('NiftyDegen');
+
+  let vrfCoordinator = VRF_COORDINATOR_ADDRESS[hre.network.name as NetworkName];
+
+  if (hre.network.name === NetworkName.Tenderly) {
+    const deployResult = await deployMockVRFCoordinator(hre, deployer);
+    vrfCoordinator = deployResult.address;
+  }
+
+  if (!vrfCoordinator) throw new Error('VRF Coordinator address is not set');
 
   return await deploy('NFTLRaffle', {
     from: deployer,
@@ -121,7 +140,7 @@ export const deployNFTLRaffle: DeployFunctionExt = async (hre, deployer) => {
             PENDING_PERIOD,
             TOTAL_WINNER_TICKET_COUNT,
             await degenContract.getAddress(),
-            VRF_COORDINATOR_ADDRESS[hre.network.name as NetworkName],
+            vrfCoordinator,
           ],
         },
       },
@@ -151,8 +170,26 @@ export const deployNiftyBurningComicsL2: DeployFunctionExt = async (hre, deploye
   });
 };
 
+export const deployMockStarkExchange: DeployFunctionExt = async (hre, deployer) => {
+  const { deploy } = hre.deployments;
+  return await deploy('MockStarkExchange', {
+    from: deployer,
+    args: [],
+    log: true,
+    skipIfAlreadyDeployed: true,
+  });
+};
+
 export const deployNiftyItemL2: DeployFunctionExt = async (hre, deployer) => {
   const { deploy } = hre.deployments;
+  let starkAddress = STARK_CONTRACT_ADDRESS[hre.network.name as NetworkName];
+
+  if (hre.network.name === NetworkName.Tenderly) {
+    const deployResult = await deployMockStarkExchange(hre, deployer);
+    starkAddress = deployResult.address;
+  }
+
+  if (!starkAddress) throw new Error('Stark address is not set');
 
   return await deploy('NiftyItemL2', {
     from: deployer,
@@ -165,7 +202,7 @@ export const deployNiftyItemL2: DeployFunctionExt = async (hre, deployer) => {
       execute: {
         init: {
           methodName: 'initialize',
-          args: [STARK_CONTRACT_ADDRESS[hre.network.name as NetworkName]],
+          args: [starkAddress],
         },
       },
     },
