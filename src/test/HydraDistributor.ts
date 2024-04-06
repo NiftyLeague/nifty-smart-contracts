@@ -2,24 +2,22 @@ import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
 import { type Signer } from 'ethers';
 
-import type { HydraDistributor, MockERC721 } from '~/types/typechain';
+import type { HydraDistributor, NiftyDegen, MockERC721 } from '~/types/typechain';
+import { deployDegens } from './utils/contracts';
 
 describe('HydraDistributor', function () {
-  let accounts: Signer[];
   let deployer: Signer;
   let alice: Signer;
   let bob: Signer;
   let niftyWallet: Signer;
   let hydraDistributor: HydraDistributor;
-  let niftyDegen: MockERC721;
+  let niftyDegen: NiftyDegen;
 
   beforeEach(async () => {
-    accounts = await ethers.getSigners();
-    [deployer, alice, bob, niftyWallet] = accounts;
+    [deployer, alice, bob, niftyWallet] = await ethers.getSigners();
 
     // Deploy NiftyDegen contracts
-    const MockERC721 = await ethers.getContractFactory('MockERC721');
-    niftyDegen = (await MockERC721.deploy()) as unknown as MockERC721;
+    niftyDegen = await deployDegens();
 
     // Deploy HydraDistributor contract
     const HydraDistributor = await ethers.getContractFactory('HydraDistributor');
@@ -30,16 +28,16 @@ describe('HydraDistributor', function () {
 
     // mint the normal NiftyDegens
     for (let i = 0; i < 16; i++) {
-      await niftyDegen.mint(await alice.getAddress()); // TokenId: 0 - 15
+      await (niftyDegen as unknown as MockERC721).mint(await alice.getAddress()); // TokenId: 0 - 15
     }
 
     for (let i = 0; i < 12; i++) {
-      await niftyDegen.mint(await niftyWallet.getAddress()); // TokenId: 16 - 27
+      await (niftyDegen as unknown as MockERC721).mint(await niftyWallet.getAddress()); // TokenId: 16 - 27
     }
 
     // mint the Hydra
     for (let i = 0; i < 10; i++) {
-      await niftyDegen.mint(await deployer.getAddress()); // TokenId: 28 - 37
+      await (niftyDegen as unknown as MockERC721).mint(await deployer.getAddress()); // TokenId: 28 - 37
     }
   });
 
@@ -169,9 +167,9 @@ describe('HydraDistributor', function () {
       let degenTokenIdList = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
       await niftyDegen.connect(alice).setApprovalForAll(await hydraDistributor.getAddress(), true);
-      await expect(hydraDistributor.connect(alice).claimRandomHydra(degenTokenIdList)).to.be.revertedWith(
-        'Need 8 degens',
-      );
+      await expect(hydraDistributor.connect(alice).claimRandomHydra(degenTokenIdList))
+        .to.be.revertedWithCustomError(hydraDistributor, 'BurnCountError')
+        .withArgs(degenTokenIdList.length, 'Need 8 degens');
     });
 
     it('Should revert if the nifty wallet doesn not burn 12 degens', async () => {
@@ -179,9 +177,9 @@ describe('HydraDistributor', function () {
       let degenTokenIdList = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26];
 
       await niftyDegen.connect(niftyWallet).setApprovalForAll(await hydraDistributor.getAddress(), true);
-      await expect(hydraDistributor.connect(niftyWallet).claimRandomHydra(degenTokenIdList)).to.be.revertedWith(
-        'Need 12 degens',
-      );
+      await expect(hydraDistributor.connect(niftyWallet).claimRandomHydra(degenTokenIdList))
+        .to.be.revertedWithCustomError(hydraDistributor, 'BurnCountError')
+        .withArgs(degenTokenIdList.length, 'Need 12 degens');
     });
 
     it('Should revert if the contract is paused', async () => {

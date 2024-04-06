@@ -167,9 +167,8 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     }
 
     function cancelSubscription() external onlyOwner {
-        uint64 cancelId = subscriptionId;
+        VRFCoordinatorV2Interface(_vrfCoordinator).cancelSubscription(subscriptionId, owner());
         subscriptionId = 0;
-        VRFCoordinatorV2Interface(_vrfCoordinator).cancelSubscription(cancelId, owner());
     }
 
     function updateTotalWinnerTicketCount(uint256 _totalWinnerTicketCount) external onlyOwner {
@@ -308,6 +307,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
         requestId = _requestRandomWords(uint32(winnerCountToRequest));
 
         emit RandomWordsRequested(requestId, winnerCountToRequest);
+        return requestId;
     }
 
     // rawFulfillRandomness is called by VRFCoordinator when it receives a valid VRF

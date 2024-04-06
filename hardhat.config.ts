@@ -9,7 +9,7 @@ import 'tsconfig-paths/register';
 dotEnvConfig();
 
 // Select the network you want to deploy to here:
-const defaultNetwork = process.env.HARDHAT_NETWORK;
+const defaultNetwork = process.env.ETH_NETWORK;
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html

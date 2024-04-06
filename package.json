@@ -21,7 +21,7 @@
     "format": "yarn format:ts && yarn format:sol",
     "type-check": "tsc --noEmit",
     "coverage": "hardhat coverage",
-    "test": "hardhat test src/test/*.ts --typecheck",
+    "test": "hardhat test src/test/*.ts --typecheck --network hardhat",
     "slither": "slither . --checklist --markdown-root ./ > SLITHER.md",
     "compile": "hardhat clean && hardhat compile",
     "build": "npm run compile",
@@ -30,6 +30,8 @@
     "export": "npm run export:sepolia && npm run export:mainnet && prettier --ignore-path .prettierignore --write ./exports/*.ts",
     "deploy": "hardhat deploy",
     "deploy:hardhat": "hardhat deploy --deploy-scripts ./src/deploy/hardhat --network hardhat",
+    "deploy:tenderly": "hardhat deploy --deploy-scripts ./src/deploy/remote --network tenderly",
+    "deploy:sepolia": "hardhat deploy --deploy-scripts ./src/deploy/remote --network sepolia",
     "deploy:remote": "hardhat deploy --deploy-scripts ./src/deploy/remote --network",
     "deploy:ledger": "hardhat deploy --deploy-scripts ./src/deploy/ledger --network",
     "verify": "hardhat etherscan-verify"
