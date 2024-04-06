@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.25;
+pragma solidity 0.8.25;
 
-import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/v4/access/OwnableUpgradeable.sol";
-import { ReentrancyGuardUpgradeable } from "@openzeppelin/contracts-upgradeable/v4/security/ReentrancyGuardUpgradeable.sol";
-import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/v4/security/PausableUpgradeable.sol";
-import { IERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/v4/token/ERC20/IERC20Upgradeable.sol";
-import { SafeERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/v4/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import { IERC1155SupplyUpgradeable } from "./interfaces/IERC1155SupplyUpgradeable.sol";
-import { IERC20PresetMinterPauserUpgradeable } from "./interfaces/IERC20PresetMinterPauserUpgradeable.sol";
-import { INiftyEquipment } from "./interfaces/INiftyEquipment.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/v4/access/OwnableUpgradeable.sol";
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/v4/security/ReentrancyGuardUpgradeable.sol";
+import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/v4/security/PausableUpgradeable.sol";
+import {IERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/v4/token/ERC20/IERC20Upgradeable.sol";
+import {SafeERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/v4/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import {IERC1155SupplyUpgradeable} from "./interfaces/IERC1155SupplyUpgradeable.sol";
+import {IERC20PresetMinterPauserUpgradeable} from "./interfaces/IERC20PresetMinterPauserUpgradeable.sol";
+import {INiftyEquipment} from "./interfaces/INiftyEquipment.sol";
 
 contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, PausableUpgradeable {
     using SafeERC20Upgradeable for IERC20Upgradeable;

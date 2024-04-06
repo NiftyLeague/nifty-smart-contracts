@@ -1,4 +1,4 @@
-import { ethers, network, run, tenderly } from 'hardhat';
+import { ethers, network, run } from 'hardhat';
 import { type BaseContract } from 'ethers';
 import chalk from 'chalk';
 import R from 'ramda';
@@ -7,7 +7,6 @@ import { NetworkName } from '~/types';
 const targetNetwork = network.name as NetworkName;
 
 // If you want to verify on https://tenderly.co/
-// eslint-disable-next-line consistent-return
 export const tenderlyVerify = async ({
   contractName,
   contractAddress,
@@ -15,22 +14,17 @@ export const tenderlyVerify = async ({
   contractName: string;
   contractAddress: string;
 }) => {
-  const tenderlyNetworks = ['sepolia', 'mainnet', 'matic', 'mumbai', 'xDai', 'POA'];
-
-  if (tenderlyNetworks.includes(targetNetwork)) {
-    console.log(chalk.blue(` 📁 Attempting tenderly verification of ${contractName} on ${targetNetwork}`));
-    await tenderly.persistArtifacts({
-      name: contractName,
-      address: contractAddress,
-    });
-    const verification = await tenderly.verify({
-      name: contractName,
-      address: contractAddress,
-      network: targetNetwork,
-    });
-    return verification;
-  }
-  console.log(chalk.grey(` 🧐 Contract verification not supported on ${targetNetwork}`));
+  console.log(chalk.blue(` 📁 Attempting tenderly verification of ${contractName} on ${targetNetwork} -- DEPRECATED`));
+  // await tenderly.persistArtifacts({
+  //   name: contractName,
+  //   address: contractAddress,
+  // });
+  // const verification = await tenderly.verify({
+  //   name: contractName,
+  //   address: contractAddress,
+  //   network: targetNetwork,
+  // });
+  // return verification;
 };
 
 // If you want to verify on https://etherscan.io/

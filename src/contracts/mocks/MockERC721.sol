@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.25;
+pragma solidity 0.8.25;
 
-import { ERC721PresetMinterPauserAutoId } from "@openzeppelin/contracts/v4/token/ERC721/presets/ERC721PresetMinterPauserAutoId.sol";
-import { Counters } from "@openzeppelin/contracts/v4/utils/Counters.sol";
+import {ERC721PresetMinterPauserAutoId} from "@openzeppelin/contracts/v4/token/ERC721/presets/ERC721PresetMinterPauserAutoId.sol";
+import {Counters} from "@openzeppelin/contracts/v4/utils/Counters.sol";
 
 contract MockERC721 is ERC721PresetMinterPauserAutoId {
     using Counters for Counters.Counter;

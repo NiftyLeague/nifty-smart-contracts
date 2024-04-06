@@ -1,29 +1,11 @@
 import { expect } from 'chai';
-import { type BigNumberish, type Signer } from 'ethers';
 import { ethers, upgrades } from 'hardhat';
-import { Address } from 'hardhat-deploy/types';
+import type { Signer } from 'ethers';
 
 import type { BalanceManager, NFTLToken } from '~/types/typechain';
-
-const getSignature = async (
-  signer: Signer,
-  beneficiary: Address,
-  amount: number,
-  nonce: BigNumberish,
-  expireAt: number,
-) => {
-  let message = ethers.solidityPackedKeccak256(
-    ['address', 'uint256', 'uint256', 'uint256'],
-    [beneficiary, amount, nonce, expireAt],
-  );
-  let signature = await signer.signMessage(ethers.getBytes(message));
-  return signature;
-};
-
-const getCurrentTime = async () => {
-  const blockNumber = await ethers.provider.getBlockNumber();
-  return (await ethers.provider.getBlock(blockNumber))?.timestamp;
-};
+import { getCurrentBlockTimestamp } from './utils/block';
+import { deployNFTL } from './utils/contracts';
+import { getSignature } from './utils/sign';
 
 describe('BalanceManager', function () {
   let alice: Signer;
@@ -43,8 +25,7 @@ describe('BalanceManager', function () {
     [deployer, maintainer, alice, bob, dao] = (await ethers.getSigners()) as Signer[];
 
     // Deploy NFTL token
-    const NFTL = await ethers.getContractFactory('MockERC20');
-    nftl = (await NFTL.deploy()) as unknown as NFTLToken;
+    nftl = await deployNFTL();
 
     // Deploy BalanceManager
     const BalanceManager = await ethers.getContractFactory('BalanceManager');
@@ -54,14 +35,13 @@ describe('BalanceManager', function () {
     ])) as unknown as BalanceManager;
 
     // Mint NFTL tokens to users
-    nftl.mint(await alice.getAddress(), INIT_BALANCE);
-    nftl.mint(await bob.getAddress(), INIT_BALANCE);
+    await nftl.mint(await alice.getAddress(), INIT_BALANCE);
+    await nftl.mint(await bob.getAddress(), INIT_BALANCE);
   });
 
   describe('deposit', function () {
     it('should be able to deposit NFTL tokens', async () => {
       const aliceAddress = await alice.getAddress();
-      const bobAddress = await bob.getAddress();
       expect(await nftl.balanceOf(aliceAddress)).to.equal(INIT_BALANCE);
 
       // deposit
@@ -69,6 +49,18 @@ describe('BalanceManager', function () {
       await balanceManager.connect(alice).deposit(DEPOSIT_AMOUNT);
 
       expect(await nftl.balanceOf(aliceAddress)).to.equal(INIT_BALANCE - DEPOSIT_AMOUNT);
+    });
+
+    it('should track multiple deposits', async () => {
+      const bobAddress = await bob.getAddress();
+      expect(await nftl.balanceOf(bobAddress)).to.equal(INIT_BALANCE);
+
+      // deposit 2x
+      await nftl.connect(bob).approve(await balanceManager.getAddress(), DEPOSIT_AMOUNT * 2);
+      await balanceManager.connect(bob).deposit(DEPOSIT_AMOUNT);
+      await balanceManager.connect(bob).deposit(DEPOSIT_AMOUNT);
+
+      expect(await nftl.balanceOf(bobAddress)).to.equal(INIT_BALANCE - DEPOSIT_AMOUNT - DEPOSIT_AMOUNT);
     });
   });
 
@@ -87,7 +79,7 @@ describe('BalanceManager', function () {
       const aliceAddress = await alice.getAddress();
       // withdraw
       let nonceForAlice = await balanceManager.nonce(aliceAddress);
-      let expireAtForAlice = ((await getCurrentTime()) || 0) + Number(ONE_DAY);
+      let expireAtForAlice = Number((await getCurrentBlockTimestamp()) + ONE_DAY);
       let signatureForAlice = await getSignature(
         maintainer,
         aliceAddress,
@@ -104,7 +96,7 @@ describe('BalanceManager', function () {
       const aliceAddress = await alice.getAddress();
       // withdraw
       let nonceForAlice = await balanceManager.nonce(aliceAddress);
-      let expireAtForAlice = ((await getCurrentTime()) || 0) + Number(ONE_DAY);
+      let expireAtForAlice = Number((await getCurrentBlockTimestamp()) + ONE_DAY);
       let signatureForAlice = await getSignature(
         maintainer,
         aliceAddress,
@@ -117,14 +109,17 @@ describe('BalanceManager', function () {
         balanceManager
           .connect(alice)
           .withdraw(WITHDRAW_AMOUNT, nonceForAlice + 1n, expireAtForAlice, signatureForAlice),
-      ).to.be.revertedWith('mismatched nonce');
+      )
+        .to.be.revertedWithCustomError(balanceManager, 'WithdrawError')
+        .withArgs(nonceForAlice, nonceForAlice + 1n, 'mismatched nonce');
     });
 
     it('revert if the request was expired', async () => {
       const aliceAddress = await alice.getAddress();
       // withdraw
       let nonceForAlice = await balanceManager.nonce(aliceAddress);
-      let expireAtForAlice = ((await getCurrentTime()) || 0) - Number(ONE_DAY);
+      const timestamp = await getCurrentBlockTimestamp();
+      let expireAtForAlice = Number(timestamp - ONE_DAY);
       let signatureForAlice = await getSignature(
         maintainer,
         aliceAddress,
@@ -135,14 +130,16 @@ describe('BalanceManager', function () {
 
       await expect(
         balanceManager.connect(alice).withdraw(WITHDRAW_AMOUNT, nonceForAlice, expireAtForAlice, signatureForAlice),
-      ).to.be.revertedWith('expired withdrawal request');
+      )
+        .to.be.revertedWithCustomError(balanceManager, 'WithdrawError')
+        .withArgs(timestamp + 1n, expireAtForAlice, 'expired withdrawal request');
     });
 
     it('revert if the signature is used twice', async () => {
       const aliceAddress = await alice.getAddress();
       // withdraw
       let nonceForAlice = await balanceManager.nonce(aliceAddress);
-      let expireAtForAlice = ((await getCurrentTime()) || 0) + Number(ONE_DAY);
+      let expireAtForAlice = Number((await getCurrentBlockTimestamp()) + ONE_DAY);
       let signatureForAlice = await getSignature(
         maintainer,
         aliceAddress,
@@ -157,14 +154,14 @@ describe('BalanceManager', function () {
         balanceManager
           .connect(alice)
           .withdraw(WITHDRAW_AMOUNT, nonceForAlice + 1n, expireAtForAlice, signatureForAlice),
-      ).to.be.revertedWith('used signature');
+      ).to.be.revertedWithCustomError(balanceManager, 'SignError');
     });
 
     it('revert if the amount is wrong', async () => {
       const aliceAddress = await alice.getAddress();
       // withdraw
       let nonceForAlice = await balanceManager.nonce(aliceAddress);
-      let expireAtForAlice = ((await getCurrentTime()) || 0) + Number(ONE_DAY);
+      let expireAtForAlice = Number((await getCurrentBlockTimestamp()) + ONE_DAY);
       let signatureForAlice = await getSignature(
         maintainer,
         aliceAddress,
@@ -175,14 +172,14 @@ describe('BalanceManager', function () {
 
       await expect(
         balanceManager.connect(bob).withdraw(WITHDRAW_AMOUNT, nonceForAlice, expireAtForAlice, signatureForAlice),
-      ).to.be.revertedWith('wrong signer');
+      ).to.be.revertedWithCustomError(balanceManager, 'SignError');
     });
 
     it('revert if the amount is wrong', async () => {
       const aliceAddress = await alice.getAddress();
       // withdraw
       let nonceForAlice = await balanceManager.nonce(aliceAddress);
-      let expireAtForAlice = ((await getCurrentTime()) || 0) + Number(ONE_DAY);
+      let expireAtForAlice = Number((await getCurrentBlockTimestamp()) + ONE_DAY);
       let signatureForAlice = await getSignature(
         maintainer,
         aliceAddress,
@@ -193,7 +190,7 @@ describe('BalanceManager', function () {
 
       await expect(
         balanceManager.connect(alice).withdraw(WITHDRAW_AMOUNT + 1, nonceForAlice, expireAtForAlice, signatureForAlice),
-      ).to.be.revertedWith('wrong signer');
+      ).to.be.revertedWithCustomError(balanceManager, 'SignError');
     });
   });
 

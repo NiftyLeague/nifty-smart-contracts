@@ -3,7 +3,7 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-import { config, ethers, network, tenderly, run } from 'hardhat';
+import { config, ethers, network, run } from 'hardhat';
 import chalk from 'chalk';
 import fs from 'fs';
 import { NetworkName } from '~/types';
@@ -34,11 +34,6 @@ const deploy = async (contractName: string, _args: unknown[] = [], overrides = {
 
   console.log(' 📄', chalk.cyan(contractName), 'deployed to:', chalk.magenta(deployedContractAddress));
   console.log(' ⛽', chalk.grey(extraGasInfo));
-
-  await tenderly.persistArtifacts({
-    name: contractName,
-    address: deployedContractAddress,
-  });
 
   await deployedContract.waitForDeployment();
 
