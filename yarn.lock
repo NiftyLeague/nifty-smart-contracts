@@ -812,6 +812,20 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-2.0.3.tgz#4a2868d75d6d6963e423bcf90b7fd1be343409d3"
   integrity sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==
 
+"@imtbl/contracts@^2.2.4":
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/@imtbl/contracts/-/contracts-2.2.4.tgz#3dc40c27702d1bc8023629b7fd5f028d75a8dde0"
+  integrity sha512-nwVVC+IqDqGkJ549pCN0Kcdslv0RLf1AcqJxfvY+NKDbz3gNXSFoOgMHEBOPR2au1hJIOokzeHccarNxzEEItA==
+  dependencies:
+    "@openzeppelin/contracts" "^4.9.3"
+    "@openzeppelin/contracts-upgradeable" "^4.9.3"
+    "@rari-capital/solmate" "^6.4.0"
+    eslint-plugin-mocha "^10.2.0"
+    openzeppelin-contracts-upgradeable-4.9.3 "npm:@openzeppelin/contracts-upgradeable@^4.9.3"
+    seaport "https://github.com/immutable/seaport.git#1.5.0+im.1.3"
+    solidity-bits "^0.4.0"
+    solidity-bytes-utils "^0.8.0"
+
 "@imtbl/imx-contracts@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@imtbl/imx-contracts/-/imx-contracts-1.0.1.tgz#61bf04ff0715ae3d3335bf276d119ac7c4c39bb1"
@@ -1131,7 +1145,7 @@
     fs-extra "^10.0.0"
     prompts "^2.4.2"
 
-"@nomicfoundation/hardhat-network-helpers@^1.0.10":
+"@nomicfoundation/hardhat-network-helpers@^1.0.10", "@nomicfoundation/hardhat-network-helpers@^1.0.7":
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/@nomicfoundation/hardhat-network-helpers/-/hardhat-network-helpers-1.0.10.tgz#c61042ceb104fdd6c10017859fdef6529c1d6585"
   integrity sha512-R35/BMBlx7tWN5V6d/8/19QCwEmIdbnA4ZrsuXgvs8i2qFx5i7h6mH5pBS4Pwi4WigLH+upl6faYusrNPuzMrQ==
@@ -1271,6 +1285,11 @@
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.9.3.tgz#ff17a80fb945f5102571f8efecb5ce5915cc4811"
   integrity sha512-jjaHAVRMrE4UuZNfDwjlLGDxTHWIOwTJS2ldnc278a0gevfXfPr8hxKEVBGFBE96kl2G3VHDZhUimw/+G3TG2A==
 
+"@openzeppelin/contracts-upgradeable@^4.9.3":
+  version "4.9.6"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.9.6.tgz#38b21708a719da647de4bb0e4802ee235a0d24df"
+  integrity sha512-m4iHazOsOCv1DgM7eD7GupTJ+NFVujRZt1wzddDPSVGpWdKq1SKkla5htKG7+IS4d2XOCtzkUNwRZ7Vq5aEUMA==
+
 "@openzeppelin/contracts/v4@npm:@openzeppelin/contracts@4.9.6":
   version "4.9.6"
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.9.6.tgz#2a880a24eb19b4f8b25adc2a5095f2aa27f39677"
@@ -1286,7 +1305,7 @@
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.9.3.tgz#00d7a8cf35a475b160b3f0293a6403c511099364"
   integrity sha512-He3LieZ1pP2TNt5JbkPA4PNT9WC3gOTOlDcFGJW4Le4QKqwmiNJCRt44APfxMxvq7OugU/cqYuPcSBzOw38DAg==
 
-"@openzeppelin/contracts@^4.1.0":
+"@openzeppelin/contracts@^4.1.0", "@openzeppelin/contracts@^4.9.2", "@openzeppelin/contracts@^4.9.3":
   version "4.9.6"
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.9.6.tgz#2a880a24eb19b4f8b25adc2a5095f2aa27f39677"
   integrity sha512-xSmezSupL+y9VkHZJGDoCBpmnB2ogM13ccaYDWqJTfS3dbuHkgjuwDFUmaFauBCboQMGB/S5UqUl2y54X99BmA==
@@ -1405,6 +1424,11 @@
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@prettier/sync/-/sync-0.3.0.tgz#91f2cfc23490a21586d1cf89c6f72157c000ca1e"
   integrity sha512-3dcmCyAxIcxy036h1I7MQU/uEEBq8oLwf1CE3xeze+MPlgkdlb/+w6rGR/1dhp6Hqi17fRS6nvwnOzkESxEkOw==
+
+"@rari-capital/solmate@^6.4.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@rari-capital/solmate/-/solmate-6.4.0.tgz#c6ee4110c8075f14b415e420b13bd8bdbbc93d9e"
+  integrity sha512-BXWIHHbG5Zbgrxi0qVYe0Zs+bfx+XgOciVUACjuIApV0KzC0kY8XdO1higusIei/ZKCC+GUKdcdQZflxYPUTKQ==
 
 "@scroll-tech/contracts@0.1.0":
   version "0.1.0"
@@ -2310,6 +2334,11 @@ buffer-from@^1.0.0:
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.2.tgz#2b146a6fd72e80b4f55d255f35ed59a3a9a41bd5"
   integrity sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==
 
+buffer-reverse@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/buffer-reverse/-/buffer-reverse-1.0.1.tgz#49283c8efa6f901bc01fa3304d06027971ae2f60"
+  integrity sha512-M87YIUBsZ6N924W57vDwT/aOu8hw7ZgdByz6ijksLjmHJELBASmYTTlNHRgjE+pTsT9oJXGaDSgqqwfdHotDUg==
+
 buffer-to-arraybuffer@^0.0.5:
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/buffer-to-arraybuffer/-/buffer-to-arraybuffer-0.0.5.tgz#6064a40fa76eb43c723aba9ef8f6e1216d10511a"
@@ -2793,6 +2822,11 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
   resolved "https://registry.yarnpkg.com/crypt/-/crypt-0.0.2.tgz#88d7ff7ec0dfb86f713dc87bbb42d044d3e6c41b"
   integrity sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==
 
+crypto-js@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.2.0.tgz#4d931639ecdfd12ff80e8186dba6af2c2e856631"
+  integrity sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==
+
 csv-generate@^3.4.3:
   version "3.4.3"
   resolved "https://registry.yarnpkg.com/csv-generate/-/csv-generate-3.4.3.tgz#bc42d943b45aea52afa896874291da4b9108ffff"
@@ -3026,6 +3060,10 @@ dotenv@^8.1.0:
   version "8.6.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.6.0.tgz#061af664d19f7f4d8fc6e4ff9b584ce237adcb8b"
   integrity sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==
+
+"ds-test@github:dapphub/ds-test":
+  version "1.0.0"
+  resolved "https://codeload.github.com/dapphub/ds-test/tar.gz/e282159d5170298eb2455a6c05280ab5a73a4ef0"
 
 eastasianwidth@^0.2.0:
   version "0.2.0"
@@ -3266,6 +3304,15 @@ eslint-config-prettier@^9.1.0:
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-9.1.0.tgz#31af3d94578645966c082fcb71a5846d3c94867f"
   integrity sha512-NSWl5BFQWEPi1j4TjVNItzYV7dZXZ+wP6I6ZhrBGpChQhZRUaElihE9uRRkcbRnNb76UMKDF3r+WTmNcGPKsqw==
 
+eslint-plugin-mocha@^10.2.0:
+  version "10.4.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-mocha/-/eslint-plugin-mocha-10.4.1.tgz#7975a3dbb0de80a5f3ea69c30f6f1f1c931f8800"
+  integrity sha512-G85ALUgKaLzuEuHhoW3HVRgPTmia6njQC3qCG6CEvA8/Ja9PDZnRZOuzekMki+HaViEQXINuYsmhp5WR5/4MfA==
+  dependencies:
+    eslint-utils "^3.0.0"
+    globals "^13.24.0"
+    rambda "^7.4.0"
+
 eslint-plugin-prettier@^5.1.3:
   version "5.1.3"
   resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-5.1.3.tgz#17cfade9e732cef32b5f5be53bd4e07afd8e67e1"
@@ -3281,6 +3328,18 @@ eslint-scope@^7.2.2:
   dependencies:
     esrecurse "^4.3.0"
     estraverse "^5.2.0"
+
+eslint-utils@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-utils/-/eslint-utils-3.0.0.tgz#8aebaface7345bb33559db0a1f13a1d2d48c3672"
+  integrity sha512-uuQC43IGctw68pJA1RgbQS8/NP7rch6Cwd4j3ZBtgo4/8Flj4eGE7ZYSZRN3iq5pVUv6GPdW5Z1RFleo84uLDA==
+  dependencies:
+    eslint-visitor-keys "^2.0.0"
+
+eslint-visitor-keys@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-2.1.0.tgz#f65328259305927392c938ed44eb0a5c9b2bd303"
+  integrity sha512-0rSmRBzXgDzIsD6mGdJgevzgezI534Cer5L/vyMX0kHzT/jiB43jRhd9YUlMGYLQy2zprNmoT8qasCGtY+QaKw==
 
 eslint-visitor-keys@^3.3.0, eslint-visitor-keys@^3.4.1, eslint-visitor-keys@^3.4.3:
   version "3.4.3"
@@ -3511,7 +3570,12 @@ ethereumjs-wallet@^1.0.1:
     utf8 "^3.0.0"
     uuid "^8.3.2"
 
-ethers@^5.7.0, ethers@^5.7.1, ethers@^5.7.2, ethers@~5.7.0:
+ethers-eip712@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/ethers-eip712/-/ethers-eip712-0.2.0.tgz#52973b3a9a22638f7357283bf66624994c6e91ed"
+  integrity sha512-fgS196gCIXeiLwhsWycJJuxI9nL/AoUPGSQ+yvd+8wdWR+43G+J1n69LmWVWvAON0M6qNaf2BF4/M159U8fujQ==
+
+ethers@^5.5.3, ethers@^5.7.0, ethers@^5.7.1, ethers@^5.7.2, ethers@~5.7.0:
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.7.2.tgz#3a7deeabbb8c030d4126b24f84e525466145872e"
   integrity sha512-wswUsmWo1aOK8rR7DIKiWSw9DbLWe6x98Jrn8wcTflTVvaXhAMaB5zGAXy0GYQEQp9iO1iSHWVyARQm11zUtyg==
@@ -3804,6 +3868,11 @@ foreground-child@^3.1.0:
     cross-spawn "^7.0.0"
     signal-exit "^4.0.1"
 
+forge-std@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/forge-std/-/forge-std-1.1.2.tgz#f4a0eda103538d56f9c563f3cd1fa2fd01bd9378"
+  integrity sha512-Wfb0iAS9PcfjMKtGpWQw9mXzJxrWD62kJCUqqLcyuI0+VRtJ3j20XembjF3kS20qELYdXft1vD/SPFVWVKMFOw==
+
 form-data-encoder@^2.1.2:
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/form-data-encoder/-/form-data-encoder-2.1.4.tgz#261ea35d2a70d48d30ec7a9603130fa5515e9cd5"
@@ -4081,7 +4150,7 @@ global@~4.4.0:
     min-document "^2.19.0"
     process "^0.11.10"
 
-globals@^13.19.0:
+globals@^13.19.0, globals@^13.24.0:
   version "13.24.0"
   resolved "https://registry.yarnpkg.com/globals/-/globals-13.24.0.tgz#8432a19d78ce0c1e833949c36adb345400bb1171"
   integrity sha512-AhO5QUcj8llrbG09iWhPU2B204J1xnPeL8kQmVorSsy+Sjj1sk8gIyh6cUocGmH4L0UuhAJy+hJMRA4mgA4mFQ==
@@ -4238,7 +4307,7 @@ hardhat-gas-reporter@^2.1.0:
     sha1 "^1.1.1"
     viem "2.7.14"
 
-hardhat@^2.22.2:
+hardhat@^2.17.3, hardhat@^2.22.2:
   version "2.22.2"
   resolved "https://registry.yarnpkg.com/hardhat/-/hardhat-2.22.2.tgz#0cadd7ec93bf39bab09f81603e75bc5e92acea3d"
   integrity sha512-0xZ7MdCZ5sJem4MrvpQWLR3R3zGDoHw5lsR+pBFimqwagimIOn3bWuZv69KA+veXClwI1s/zpqgwPwiFrd4Dxw==
@@ -5252,6 +5321,17 @@ merge2@^1.2.3, merge2@^1.3.0, merge2@^1.4.1:
   resolved "https://registry.yarnpkg.com/merge2/-/merge2-1.4.1.tgz#4368892f885e907455a6fd7dc55c0c9d404990ae"
   integrity sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==
 
+merkletreejs@^0.3.11:
+  version "0.3.11"
+  resolved "https://registry.yarnpkg.com/merkletreejs/-/merkletreejs-0.3.11.tgz#e0de05c3ca1fd368de05a12cb8efb954ef6fc04f"
+  integrity sha512-LJKTl4iVNTndhL+3Uz/tfkjD0klIWsHlUzgtuNnNrsf7bAlXR30m+xYB7lHr5Z/l6e/yAIsr26Dabx6Buo4VGQ==
+  dependencies:
+    bignumber.js "^9.0.1"
+    buffer-reverse "^1.0.1"
+    crypto-js "^4.2.0"
+    treeify "^1.1.0"
+    web3-utils "^1.3.4"
+
 micro-ftch@^0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/micro-ftch/-/micro-ftch-0.3.1.tgz#6cb83388de4c1f279a034fb0cf96dfc050853c5f"
@@ -5656,6 +5736,11 @@ onetime@^6.0.0:
   dependencies:
     mimic-fn "^4.0.0"
 
+"openzeppelin-contracts-upgradeable-4.9.3@npm:@openzeppelin/contracts-upgradeable@^4.9.3":
+  version "4.9.6"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.9.6.tgz#38b21708a719da647de4bb0e4802ee235a0d24df"
+  integrity sha512-m4iHazOsOCv1DgM7eD7GupTJ+NFVujRZt1wzddDPSVGpWdKq1SKkla5htKG7+IS4d2XOCtzkUNwRZ7Vq5aEUMA==
+
 optionator@^0.8.1:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.8.3.tgz#84fa1d036fe9d3c7e21d99884b601167ec8fb495"
@@ -6028,6 +6113,11 @@ quick-lru@^5.1.1:
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-5.1.1.tgz#366493e6b3e42a3a6885e2e99d18f80fb7a8c932"
   integrity sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==
 
+rambda@^7.4.0:
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/rambda/-/rambda-7.5.0.tgz#1865044c59bc0b16f63026c6e5a97e4b1bbe98fe"
+  integrity sha512-y/M9weqWAH4iopRd7EHDEQQvpFPHj1AA3oHozE9tfITHUtTR7Z9PSlIRRG2l1GuW7sefC1cXFfIcF+cgnShdBA==
+
 ramda@^0.29.1:
   version "0.29.1"
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.29.1.tgz#408a6165b9555b7ba2fc62555804b6c5a2eca196"
@@ -6354,6 +6444,47 @@ scrypt-js@3.0.1, scrypt-js@^3.0.0, scrypt-js@^3.0.1:
   resolved "https://registry.yarnpkg.com/scrypt-js/-/scrypt-js-3.0.1.tgz#d314a57c2aef69d1ad98a138a21fe9eafa9ee312"
   integrity sha512-cdwTTnqPu0Hyvf5in5asVdZocVDTNRmR7XEcJuIzMjJeSHybHl7vpB66AzwTaIg6CLSbtjcxc8fqcySfnTkccA==
 
+seaport-core@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/seaport-core/-/seaport-core-0.0.1.tgz#99db0b605d0fbbfd43ca7a4724e64374ce47f6d4"
+  integrity sha512-fgdSIC0ru8xK+fdDfF4bgTFH8ssr6EwbPejC2g/JsWzxy+FvG7JfaX57yn/eIv6hoscgZL87Rm+kANncgwLH3A==
+  dependencies:
+    seaport-types "^0.0.1"
+
+seaport-core@immutable/seaport-core#1.5.0+im.1:
+  version "1.5.0"
+  resolved "https://codeload.github.com/immutable/seaport-core/tar.gz/33e9030f308500b422926a1be12d7a1e4d6adc06"
+  dependencies:
+    seaport-types "^0.0.1"
+
+seaport-sol@^1.5.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/seaport-sol/-/seaport-sol-1.6.0.tgz#2a71ae8da5af9aecffee21767632ef37aaaaee13"
+  integrity sha512-a1FBK1jIeEQXZ9CmQvtmfG0w7CE8nIad89btGg7qrrrtF4j1S0Ilmzpe2Hderap05Uvf3EWS9P/aghDQCNAwkA==
+  dependencies:
+    seaport-core "^0.0.1"
+    seaport-types "^0.0.1"
+
+seaport-types@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/seaport-types/-/seaport-types-0.0.1.tgz#e2a32fe8641853d7dadb1b0232d911d88ccc3f1a"
+  integrity sha512-m7MLa7sq3YPwojxXiVvoX1PM9iNVtQIn7AdEtBnKTwgxPfGRWUlbs/oMgetpjT/ZYTmv3X5/BghOcstWYvKqRA==
+
+"seaport@git+https://github.com/immutable/seaport.git#1.5.0+im.1.3":
+  version "1.5.0"
+  resolved "git+https://github.com/immutable/seaport.git#ae061dc008105dd8d05937df9ad9a676f878cbf9"
+  dependencies:
+    "@nomicfoundation/hardhat-network-helpers" "^1.0.7"
+    "@openzeppelin/contracts" "^4.9.2"
+    ethers "^5.5.3"
+    ethers-eip712 "^0.2.0"
+    hardhat "^2.17.3"
+    merkletreejs "^0.3.11"
+    seaport-core immutable/seaport-core#1.5.0+im.1
+    seaport-sol "^1.5.0"
+    seaport-types "^0.0.1"
+    solady "^0.0.84"
+
 secp256k1@^4.0.1:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/secp256k1/-/secp256k1-4.0.3.tgz#c4559ecd1b8d3c1827ed2d1b94190d69ce267303"
@@ -6561,6 +6692,11 @@ smartwrap@^2.0.2:
     wcwidth "^1.0.1"
     yargs "^15.1.0"
 
+solady@^0.0.84:
+  version "0.0.84"
+  resolved "https://registry.yarnpkg.com/solady/-/solady-0.0.84.tgz#95476df1936ef349003e88d8a4853185eb0b7267"
+  integrity sha512-1ccuZWcMR+g8Ont5LUTqMSFqrmEC+rYAbo6DjZFzdL7AJAtLiaOzO25BKZR10h6YBZNaqO5zUOFy09R6/AzAKQ==
+
 solc@0.7.3:
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/solc/-/solc-0.7.3.tgz#04646961bd867a744f63d2b4e3c0701ffdc7d78a"
@@ -6616,6 +6752,19 @@ solidity-ast@^0.4.51:
   integrity sha512-HgmsA/Gfklm/M8GFbCX/J1qkVH0spXHgALCNZ8fA8x5X+MFdn/8CP2gr5OVyXjXw6RZTPC/Sxl2RUDQOXyNMeA==
   dependencies:
     array.prototype.findlast "^1.2.2"
+
+solidity-bits@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/solidity-bits/-/solidity-bits-0.4.0.tgz#164ef2184d446b37fe1e08e63c55ae200b36697a"
+  integrity sha512-bAU3OwfZ3DrZz0LqxyCjaxXQL5fcbUXygaz7Wjd+4Th5zUbkw6h1SWBdi2E4yGOv1VSGyvcmHI8gAdgLDCXaDQ==
+
+solidity-bytes-utils@^0.8.0:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/solidity-bytes-utils/-/solidity-bytes-utils-0.8.2.tgz#763d6a02fd093e93b3a97b742e97d540e66c29bd"
+  integrity sha512-cqXPYAV2auhpdKSTPuqji0CwpSceZDu95CzqSM/9tDJ2MoMaMsdHTpOIWtVw31BIqqGPNmIChCswzbw0tHaMTw==
+  dependencies:
+    ds-test "github:dapphub/ds-test"
+    forge-std "^1.1.2"
 
 solidity-comments-extractor@^0.0.8:
   version "0.0.8"
@@ -7008,6 +7157,11 @@ tr46@~0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
   integrity sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==
+
+treeify@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/treeify/-/treeify-1.1.0.tgz#4e31c6a463accd0943879f30667c4fdaff411bb8"
+  integrity sha512-1m4RA7xVAJrSGrrXGs0L3YTwyvBs2S8PbRHaLZAkFw7JR8oIFwYtysxlBZhYIa7xSyiYJKZ3iGrrk55cGA3i9A==
 
 trim-newlines@^3.0.0:
   version "3.0.1"
@@ -7499,7 +7653,7 @@ web3-utils@1.5.2:
     randombytes "^2.1.0"
     utf8 "3.0.0"
 
-web3-utils@^1.3.6:
+web3-utils@^1.3.4, web3-utils@^1.3.6:
   version "1.10.4"
   resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.10.4.tgz#0daee7d6841641655d8b3726baf33b08eda1cbec"
   integrity sha512-tsu8FiKJLk2PzhDl9fXbGUWTkkVXYhtTA+SmEFkKft+9BgwLxfCRpU96sWv7ICC8zixBNd3JURVoiR3dUXgP8A==

@@ -6,6 +6,8 @@ export enum NetworkName {
   Mainnet = 'mainnet',
   Sepolia = 'sepolia',
   Tenderly = 'tenderly',
+  IMXzkEVMTestnet = 'imtbl-zkevm-testnet',
+  IMXzkEVMMainnet = 'imtbl-zkevm-mainnet',
 }
 
 export type ContractAddressRecord = Partial<Record<NetworkName, Address>>;
