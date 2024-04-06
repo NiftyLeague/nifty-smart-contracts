@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.25;
+pragma solidity 0.8.23;
 
 import {ERC721PresetMinterPauserAutoId} from "@openzeppelin/contracts/v4/token/ERC721/presets/ERC721PresetMinterPauserAutoId.sol";
 import {Counters} from "@openzeppelin/contracts/v4/utils/Counters.sol";
