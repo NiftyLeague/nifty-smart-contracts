@@ -41,6 +41,8 @@ jobs:
         uses: borales/actions-yarn@v5
         with:
           cmd: test
+        env:
+          TENDERLY_ACCESS_KEY: ${{ secrets.TENDERLY_ACCESS_KEY }}
       - name: Check Solidity coverage
         uses: borales/actions-yarn@v5
         with:
