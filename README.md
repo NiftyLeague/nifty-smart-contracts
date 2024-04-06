@@ -2,7 +2,7 @@
 
 This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
 
-## Developer instructions
+## Setup Guide
 
 ### Install dependencies
 
@@ -10,7 +10,7 @@ This project demonstrates an advanced Hardhat use case, integrating other tools 
 yarn install
 ```
 
-### Set up environment variables
+### Setup environment variables
 
 Copy the `.env.example` file in this directory to `.env.local` (which will be ignored by Git):
 
@@ -20,23 +20,74 @@ cp .env.example .env.local
 
 ### Compile code
 
-Compiles the entire project, building all artifacts
-
 ```bash
 yarn build
 ```
 
-### Run tests
+This command uses `hardhat clean` to clear cache and delete all artifacts. It then runs `hardhat compile` to compile the entire project, building fresh artifacts.
+
+## Testing
+
+### Check code format
+
+We use [Prettier](https://prettier.io/) for code formatting!
 
 ```bash
-yarn test ./test/{desired_test_script}
+yarn format
 ```
 
-### Deploy code
+This will run both `yarn format:ts` & `yarn format:sol` to write all files with the necessary plugins.
+
+### Linting
+
+For TypeScript files we use [ESLint](https://eslint.org/) and for Solidity files we use [Solhint](https://protofire.io/projects/solhint). You can run both with:
+
+```bash
+yarn format
+```
+
+If you want to run them individually use `yarn lint:ts` or `yarn lint:sol`
+
+### TypeScript
+
+To check TypeScript for the entire app, run the following command:
+
+```bash
+yarn type-check
+```
+
+### Solidity static analysis
+
+We use [Slither](https://github.com/crytic/slither) in our CI pipeline to check and report any potential vulnerabilities in our contracts. You can also run this analyzer locally which will generate a `SLITHER.md` report. Run the following:
+
+```bash
+yarn slither
+```
+
+### Hardhat tests
+
+Please write tests for all contracts in the `src/test/` folder. To run all use:
+
+```bash
+yarn test
+```
+
+You can also run a single test using:
+
+```bash
+yarn test src/test/{desired_test_script}  --network hardhat
+```
+
+> **Note:**
+> All tests should be run on `hardhat` network!
+
+## Deploying contracts
 
 For deployment we use the [hardhat-deploy](https://github.com/wighawag/hardhat-deploy) plugin. This plugin allows you to write deploy scripts in the `src/deploy` folder and declare nested deploy environments. Each deploy script in the selected build environment will run sequentially.
 
-#### Local Development:
+> **Note:** `yarn deploy` will run on the network selected with .env `ETH_NETWORK` using the default deploy directory listed in `hardhat.config.ts`
+
+### Local Development:
 
 Start a JSON-RPC server on top of Hardhat Network:
 
@@ -50,7 +101,17 @@ Deploy test contracts on Hardhat Network (this will deploy scripts sequentially 
 yarn deploy:hardhat
 ```
 
-#### Testnet:
+### Tenderly DevNet:
+
+To use DevNets, go to [Tenderly](https://tenderly.co/devnets) and spawn a new DevNet. You will need to copy the RPC details into .env `TENDERLY_DEV_NET=<slug>/<devnet-id>`
+
+You can now set `ETH_NETWORK` to "tenderly" or run:
+
+```bash
+yarn deploy:tenderly
+```
+
+### Testnet:
 
 To deploy contracts using an account `PRIVATE_KEY` defined in `.env` on Testnet or Mainnet use:
 
@@ -58,7 +119,13 @@ To deploy contracts using an account `PRIVATE_KEY` defined in `.env` on Testnet 
 yarn deploy:remote {network}
 ```
 
-#### Mainnet:
+You can also deploy to our preferred testnet, [Sepolia](https://www.alchemy.com/faucets/ethereum-sepolia) using:
+
+```bash
+yarn deploy:sepolia
+```
+
+### Mainnet:
 
 For mainnet deployment we use [Frame](https://frame.sh/) to deploy with a Ledger signer.
 
@@ -66,7 +133,7 @@ For mainnet deployment we use [Frame](https://frame.sh/) to deploy with a Ledger
 yarn deploy:ledger mainnet
 ```
 
-### Export contracts
+## Export contracts
 
 To export contracts for use in client repositories, run:
 
@@ -76,7 +143,7 @@ yarn export
 
 This will create deployment files in `exports/` for both mainnet & sepolia which are git-ignored.
 
-### Other scripts
+## Other scripts
 
 Try running some of the following tasks:
 
@@ -84,20 +151,10 @@ Try running some of the following tasks:
 npx hardhat accounts
 npx hardhat compile
 npx hardhat clean
-npx hardhat test
 npx hardhat node
 npx hardhat help
-REPORT_GAS=true npx hardhat test
 npx hardhat coverage
-npx hardhat run src/scripts/deploy.ts
-TS_NODE_FILES=true npx ts-node src/scripts/deploy.ts
-npx eslint '**/*.{js,ts}'
-npx eslint '**/*.{js,ts}' --fix
-npx prettier '**/*.{json,sol,md}' --check
-npx prettier '**/*.{json,sol,md}' --write
-npx solhint 'src/contracts/**/*.sol'
-npx solhint 'src/contracts/**/*.sol' --fix
-slither . --checklist
+npx hardhat run src/scripts/<script>.ts
 ```
 
 ## Etherscan verification
