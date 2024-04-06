@@ -1,7 +1,7 @@
 // solhint-disable custom-errors, gas-custom-errors
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.25;
+pragma solidity 0.8.25;
 
 import {Ownable} from "@openzeppelin/contracts/v4/access/Ownable.sol";
 import {Pausable} from "@openzeppelin/contracts/v4/security/Pausable.sol";
