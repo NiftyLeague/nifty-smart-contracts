@@ -2,9 +2,9 @@
 
 ## Reporting a Vulnerability
 
-If there are any vulnerabilities in **NiftySmartContracts**, don't hesitate to _report them_.
+If there are any vulnerabilities in **nifty-smart-contracts**, don't hesitate to _report them_.
 
-1. Use any of the [contact options](https://github.com/NiftyLeague/NiftySmartContracts#support).
+1. Use any of the [contact options](https://github.com/NiftyLeague/nifty-smart-contracts#support).
 2. Describe the vulnerability.
 
    If you have a fix, that is most welcome -- please attach or summarize it in your message!

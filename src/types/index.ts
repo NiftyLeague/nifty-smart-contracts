@@ -2,9 +2,10 @@ import type { HardhatRuntimeEnvironment } from 'hardhat/types';
 import type { Address, DeployResult } from 'hardhat-deploy/types';
 
 export enum NetworkName {
-  Mainnet = 'mainnet',
   Hardhat = 'hardhat',
+  Mainnet = 'mainnet',
   Sepolia = 'sepolia',
+  Tenderly = 'tenderly',
 }
 
 export type ContractAddressRecord = Partial<Record<NetworkName, Address>>;

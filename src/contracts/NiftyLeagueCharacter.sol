@@ -1,12 +1,12 @@
 // solhint-disable custom-errors, gas-custom-errors
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.25;
+pragma solidity 0.8.25;
 
-import { Ownable } from "@openzeppelin/contracts/v4/access/Ownable.sol";
-import { Pausable } from "@openzeppelin/contracts/v4/security/Pausable.sol";
-import { ERC721 } from "@openzeppelin/contracts/v4/token/ERC721/ERC721.sol";
-import { Strings } from "@openzeppelin/contracts/v4/utils/Strings.sol";
+import {Ownable} from "@openzeppelin/contracts/v4/access/Ownable.sol";
+import {Pausable} from "@openzeppelin/contracts/v4/security/Pausable.sol";
+import {ERC721} from "@openzeppelin/contracts/v4/token/ERC721/ERC721.sol";
+import {Strings} from "@openzeppelin/contracts/v4/utils/Strings.sol";
 
 /**
  * @title NiftyLeagueCharacter (Base NFT for Nifty League characters)

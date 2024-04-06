@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import fs from 'fs';
-import { config, ethers, network, tenderly } from 'hardhat';
+import { config, ethers, network } from 'hardhat';
 
 import { tenderlyVerify, etherscanVerify, abiEncodeArgs } from '../utils';
 import { getLedgerSigner } from '../ledger';
@@ -139,8 +139,6 @@ const deploy = async (
 
   console.log(' 📄', chalk.cyan(contractName), 'deployed to:', chalk.magenta(deployedAddress));
   console.log(' ⛽', chalk.grey(extraGasInfo));
-
-  await tenderly.persistArtifacts({ name: contractName, address: deployedAddress });
 
   if (!encoded || encoded.length <= 2) return deployedContract as Contract;
   fs.writeFileSync(`${config.paths.artifacts}/${contractName}.args`, encoded.slice(2));

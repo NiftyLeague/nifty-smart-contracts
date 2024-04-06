@@ -4,13 +4,13 @@
   "description": "Nifty League Smart Contracts",
   "author": "Nifty Andy",
   "license": "MIT",
-  "homepage": "https://github.com/NiftyLeague/NiftySmartContracts#readme",
+  "homepage": "https://github.com/NiftyLeague/nifty-smart-contracts#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NiftyLeague/NiftySmartContracts"
+    "url": "git+https://github.com/NiftyLeague/nifty-smart-contracts"
   },
   "bugs": {
-    "url": "https://github.com/NiftyLeague/NiftySmartContracts/issues"
+    "url": "https://github.com/NiftyLeague/nifty-smart-contracts/issues"
   },
   "scripts": {
     "lint:ts": "eslint --ignore-path .eslintignore . --ext .ts,.js --fix",
@@ -21,9 +21,8 @@
     "format": "yarn format:ts && yarn format:sol",
     "type-check": "tsc --noEmit",
     "coverage": "hardhat coverage",
-    "test": "hardhat test --typecheck",
+    "test": "hardhat test src/test/*.ts --typecheck --network hardhat",
     "slither": "slither . --checklist --markdown-root ./ > SLITHER.md",
-    "full-test": "yarn lint && yarn format && yarn type-check && yarn slither",
     "compile": "hardhat clean && hardhat compile",
     "build": "npm run compile",
     "export:sepolia": "hardhat deploy --export --network sepolia ./exports/deployments.sepolia.ts",
@@ -31,12 +30,13 @@
     "export": "npm run export:sepolia && npm run export:mainnet && prettier --ignore-path .prettierignore --write ./exports/*.ts",
     "deploy": "hardhat deploy",
     "deploy:hardhat": "hardhat deploy --deploy-scripts ./src/deploy/hardhat --network hardhat",
+    "deploy:tenderly": "hardhat deploy --deploy-scripts ./src/deploy/remote --network tenderly",
+    "deploy:sepolia": "hardhat deploy --deploy-scripts ./src/deploy/remote --network sepolia",
     "deploy:remote": "hardhat deploy --deploy-scripts ./src/deploy/remote --network",
     "deploy:ledger": "hardhat deploy --deploy-scripts ./src/deploy/ledger --network",
     "verify": "hardhat etherscan-verify"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.4",
     "@chainlink/contracts": "^1.0.0",
     "@imtbl/imx-contracts": "^1.0.1",
     "@imtbl/imx-sdk": "^3.8.0",
@@ -52,7 +52,6 @@
     "@openzeppelin/contracts/v4": "npm:@openzeppelin/contracts@4.9.6",
     "@openzeppelin/contracts/v5": "npm:@openzeppelin/contracts@latest",
     "@openzeppelin/hardhat-upgrades": "^3.0.0",
-    "@tenderly/hardhat-tenderly": "^2.2.2",
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.1.0",
     "@types/chai": "^4.3.14",
@@ -61,7 +60,7 @@
     "@types/ramda": "^0.29.12",
     "@typescript-eslint/eslint-plugin": "^7.5.0",
     "@typescript-eslint/parser": "^7.5.0",
-    "chai": "^4.3.7",
+    "chai": "^4.4.1",
     "chalk": "^5.3.0",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
@@ -71,7 +70,6 @@
     "ethers": "^6.9.0",
     "fs": "0.0.1-security",
     "hardhat": "^2.22.2",
-    "hardhat-abi-exporter": "^2.10.1",
     "hardhat-deploy": "^0.12.2",
     "hardhat-deploy-ethers": "^0.4.1",
     "hardhat-gas-reporter": "^2.1.0",
@@ -84,9 +82,6 @@
     "solhint": "^4.5.2",
     "solhint-plugin-prettier": "^0.1.0",
     "solidity-coverage": "^0.8.11",
-    "tenderly": "^0.9.1",
-    "ts-command-line-args": "^2.5.1",
-    "ts-generator": "^0.1.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typechain": "^8.3.2",

@@ -7,7 +7,7 @@ import { mintDegen } from '~/scripts/mint';
 
 const postDeployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const chainId = await hre.getChainId();
-  if (chainId === '1') return console.log('Skipping post deploy on mainnet');
+  if (chainId === '1') return console.log(`Skipping post deploy on ${hre.network.name}`);
 
   const { deployer } = await hre.getNamedAccounts();
   const degenContract = await hre.ethers.getContract<NiftyDegen>('NiftyDegen');
