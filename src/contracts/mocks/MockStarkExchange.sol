@@ -1,6 +1,6 @@
 // solhint-disable no-empty-blocks
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.23;
+pragma solidity 0.8.19;
 
 contract MockStarkExchange {
     mapping(address acc => uint256 balance) private _balances;
