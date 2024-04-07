@@ -1,7 +1,7 @@
 // solhint-disable custom-errors, gas-custom-errors
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.23;
+pragma solidity 0.8.19;
 
 import {Counters} from "@openzeppelin/contracts/v4/utils/Counters.sol";
 import {NameableCharacter, NiftyLeagueCharacter} from "./NameableCharacter.sol";

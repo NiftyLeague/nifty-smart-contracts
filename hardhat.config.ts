@@ -34,7 +34,7 @@ const config: HardhatUserConfig = {
     compilers: [
       {
         // solidity <=0.8.23 required: https://docs.immutable.com/docs/zkEVM/architecture/chain-differences#solidity-compatibility
-        version: '0.8.23',
+        version: '0.8.19',
         settings: { optimizer: { enabled: true, runs: 200 } },
       },
     ],
@@ -72,17 +72,19 @@ const config: HardhatUserConfig = {
     },
     // Immutable zkEVM: https://docs.immutable.com/docs/zkEVM/architecture/chain-config
     'imtbl-zkevm-testnet': {
-      url: 'https://rpc.testnet.immutable.com',
       chainId: 13473,
+      url: 'https://rpc.testnet.immutable.com',
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
       companionNetworks: { L1: 'sepolia' }, // https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#companionnetworks
+      deploy: ['src/deploy/imx'],
       tags: ['staging'],
     },
     'imtbl-zkevm-mainnet': {
-      url: 'https://rpc.immutable.com',
       chainId: 13371,
+      url: 'https://rpc.immutable.com',
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
       companionNetworks: { L1: 'mainnet' }, // https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#companionnetworks
+      deploy: ['src/deploy/imx'],
       tags: ['prod'],
     },
   },

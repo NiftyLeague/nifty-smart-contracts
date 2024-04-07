@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.23;
+pragma solidity 0.8.19;
 
 interface INiftyEquipment {
     function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data) external;
