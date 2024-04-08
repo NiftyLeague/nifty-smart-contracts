@@ -78,6 +78,12 @@ const config: HardhatUserConfig = {
       companionNetworks: { L1: 'sepolia' }, // https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#companionnetworks
       deploy: ['src/deploy/imx'],
       tags: ['staging'],
+      verify: {
+        etherscan: {
+          apiUrl: 'https://explorer.testnet.immutable.com/api/v2',
+          apiKey: process.env.BLOCKSCOUT_API_KEY,
+        },
+      },
     },
     'imtbl-zkevm-mainnet': {
       chainId: 13371,
@@ -86,6 +92,12 @@ const config: HardhatUserConfig = {
       companionNetworks: { L1: 'mainnet' }, // https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#companionnetworks
       deploy: ['src/deploy/imx'],
       tags: ['prod'],
+      verify: {
+        etherscan: {
+          apiUrl: 'https://explorer.immutable.com/api/v2',
+          apiKey: process.env.BLOCKSCOUT_API_KEY,
+        },
+      },
     },
   },
   namedAccounts: {
@@ -104,6 +116,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
+  sourcify: { enabled: true },
   defender: {
     apiKey: `${process.env.OZ_DEFENDER_API_KEY}`,
     apiSecret: `${process.env.OZ_DEFENDER_API_SECRET}`,
