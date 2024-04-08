@@ -61,7 +61,7 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
     // Batch mint comics & items
     await batchMintItems(network, contract);
     // Revoke minter role from deployer
-    await contract.revokeRole(MINTER_ROLE, deployer);
+    await contract.renounceRole(MINTER_ROLE, deployer);
   } else if (REFRESH_METADATA) {
     // Refresh metadata for all tokens
     const comics = [1, 2, 3, 4, 5, 6];
