@@ -2,10 +2,10 @@
 
 pragma solidity 0.8.19;
 
-import {ERC1155} from "@openzeppelin/contracts/v4/token/ERC1155/ERC1155.sol";
-import {AccessControl} from "@openzeppelin/contracts/v4/access/AccessControl.sol";
-import {Pausable} from "@openzeppelin/contracts/v4/security/Pausable.sol";
-import {Context} from "@openzeppelin/contracts/v4/utils/Context.sol";
+import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
+import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 import {INiftyLaunchComics} from "./interfaces/INiftyLaunchComics.sol";
 
 /**
