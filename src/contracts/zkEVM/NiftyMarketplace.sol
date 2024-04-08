@@ -49,9 +49,9 @@ contract NiftyMarketplace is ImmutableERC1155 {
      * @notice Returns the URI for a given token ID
      * This overrides the default implementation. See {IERC1155MetadataURI-uri}
      * @param tokenId The identifier of the token
-     * @return uri The URI for the given token id
+     * @return tokenURI The URI for the given token id
      */
-    function uri(uint256 tokenId) public view override returns (string memory) {
+    function uri(uint256 tokenId) public view override returns (string memory tokenURI) {
         return string(abi.encodePacked(baseURI(), Strings.toString(tokenId)));
     }
 }
