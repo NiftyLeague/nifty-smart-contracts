@@ -4276,10 +4276,10 @@ hardhat-deploy@^0.12.2:
     qs "^6.9.4"
     zksync-ethers "^5.0.0"
 
-hardhat-gas-reporter@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/hardhat-gas-reporter/-/hardhat-gas-reporter-2.1.0.tgz#cca3041d435fed76e1974d054ae732c585bc897e"
-  integrity sha512-d/WU/qHhBFnbweAm2fAAjcaaE0M7BKZ4r+/bqcFlfP6um28BXtlv2FrJ6oyQUGSFD0ttbmB7sH4ZFDzkYw5GzA==
+hardhat-gas-reporter@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/hardhat-gas-reporter/-/hardhat-gas-reporter-2.1.1.tgz#fc91d437ee841ff32df1340025b0198201df92da"
+  integrity sha512-h3PAU7iDiPNqPA4i7GcKgnIZsN3UIdALM4gdJNoTtfmF9PGVne5nFZRNX1N7Y2Mx+znbBqeV1mS7o/i6T7NkTg==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/bytes" "^5.7.0"
