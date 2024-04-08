@@ -167,3 +167,13 @@ export const IMMUTABLE_SEAPORT_ADDRESS: ContractAddressRecord = {
   'imtbl-zkevm-mainnet': '0x6c12aD6F0bD274191075Eb2E78D7dA5ba6453424',
   'imtbl-zkevm-testnet': '0x7d117aA8BD6D31c4fa91722f246388f38ab1942c',
 };
+
+export const OPERATOR_ALLOWLIST_ADDRESS: ContractAddressRecord = {
+  'imtbl-zkevm-mainnet': '0x5F5EBa8133f68ea22D712b0926e2803E78D89221',
+  'imtbl-zkevm-testnet': '0x6b969FD89dE634d8DE3271EbE97734FEFfcd58eE',
+};
+
+export const MINTER_API_ADDRESS: ContractAddressRecord = {
+  'imtbl-zkevm-mainnet': '0xbb7ee21AAaF65a1ba9B05dEe234c5603C498939E',
+  'imtbl-zkevm-testnet': '0x9CcFbBaF5509B1a03826447EaFf9a0d1051Ad0CF',
+};
