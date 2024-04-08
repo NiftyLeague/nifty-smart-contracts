@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import {Ownable} from "@openzeppelin/contracts/v4/access/Ownable.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title AllowedColorsStorage

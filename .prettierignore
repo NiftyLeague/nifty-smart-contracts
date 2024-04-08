@@ -5,12 +5,12 @@ node_modules
 /.DS_Store
 
 # Hardhat files
-cache
 artifacts
-typechain
+cache
 deployments
-deployments.json
 gasReporterOutput.json
+Flattened.sol
+SLITHER.md
 
 #Coverage
 coverage*
@@ -23,5 +23,3 @@ coverage.json
 logs
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
