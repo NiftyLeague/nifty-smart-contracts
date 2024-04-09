@@ -1,19 +1,19 @@
 module.exports = {
   // Type check TypeScript files
-  '**/*.ts': () => 'yarn tsc --noEmit',
+  '**/*.ts': () => 'pnpm tsc --noEmit',
 
   // Lint then format TypeScript and JavaScript files
   '**/*.(ts|js)': filenames => [
-    `yarn eslint --fix ${filenames.join(' ')}`,
-    `yarn prettier --write ${filenames.join(' ')}`,
+    `pnpm eslint --fix ${filenames.join(' ')}`,
+    `pnpm prettier --write ${filenames.join(' ')}`,
   ],
 
   // Format MarkDown and JSON
-  '**/*.(md|json)': filenames => `yarn prettier --write ${filenames.join(' ')}`,
+  '**/*.(md|json)': filenames => `pnpm prettier --write ${filenames.join(' ')}`,
 
   // Lint then format Solidity
   '**/*.sol': filenames => [
-    `yarn solhint ${filenames.join(' ')}`,
-    `yarn prettier --write --plugin=prettier-plugin-solidity ${filenames.join(' ')}`,
+    `pnpm solhint ${filenames.join(' ')}`,
+    `pnpm prettier --write --plugin=prettier-plugin-solidity ${filenames.join(' ')}`,
   ],
 };

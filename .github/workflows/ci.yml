@@ -5,48 +5,39 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Setup Node
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+      - name: Setup Node ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 18.18.0
-          cache: 'yarn'
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
       - name: Install dependencies
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: install
+        run: pnpm install
       - name: Hardhat compile
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: build
+        run: pnpm build
       - name: Run Prettier
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: format
+        run: pnpm format
       - name: Lint TS Scripts
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: lint:ts
+        run: pnpm lint:ts
       - name: Lint Solidity files
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: lint:sol
+        run: pnpm lint:sol
       - name: Check TypeScript
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: type-check
+        run: pnpm type-check
       - name: Run Hardhat tests
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: test
+        run: pnpm test
         env:
           TENDERLY_ACCESS_KEY: ${{ secrets.TENDERLY_ACCESS_KEY }}
       - name: Check Solidity coverage
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: coverage
+        run: pnpm coverage
       - name: Test contract deployment
         continue-on-error: false
-        run: npx hardhat run --network hardhat src/scripts/deploy_test.ts
+        run: pnpm hardhat run --network hardhat src/scripts/deploy_test.ts

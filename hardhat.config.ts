@@ -33,7 +33,8 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.8.25',
+        // solidity <=0.8.23 required: https://docs.immutable.com/docs/zkEVM/architecture/chain-differences#solidity-compatibility
+        version: '0.8.19',
         settings: { optimizer: { enabled: true, runs: 200 } },
       },
     ],
@@ -44,29 +45,64 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
-    local: {
-      url: 'http://localhost:8545',
-      deploy: ['src/deploy/hardhat/'],
-    },
     hardhat: {
       allowUnlimitedContractSize: true,
-      deploy: ['src/deploy/hardhat/'],
+      deploy: ['src/deploy/hardhat'],
+      tags: ['test', 'local'],
     },
     tenderly: {
       url: `https://rpc.vnet.tenderly.co/devnet/${process.env.TENDERLY_DEV_NET}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-      deploy: ['src/deploy/remote/'],
+      deploy: ['src/deploy/remote'],
+      saveDeployments: false,
+      tags: ['local'],
     },
     sepolia: {
       // url: `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
       // url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
       url: `https://sepolia.gateway.tenderly.co/${process.env.TENDERLY_ACCESS_KEY}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-      deploy: ['src/deploy/remote/'],
+      deploy: ['src/deploy/remote'],
+      tags: ['staging'],
     },
     mainnet: {
       url: 'http://127.0.0.1:1248', // this is the RPC endpoint exposed by Frame
-      deploy: ['src/deploy/ledger/'],
+      deploy: ['src/deploy/ledger'],
+      tags: ['prod'],
+    },
+    // Immutable zkEVM: https://docs.immutable.com/docs/zkEVM/architecture/chain-config
+    'imtbl-zkevm-testnet': {
+      chainId: 13473,
+      url: 'https://rpc.testnet.immutable.com',
+      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      companionNetworks: { L1: 'sepolia' }, // https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#companionnetworks
+      deploy: ['src/deploy/imx'],
+      tags: ['staging'],
+      verify: {
+        etherscan: {
+          apiUrl: 'https://explorer.testnet.immutable.com/api/v2',
+          apiKey: process.env.BLOCKSCOUT_API_KEY,
+        },
+      },
+    },
+    'imtbl-zkevm-mainnet': {
+      chainId: 13371,
+      url: 'https://rpc.immutable.com',
+      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      companionNetworks: { L1: 'mainnet' }, // https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#companionnetworks
+      deploy: ['src/deploy/imx'],
+      tags: ['prod'],
+      verify: {
+        etherscan: {
+          apiUrl: 'https://explorer.immutable.com/api/v2',
+          apiKey: process.env.BLOCKSCOUT_API_KEY,
+        },
+      },
+    },
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0, // here this will by default take the first account as deployer
     },
   },
   gasReporter: {
@@ -80,14 +116,10 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
+  sourcify: { enabled: true },
   defender: {
     apiKey: `${process.env.OZ_DEFENDER_API_KEY}`,
     apiSecret: `${process.env.OZ_DEFENDER_API_SECRET}`,
-  },
-  namedAccounts: {
-    deployer: {
-      default: 0, // here this will by default take the first account as deployer
-    },
   },
   typechain: {
     outDir: 'src/types/typechain',
