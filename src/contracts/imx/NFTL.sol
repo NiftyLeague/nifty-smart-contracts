@@ -29,12 +29,24 @@ import {IChildERC20} from "../interfaces/IChildERC20.sol";
  */
 
 contract ChildERC20 is EIP712MetaTransaction, ERC20Upgradeable, IChildERC20 {
+    ///  @dev The bridge contract address
     address private _bridge;
+
+    ///  @dev The root token contract address
     address private _rootToken;
+
+    ///  @dev The number of decimals for the token
     uint8 private _decimals;
 
+    error InvalidInitialization(string message);
+    error Unauthorized(string message);
+
+    /**
+     * @dev Modifier that allows only the bridge contract to call the function.
+     * Throws an `Unauthorized` error if called by any other address.
+     */
     modifier onlyBridge() {
-        require(msg.sender == _bridge, "ChildERC20: Only bridge can call");
+        if (msg.sender != _bridge) revert Unauthorized("Only bridge can call");
         _;
     }
 
@@ -47,10 +59,9 @@ contract ChildERC20 is EIP712MetaTransaction, ERC20Upgradeable, IChildERC20 {
         string calldata symbol_,
         uint8 decimals_
     ) external initializer {
-        require(
-            rootToken_ != address(0) && bytes(name_).length != 0 && bytes(symbol_).length != 0,
-            "ChildERC20: BAD_INITIALIZATION"
-        );
+        if (rootToken_ == address(0)) revert InvalidInitialization("Token address must be defined");
+        if (bytes(name_).length == 0) revert InvalidInitialization("Name cannot be empty");
+        if (bytes(symbol_).length == 0) revert InvalidInitialization("Symbol cannot be empty");
         _rootToken = rootToken_;
         _decimals = decimals_;
         _bridge = msg.sender;
@@ -91,6 +102,7 @@ contract ChildERC20 is EIP712MetaTransaction, ERC20Upgradeable, IChildERC20 {
     }
 
     /**
+     * @inheritdoc ERC20Upgradeable
      * @notice Returns the decimals places of the token
      * @return uint8 Returns the decimals places of the token.
      */
@@ -98,6 +110,11 @@ contract ChildERC20 is EIP712MetaTransaction, ERC20Upgradeable, IChildERC20 {
         return _decimals;
     }
 
+    /**
+     * @inheritdoc ContextUpgradeable
+     * @notice Returns the address of the sender of the message
+     * @return address Returns the address of the sender of the message.
+     */
     function _msgSender() internal view virtual override(EIP712MetaTransaction, ContextUpgradeable) returns (address) {
         return EIP712MetaTransaction._msgSender();
     }

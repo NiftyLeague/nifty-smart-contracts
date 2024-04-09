@@ -8,7 +8,7 @@
     "gas-custom-errors": "warn",
     "gas-increment-by-one": "warn",
     "gas-length-in-loops": "warn",
-    "gas-named-return-values": "warn",
+    "gas-named-return-values": "off",
     "gas-small-strings": "warn",
     "gas-struct-packing": "warn",
     "interface-starts-with-i": "warn",

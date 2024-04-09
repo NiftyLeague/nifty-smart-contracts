@@ -23,6 +23,7 @@ import {INiftyLaunchComics} from "./interfaces/INiftyLaunchComics.sol";
  * roles, as well as the default admin role, which will let it grant both minter
  * and pauser roles to other accounts.
  */
+// slither-disable-next-line missing-inheritance
 contract NiftyLaunchComics is Context, AccessControl, ERC1155, Pausable, INiftyLaunchComics {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");

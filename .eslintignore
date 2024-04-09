@@ -3,6 +3,7 @@ node_modules
 .idea
 .env
 /.DS_Store
+pnpm-lock.yaml
 
 # Hardhat files
 artifacts

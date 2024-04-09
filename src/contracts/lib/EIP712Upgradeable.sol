@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: Apache 2.0
-// slither-disable-start naming-convention
 // Adapted from OpenZeppelin Contracts (last updated v4.8.0) (utils/cryptography/EIP712.sol)
 
 pragma solidity 0.8.19;
@@ -54,6 +53,7 @@ abstract contract EIP712Upgradeable {
     function _initializeEIP712(string memory name, string memory version) internal {
         bytes32 hashedName = keccak256(bytes(name));
         bytes32 hashedVersion = keccak256(bytes(version));
+        /* solhint-disable gas-small-strings */
         bytes32 typeHash = keccak256(
             "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
         );
@@ -76,14 +76,6 @@ abstract contract EIP712Upgradeable {
         }
     }
 
-    function _buildDomainSeparator(
-        bytes32 typeHash,
-        bytes32 nameHash,
-        bytes32 versionHash
-    ) private view returns (bytes32) {
-        return keccak256(abi.encode(typeHash, nameHash, versionHash, block.chainid, address(this)));
-    }
-
     /**
      * @dev Given an already https://eips.ethereum.org/EIPS/eip-712#definition-of-hashstruct[hashed struct], this
      * function returns the hash of the fully encoded EIP712 message for this domain.
@@ -102,5 +94,19 @@ abstract contract EIP712Upgradeable {
     function _hashTypedDataV4(bytes32 structHash) internal view virtual returns (bytes32) {
         return ECDSA.toTypedDataHash(_domainSeparatorV4(), structHash);
     }
+
+    /**
+     * @dev Builds the domain separator for EIP-712 signatures.
+     * @param typeHash The type hash of the contract.
+     * @param nameHash The hash of the contract name.
+     * @param versionHash The hash of the contract version.
+     * @return bytes32 domain separator hash.
+     */
+    function _buildDomainSeparator(
+        bytes32 typeHash,
+        bytes32 nameHash,
+        bytes32 versionHash
+    ) private view returns (bytes32) {
+        return keccak256(abi.encode(typeHash, nameHash, versionHash, block.chainid, address(this)));
+    }
 }
-// slither-disable-end naming-convention

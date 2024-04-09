@@ -9,8 +9,8 @@
     "hardhat/=./node_modules/hardhat/",
     "@chainlink/=./node_modules/@chainlink/"
   ],
-  "detectors_to_exclude": "solc-version,naming-convention,similar-names,dead-code,too-many-digits,timestamp,weak-prng,calls-loop",
-  "show_ignored_findings": true,
+  "detectors_to_exclude": "solc-version,naming-convention,similar-names,dead-code,too-many-digits",
+  "show_ignored_findings": false,
   "exclude_informational": false,
   "exclude_low": false,
   "exclude_medium": false,

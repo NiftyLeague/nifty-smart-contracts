@@ -42,6 +42,7 @@ contract NiftyBurningComicsL2 is OwnableUpgradeable, ReentrancyGuardUpgradeable,
      * @dev User can burn all 6 comics at once to receive a key to the citadel
      * @param _values Number of comics to burn, nth value means the number of nth comics(tokenId = n) to burn
      */
+    // slither-disable-start cyclomatic-complexity
     function burnComics(uint256[] calldata _values) external nonReentrant whenNotPaused {
         uint256 length = _values.length;
         // check _values param
@@ -71,6 +72,7 @@ contract NiftyBurningComicsL2 is OwnableUpgradeable, ReentrancyGuardUpgradeable,
         }
 
         // burn comics
+        // slither-disable-next-line reentrancy-benign
         INiftyLaunchComics(comics).burnBatch(msg.sender, tokenIds, _values);
         emit ComicsBurned(msg.sender, tokenIds, _values);
 
@@ -95,6 +97,7 @@ contract NiftyBurningComicsL2 is OwnableUpgradeable, ReentrancyGuardUpgradeable,
                 }
 
                 // increase the itemIndex for next items
+                // slither-disable-next-line costly-loop
                 itemIndex += tokenNumbersForItems[i];
             }
 
@@ -110,12 +113,14 @@ contract NiftyBurningComicsL2 is OwnableUpgradeable, ReentrancyGuardUpgradeable,
                 }
 
                 // increase the itemIndex for next items
+                // slither-disable-next-line costly-loop
                 itemIndex += _values[i];
             }
 
             emit ItemMinted(msg.sender, tokenIds, _values, tokenItemIndexs);
         }
     }
+    // slither-disable-end cyclomatic-complexity
 
     /**
      * @notice Pause comics burning
