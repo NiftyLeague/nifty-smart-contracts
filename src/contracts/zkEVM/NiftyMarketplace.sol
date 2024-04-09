@@ -40,7 +40,7 @@ contract NiftyMarketplace is ImmutableERC1155 {
         address _operatorAllowlist,
         address _receiver,
         uint96 _feeNumerator
-    ) payable ImmutableERC1155(owner, name_, baseURI_, contractURI_, _operatorAllowlist, _receiver, _feeNumerator) {
+    ) ImmutableERC1155(owner, name_, baseURI_, contractURI_, _operatorAllowlist, _receiver, _feeNumerator) {
         name = name_;
         symbol = symbol_;
     }
@@ -52,6 +52,6 @@ contract NiftyMarketplace is ImmutableERC1155 {
      * @return tokenURI The URI for the given token id
      */
     function uri(uint256 tokenId) public view override returns (string memory tokenURI) {
-        return string(abi.encodePacked(baseURI(), Strings.toString(tokenId)));
+        return string.concat(baseURI(), Strings.toString(tokenId));
     }
 }

@@ -85,7 +85,7 @@ pnpm test src/test/{desired_test_script}  --network hardhat
 
 For deployment we use the [hardhat-deploy](https://github.com/wighawag/hardhat-deploy) plugin. This plugin allows you to write deploy scripts in the `src/deploy` folder and declare nested deploy environments. Each deploy script in the selected build environment will run sequentially.
 
-> **Note:** `pnpm deploy` will run on the network selected with .env `ETH_NETWORK` using the default deploy directory listed in `hardhat.config.ts`
+> **Note:** `pnpm deploy:env` will run on the network selected with .env `ETH_NETWORK` using the default deploy directory listed in `hardhat.config.ts`
 
 ### Local Development:
 
