@@ -9,6 +9,9 @@ on:
 jobs:
   analyze:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
     permissions:
       contents: read
       security-events: write
@@ -21,17 +24,24 @@ jobs:
         with:
           version: 8
 
-      - name: Set up Node
+      - name: Setup Node ${{ matrix.node-version }}
         uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
 
-      - name: Install Yarn
-        run: npm install --global yarn
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build the contracts
+        run: pnpm build
 
       - name: Run Slither
         uses: crytic/slither-action@v0.3.2
         id: slither
         with:
-          node-version: 20.9.0
+          ignore-compile: true
+          node-version: ${{ matrix.node-version }}
           sarif: results.sarif
           fail-on: none
 

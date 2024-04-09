@@ -496,7 +496,7 @@ packages:
   /@eth-optimism/contracts@0.6.0(ethers@6.11.1):
     resolution: {integrity: sha512-vQ04wfG9kMf1Fwy3FEMqH2QZbgS0gldKhcBeBUPfO8zu68L61VI97UDXmsMQXzTsEAxK8HnokW3/gosl4/NW3w==}
     peerDependencies:
-      ethers: ^5
+      ethers: ^5 || ^6.11.1
     dependencies:
       '@eth-optimism/core-utils': 0.12.0
       '@ethersproject/abstract-provider': 5.7.0
@@ -1171,7 +1171,7 @@ packages:
     peerDependencies:
       '@nomicfoundation/hardhat-ethers': ^3.0.0
       chai: ^4.2.0
-      ethers: ^6.1.0
+      ethers: ^6.1.0 || ^6.11.1
       hardhat: ^2.9.4
     dependencies:
       '@nomicfoundation/hardhat-ethers': 3.0.5(ethers@6.11.1)(hardhat@2.22.2)
@@ -1187,7 +1187,7 @@ packages:
   /@nomicfoundation/hardhat-ethers@3.0.5(ethers@6.11.1)(hardhat@2.22.2):
     resolution: {integrity: sha512-RNFe8OtbZK6Ila9kIlHp0+S80/0Bu/3p41HUpaRIoHLm6X3WekTd83vob3rE54Duufu1edCiBDxspBzi2rxHHw==}
     peerDependencies:
-      ethers: ^6.1.0
+      ethers: ^6.1.0 || ^6.11.1
       hardhat: ^2.0.0
     dependencies:
       debug: 4.3.4(supports-color@8.1.1)
@@ -1204,7 +1204,7 @@ packages:
       '@nomicfoundation/hardhat-ethers': ^3.0.4
       '@nomicfoundation/hardhat-ignition': ^0.15.0
       '@nomicfoundation/ignition-core': ^0.15.0
-      ethers: ^6.7.0
+      ethers: ^6.7.0 || ^6.11.1
       hardhat: ^2.18.0
     dependencies:
       '@nomicfoundation/hardhat-ethers': 3.0.5(ethers@6.11.1)(hardhat@2.22.2)
@@ -1257,7 +1257,7 @@ packages:
       '@types/mocha': '>=9.1.0'
       '@types/node': '>=18.0.0'
       chai: ^4.2.0
-      ethers: ^6.4.0
+      ethers: ^6.4.0 || ^6.11.1
       hardhat: ^2.11.0
       hardhat-gas-reporter: ^1.0.8 || ^2.1.1
       solidity-coverage: ^0.8.1
@@ -1475,8 +1475,8 @@ packages:
       - encoding
     dev: true
 
-  /@openzeppelin/defender-sdk-base-client@1.11.0:
-    resolution: {integrity: sha512-HNcbRhbcMZZM5Ri5IfUwJaiJZGIrc0yboRZRlXJfG2aFS/EMfUFnQHC0tyyXtCOAoAZcn+iMlsSj5h8CoUeCfw==}
+  /@openzeppelin/defender-sdk-base-client@1.12.0:
+    resolution: {integrity: sha512-6n5SwJWCjFciC+T7QhfXnkEmkNZGKK0efkCZDAfu/Kd8L1AICnIkWwVte71dnzCBln7wglMiZupSHL3fZqePmQ==}
     dependencies:
       amazon-cognito-identity-js: 6.3.12
       async-retry: 1.3.3
@@ -1484,10 +1484,10 @@ packages:
       - encoding
     dev: true
 
-  /@openzeppelin/defender-sdk-deploy-client@1.11.0(debug@4.3.4):
-    resolution: {integrity: sha512-ELYVihsrTOlH7Sy5C/+Yf64hV3ICeTY2OcczOWVQ/o6rHBWKSnHSZCE/oB1cfOpyg/gCrCLXozs4NyrS5z3GUw==}
+  /@openzeppelin/defender-sdk-deploy-client@1.12.0(debug@4.3.4):
+    resolution: {integrity: sha512-E1RTyh0kXGRJJy7Kq/qSjQlyHJmtytLLKGHIVbI4Ijo9vwRZ7FZhZgK9lapJNshS4E1p3WgXHSOUJtOfn3F1bg==}
     dependencies:
-      '@openzeppelin/defender-sdk-base-client': 1.11.0
+      '@openzeppelin/defender-sdk-base-client': 1.12.0
       axios: 1.6.8(debug@4.3.4)
       lodash: 4.17.21
     transitivePeerDependencies:
@@ -1495,10 +1495,10 @@ packages:
       - encoding
     dev: true
 
-  /@openzeppelin/defender-sdk-network-client@1.11.0(debug@4.3.4):
-    resolution: {integrity: sha512-CPy1TA6RyFYtACbvXZJhJpsYW2u4yxTSNU8cVIw1lH/9iArXzfWuJ2p8Deidc0sJBbMeJYkv1AvqTBJNifjKMg==}
+  /@openzeppelin/defender-sdk-network-client@1.12.0(debug@4.3.4):
+    resolution: {integrity: sha512-0dlEHC27hOVRY+iVcoP2zH8K0jy4O+sOGKz2Ep9eebNcWc7GO6z1wsc4fU51AoiMh+G7cYb+l5z1wQ4Q3Y9vIA==}
     dependencies:
-      '@openzeppelin/defender-sdk-base-client': 1.11.0
+      '@openzeppelin/defender-sdk-base-client': 1.12.0
       axios: 1.6.8(debug@4.3.4)
       lodash: 4.17.21
     transitivePeerDependencies:
@@ -1512,7 +1512,7 @@ packages:
     peerDependencies:
       '@nomicfoundation/hardhat-ethers': ^3.0.0
       '@nomicfoundation/hardhat-verify': ^2.0.0
-      ethers: ^6.6.0
+      ethers: ^6.6.0 || ^6.11.1
       hardhat: ^2.0.2
     peerDependenciesMeta:
       '@nomicfoundation/hardhat-verify':
@@ -1522,9 +1522,9 @@ packages:
       '@nomicfoundation/hardhat-verify': 2.0.5(hardhat@2.22.2)
       '@openzeppelin/defender-admin-client': 1.54.1(debug@4.3.4)
       '@openzeppelin/defender-base-client': 1.54.1(debug@4.3.4)
-      '@openzeppelin/defender-sdk-base-client': 1.11.0
-      '@openzeppelin/defender-sdk-deploy-client': 1.11.0(debug@4.3.4)
-      '@openzeppelin/defender-sdk-network-client': 1.11.0(debug@4.3.4)
+      '@openzeppelin/defender-sdk-base-client': 1.12.0
+      '@openzeppelin/defender-sdk-deploy-client': 1.12.0(debug@4.3.4)
+      '@openzeppelin/defender-sdk-network-client': 1.12.0(debug@4.3.4)
       '@openzeppelin/upgrades-core': 1.32.5
       chalk: 4.1.2
       debug: 4.3.4(supports-color@8.1.1)
@@ -1622,7 +1622,7 @@ packages:
     resolution: {integrity: sha512-N1ZhksgwD3OBlwTv3R6KFEcPojl/W4ElJOeCZdi+vuI5QmTFwLq3OFf2zd2ROpKvxFdgZ6hUpb0dx9bVNEwYCA==}
     dependencies:
       '@noble/curves': 1.2.0
-      '@noble/hashes': 1.3.3
+      '@noble/hashes': 1.3.2
       '@scure/base': 1.1.6
     dev: true
 
@@ -1644,7 +1644,7 @@ packages:
   /@scure/bip39@1.2.1:
     resolution: {integrity: sha512-Z3/Fsz1yr904dduJD0NpiyRHhRYHdcnyh73FZWiV+/qhWi83wNJ3NWolYqCEN+ZWsUz2TWwajJggcRE9r1zUYg==}
     dependencies:
-      '@noble/hashes': 1.3.3
+      '@noble/hashes': 1.3.2
       '@scure/base': 1.1.6
     dev: true
 
@@ -1771,7 +1771,7 @@ packages:
   /@typechain/ethers-v6@0.5.1(ethers@6.11.1)(typechain@8.3.2)(typescript@5.4.4):
     resolution: {integrity: sha512-F+GklO8jBWlsaVV+9oHaPh5NJdd6rAKN4tklGfInX1Q7h0xPgVLP39Jl3eCulPB5qexI71ZFHwbljx4ZXNfouA==}
     peerDependencies:
-      ethers: 6.x
+      ethers: 6.x || ^6.11.1
       typechain: ^8.3.2
       typescript: '>=4.7.0'
     dependencies:
@@ -1786,7 +1786,7 @@ packages:
     resolution: {integrity: sha512-mtaUlzLlkqTlfPwB3FORdejqBskSnh+Jl8AIJGjXNAQfRQ4ofHADPl1+oU7Z3pAJzmZbUXII8MhOLQltcHgKnA==}
     peerDependencies:
       '@typechain/ethers-v6': ^0.5.1
-      ethers: ^6.1.0
+      ethers: ^6.1.0 || ^6.11.1
       hardhat: ^2.9.9
       typechain: ^8.3.2
     dependencies:
@@ -3546,7 +3546,7 @@ packages:
   /ethers-eip712@0.2.0(ethers@5.7.2):
     resolution: {integrity: sha512-fgS196gCIXeiLwhsWycJJuxI9nL/AoUPGSQ+yvd+8wdWR+43G+J1n69LmWVWvAON0M6qNaf2BF4/M159U8fujQ==}
     peerDependencies:
-      ethers: ^4.0.47 || ^5.0.8
+      ethers: ^4.0.47 || ^5.0.8 || ^6.11.1
     dependencies:
       ethers: 5.7.2
     dev: true
@@ -5977,7 +5977,7 @@ packages:
     resolution: {integrity: sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==}
     hasBin: true
     dependencies:
-      glob: 7.2.3
+      glob: 7.2.0
     dev: true
 
   /rimraf@3.0.2:
@@ -7354,7 +7354,7 @@ packages:
     resolution: {integrity: sha512-X99c5APICTlRzyXXjfwkEjRzOPp3Jwo62+z2DVGaZbe+b9Apbizcd2UGV4NGomoAR2GXPbeiSqi1cf3Hbo3cQw==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
-      ethers: ~5.7.0
+      ethers: ~5.7.0 || ^6.11.1
     dependencies:
       ethers: 5.7.2
     dev: true
@@ -7379,8 +7379,6 @@ packages:
     name: seaport
     version: 1.5.0
     engines: {node: '>=16.15.1'}
-    prepare: true
-    requiresBuild: true
     dependencies:
       '@nomicfoundation/hardhat-network-helpers': 1.0.10(hardhat@2.22.2)
       '@openzeppelin/contracts': 4.9.6

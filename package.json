@@ -28,7 +28,7 @@
     "export:sepolia": "hardhat deploy --export --network sepolia exports/deployments.sepolia.ts",
     "export:mainnet": "hardhat deploy --export --network mainnet exports/deployments.mainnet.ts",
     "export": "pnpm export:sepolia && pnpm export:mainnet && prettier --ignore-path .prettierignore --write exports/*.ts",
-    "deploy": "hardhat deploy",
+    "deploy:env": "hardhat deploy",
     "deploy:hardhat": "hardhat deploy --network hardhat",
     "deploy:tenderly": "hardhat deploy --network tenderly",
     "deploy:sepolia": "hardhat deploy --network sepolia",
@@ -92,6 +92,7 @@
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
+        "ethers": "^6.11.1",
         "hardhat-deploy": "^0.12.2",
         "hardhat-gas-reporter": "^2.1.1"
       }
