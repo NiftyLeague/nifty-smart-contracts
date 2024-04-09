@@ -198,6 +198,7 @@ contract NiftyDegen is NameableCharacter {
         ) {
             uint256 randomIndex = _rngIndex(newCharId);
             uint16 randomTrait = _unpackUint10(traitCombo >> (randomIndex * 10));
+            // slither-disable-next-line timestamp
             if (randomTrait != 0) {
                 uint256 poolSize = _originalPoolSizes[randomIndex];
                 bool skip = _rngSkip(poolSize);
@@ -279,6 +280,7 @@ contract NiftyDegen is NameableCharacter {
      */
     function _rngIndex(uint256 tokenId) private view returns (uint256 index) {
         uint256 randomHash = uint256(keccak256(abi.encodePacked(tokenId, block.timestamp, block.basefee)));
+        // slither-disable-next-line weak-prng
         return (randomHash % 17) + 5;
     }
 
@@ -290,7 +292,9 @@ contract NiftyDegen is NameableCharacter {
      */
     function _rngSkip(uint256 poolSize) private view returns (bool skip) {
         uint256 randomHash = uint256(keccak256(abi.encodePacked(poolSize, block.timestamp, block.basefee)));
+        // slither-disable-next-line weak-prng
         int256 odds = 70 - int256(randomHash % 61);
+        // slither-disable-next-line timestamp
         return odds < int256(500 / poolSize);
     }
 

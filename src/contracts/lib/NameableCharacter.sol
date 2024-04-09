@@ -40,6 +40,7 @@ abstract contract NameableCharacter is NiftyLeagueCharacter {
         if (!validateName(newName)) revert NameError("Name is not allowed");
         if (isNameReserved(newName)) revert NameError("Name already reserved");
 
+        // slither-disable-next-line reentrancy-no-eth,reentrancy-events
         INFTL(_NFTL_ADDRESS).burnFrom(_msgSender(), NAME_CHANGE_PRICE);
         if (bytes(_characters[tokenId].name).length > 0) {
             _toggleReserveName(_characters[tokenId].name, false);

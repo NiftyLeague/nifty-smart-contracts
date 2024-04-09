@@ -1,19 +1,11 @@
 //SPDX-License-Identifier: Apache 2.0
-// solhint-disable reason-string
+// solhint-disable custom-errors, gas-custom-errors, gas-small-strings, reason-string, no-inline-assembly
 
 pragma solidity 0.8.19;
 
 import {EIP712Upgradeable} from "./EIP712Upgradeable.sol";
 
 contract EIP712MetaTransaction is EIP712Upgradeable {
-    bytes32 private constant META_TRANSACTION_TYPEHASH =
-        keccak256(bytes("MetaTransaction(uint256 nonce,address from,bytes functionSignature)"));
-
-    /// @dev Event emitted when a meta transaction is successfully executed.
-    event MetaTransactionExecuted(address userAddress, address relayerAddress, bytes functionSignature);
-
-    mapping(address => uint256) private nonces;
-
     /*
      * Meta transaction structure.
      * No point of including value field here as if user is doing value transfer then he has the funds to pay for gas
@@ -24,6 +16,16 @@ contract EIP712MetaTransaction is EIP712Upgradeable {
         address from;
         bytes functionSignature;
     }
+
+    /// @dev EIP712 typehash for the contract's domain
+    bytes32 private constant _META_TRANSACTION_TYPEHASH =
+        keccak256(bytes("MetaTransaction(uint256 nonce,address from,bytes functionSignature)"));
+
+    /// @dev A mapping of users nonces to prevent replay attacks
+    mapping(address user => uint256 nonce) private _nonces;
+
+    /// @dev Event emitted when a meta transaction is successfully executed.
+    event MetaTransactionExecuted(address userAddress, address relayerAddress, bytes functionSignature);
 
     /**
      * @notice Executes a meta transaction on behalf of the user.
@@ -47,7 +49,7 @@ contract EIP712MetaTransaction is EIP712Upgradeable {
         require(destinationFunctionSig != msg.sig, "functionSignature can not be of executeMetaTransaction method");
 
         MetaTransaction memory metaTx = MetaTransaction({
-            nonce: nonces[userAddress],
+            nonce: _nonces[userAddress],
             from: userAddress,
             functionSignature: functionSignature
         });
@@ -55,7 +57,7 @@ contract EIP712MetaTransaction is EIP712Upgradeable {
         require(_verify(userAddress, metaTx, sigR, sigS, sigV), "Signer and signature do not match");
 
         unchecked {
-            ++nonces[userAddress];
+            ++_nonces[userAddress];
         }
         // Append userAddress at the end to extract it from calling context
         // slither-disable-next-line low-level-calls
@@ -72,7 +74,7 @@ contract EIP712MetaTransaction is EIP712Upgradeable {
      * @param offset The number of nonces, from the current nonce, to invalidate.
      */
     function invalidateNext(uint256 offset) external {
-        nonces[msg.sender] += offset;
+        _nonces[msg.sender] += offset;
     }
 
     /**
@@ -81,7 +83,7 @@ contract EIP712MetaTransaction is EIP712Upgradeable {
      * @return nonce The current nonce of the user.
      */
     function getNonce(address user) external view returns (uint256 nonce) {
-        nonce = nonces[user];
+        nonce = _nonces[user];
     }
 
     function _msgSender() internal view virtual returns (address sender) {
@@ -90,7 +92,6 @@ contract EIP712MetaTransaction is EIP712Upgradeable {
             uint256 index = msg.data.length;
             // slither-disable-next-line assembly
             assembly {
-                // solhint-disable no-inline-assembly
                 // Load the 32 bytes word from memory with the address on the lower 20 bytes, and mask those.
                 sender := and(mload(add(array, index)), 0xffffffffffffffffffffffffffffffffffffffff)
             }
@@ -107,7 +108,7 @@ contract EIP712MetaTransaction is EIP712Upgradeable {
      * @param sigR Part of the signature data.
      * @param sigS Part of the signature data.
      * @param sigV Recovery byte of the signature.
-     * @return True if the signature is valid, false otherwise.
+     * @return valid if the signature is valid, false otherwise.
      */
     function _verify(
         address user,
@@ -115,22 +116,29 @@ contract EIP712MetaTransaction is EIP712Upgradeable {
         bytes32 sigR,
         bytes32 sigS,
         uint8 sigV
-    ) private view returns (bool) {
+    ) private view returns (bool valid) {
         // The inclusion of a user specific nonce removes signature malleability concerns
         address signer = ecrecover(_hashTypedDataV4(_hashMetaTransaction(metaTx)), sigV, sigR, sigS);
         require(signer != address(0), "Invalid signature");
         return signer == user;
     }
 
+    /**
+     * @dev Calculates the hash of a meta transaction.
+     * @param metaTx The meta transaction object containing the necessary data.
+     * @return bytes32 hash of the meta transaction.
+     */
     function _hashMetaTransaction(MetaTransaction memory metaTx) private pure returns (bytes32) {
         return
             keccak256(
-                abi.encode(META_TRANSACTION_TYPEHASH, metaTx.nonce, metaTx.from, keccak256(metaTx.functionSignature))
+                abi.encode(_META_TRANSACTION_TYPEHASH, metaTx.nonce, metaTx.from, keccak256(metaTx.functionSignature))
             );
     }
 
     /**
      * @dev Extract the first four bytes from `inBytes`
+     * @param inBytes The bytes from which the first four bytes will be extracted
+     * @return outBytes4 The first four bytes of `inBytes`
      */
     function _convertBytesToBytes4(bytes memory inBytes) private pure returns (bytes4 outBytes4) {
         if (inBytes.length == 0) {
@@ -139,7 +147,6 @@ contract EIP712MetaTransaction is EIP712Upgradeable {
         // slither-disable-next-line assembly
         assembly {
             // extract the first 4 bytes from inBytes
-            // solhint-disable no-inline-assembly
             outBytes4 := mload(add(inBytes, 32))
         }
     }

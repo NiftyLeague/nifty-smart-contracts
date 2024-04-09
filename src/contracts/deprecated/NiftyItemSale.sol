@@ -122,6 +122,7 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
             // check the item limit if it's set
             uint256 itemLimitCount = itemLimitPerAdress[itemId];
             if (itemLimitCount > 0) {
+                // slither-disable-next-line calls-loop
                 uint256 userBalance = IERC1155SupplyUpgradeable(items).balanceOf(msg.sender, itemId);
                 if (userBalance + amount > itemLimitCount) revert InputError("Item limit overflow");
             }
@@ -177,6 +178,7 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
             if (_itemIds[i] <= 6) revert InputError("Token ID less than 7");
 
             // check if the max count is smaller than the current total supply
+            // slither-disable-next-line calls-loop
             if (_maxCounts[i] < IERC1155SupplyUpgradeable(items).totalSupply(_itemIds[i]))
                 revert InputError("Max count less than total supply");
 
@@ -273,6 +275,7 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
      * @return count (uint256) Remaining item amount able to purchase
      */
     function getRemainingItemCount(uint256 _itemId) public view returns (uint256 count) {
+        // slither-disable-next-line calls-loop
         return itemMaxCounts[_itemId] - IERC1155SupplyUpgradeable(items).totalSupply(_itemId);
     }
 }

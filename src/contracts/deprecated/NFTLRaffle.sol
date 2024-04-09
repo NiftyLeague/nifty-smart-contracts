@@ -158,6 +158,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 
         for (uint256 i = 0; i < totalPrizeCount; ) {
             uint256 prizeNFTTokenId = _prizeNFTTokenIds[i];
+            // slither-disable-next-line calls-loop
             prizeNFT.safeTransferFrom(msg.sender, address(this), prizeNFTTokenId, bytes(""));
 
             unchecked {
@@ -167,6 +168,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
     }
 
     function cancelSubscription() external onlyOwner {
+        // slither-disable-next-line reentrancy-no-eth
         VRFCoordinatorV2Interface(_vrfCoordinator).cancelSubscription(subscriptionId, owner());
         subscriptionId = 0;
     }
@@ -232,6 +234,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 
     function deposit(uint256 _amount) external onlyDepositAllowed whenNotPaused {
         // burn NFTL tokens
+        // slither-disable-next-line reentrancy-benign,reentrancy-events
         nftl.burnFrom(msg.sender, _amount);
 
         // increase the user deposit
@@ -298,6 +301,7 @@ contract NFTLRaffle is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 
         if (randomWordList.length != 0) {
             // select winners
+            // slither-disable-next-line reentrancy-events
             bool isWinnerSelected = _selectWinners();
             if (isWinnerSelected) return 0;
         }

@@ -56,12 +56,14 @@ contract NFTLToken is ERC20PresetMinterPauser("Nifty League", "NFTL") {
      * @return total NFTL claimed
      */
     function claim(uint256[] memory tokenIndices) public returns (uint256 total) {
+        // slither-disable-next-line timestamp
         require(block.timestamp > emissionStart, "Emission has not started yet");
 
         uint256 totalClaimQty = 0;
         uint256 length = tokenIndices.length;
         for (uint256 i = 0; i < length; ++i) {
             // Sanity check for non-minted index
+            // slither-disable-next-line calls-loop
             require(tokenIndices[i] <= ERC721Enumerable(_nftAddress).totalSupply(), "NFT at index not been minted");
             // Duplicate token index check
             for (uint256 j = i + 1; j < length; ++j) {
@@ -69,6 +71,7 @@ contract NFTLToken is ERC20PresetMinterPauser("Nifty League", "NFTL") {
             }
 
             uint256 tokenIndex = tokenIndices[i];
+            // slither-disable-next-line calls-loop
             require(ERC721Enumerable(_nftAddress).ownerOf(tokenIndex) == _msgSender(), "Sender is not the owner");
 
             uint256 claimQty = accumulated(tokenIndex);
@@ -89,8 +92,11 @@ contract NFTLToken is ERC20PresetMinterPauser("Nifty League", "NFTL") {
      * @return last claim timestamp
      */
     function getLastClaim(uint256 tokenIndex) public view returns (uint256 last) {
+        // slither-disable-next-line calls-loop
         require(tokenIndex <= ERC721Enumerable(_nftAddress).totalSupply(), "NFT at index not been minted");
+        // slither-disable-next-line calls-loop
         require(ERC721Enumerable(_nftAddress).ownerOf(tokenIndex) != address(0), "Owner cannot be 0 address");
+        // slither-disable-next-line timestamp
         uint256 lastClaimed = uint256(_lastClaim[tokenIndex]) != 0 ? uint256(_lastClaim[tokenIndex]) : emissionStart;
         return lastClaimed;
     }
@@ -101,6 +107,7 @@ contract NFTLToken is ERC20PresetMinterPauser("Nifty League", "NFTL") {
      * @return total NFTL accumulated and ready to claim
      */
     function accumulated(uint256 tokenIndex) public view returns (uint256 total) {
+        // slither-disable-next-line timestamp
         require(block.timestamp > emissionStart, "Emission has not started yet");
 
         uint256 lastClaimed = getLastClaim(tokenIndex);
@@ -111,6 +118,7 @@ contract NFTLToken is ERC20PresetMinterPauser("Nifty League", "NFTL") {
         uint256 totalAccumulated = ((accumulationPeriod - lastClaimed) * EMISSION_PER_DAY) / 1 days;
 
         // If claim hasn't been done before for the index, add initial allotment
+        // slither-disable-next-line incorrect-equality
         if (lastClaimed == emissionStart) {
             if (tokenIndex > 9500 && tokenIndex < 9901)
                 totalAccumulated = totalAccumulated + 21500e18; // 21500 NFTL
@@ -135,12 +143,14 @@ contract NFTLToken is ERC20PresetMinterPauser("Nifty League", "NFTL") {
      * @return total NFTL accumulated and ready to claim
      */
     function accumulatedMultiCheck(uint256[] memory tokenIndices) public view returns (uint256 total) {
+        // slither-disable-next-line timestamp
         require(block.timestamp > emissionStart, "Emission has not started yet");
         uint256 totalClaimableQty = 0;
         uint256 length = tokenIndices.length;
         for (uint256 i = 0; i < length; ++i) {
             uint256 tokenIndex = tokenIndices[i];
             // Sanity check for non-minted index
+            // slither-disable-next-line calls-loop
             require(tokenIndex <= ERC721Enumerable(_nftAddress).totalSupply(), "NFT at index not been minted");
             uint256 claimableQty = accumulated(tokenIndex);
             totalClaimableQty = totalClaimableQty + claimableQty;
