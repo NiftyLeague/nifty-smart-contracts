@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // solhint-disable
 
 pragma solidity 0.4.18;

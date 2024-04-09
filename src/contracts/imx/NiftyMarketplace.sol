@@ -1,4 +1,6 @@
-// SPDX-License-Identifier: MIT
+// Copyright Immutable Pty Ltd 2018 - 2023
+// SPDX-License-Identifier: Apache 2.0
+
 pragma solidity 0.8.19;
 
 import {ImmutableERC1155} from "@imtbl/contracts/contracts/token/erc1155/preset/ImmutableERC1155.sol";
