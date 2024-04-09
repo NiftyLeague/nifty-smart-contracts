@@ -1,5 +1,5 @@
-// solhint-disable immutable-vars-naming, custom-errors, gas-custom-errors
 // SPDX-License-Identifier: MIT
+// solhint-disable immutable-vars-naming, custom-errors, gas-custom-errors
 
 pragma solidity 0.8.19;
 
