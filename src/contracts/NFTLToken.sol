@@ -1,10 +1,10 @@
 // solhint-disable immutable-vars-naming, custom-errors, gas-custom-errors
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.25;
+pragma solidity 0.8.19;
 
-import {ERC20PresetMinterPauser} from "@openzeppelin/contracts/v4/token/ERC20/presets/ERC20PresetMinterPauser.sol";
-import {ERC721Enumerable} from "@openzeppelin/contracts/v4/token/ERC721/extensions/ERC721Enumerable.sol";
+import {ERC20PresetMinterPauser} from "@openzeppelin/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol";
+import {ERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 /**
  * @title NFTL Token (The native ecosystem token of Nifty League)

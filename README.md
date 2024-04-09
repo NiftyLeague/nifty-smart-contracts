@@ -7,7 +7,7 @@ This project demonstrates an advanced Hardhat use case, integrating other tools 
 ### Install dependencies
 
 ```bash
-yarn install
+pnpm install
 ```
 
 ### Setup environment variables
@@ -21,7 +21,7 @@ cp .env.example .env.local
 ### Compile code
 
 ```bash
-yarn build
+pnpm build
 ```
 
 This command uses `hardhat clean` to clear cache and delete all artifacts. It then runs `hardhat compile` to compile the entire project, building fresh artifacts.
@@ -33,27 +33,27 @@ This command uses `hardhat clean` to clear cache and delete all artifacts. It th
 We use [Prettier](https://prettier.io/) for code formatting!
 
 ```bash
-yarn format
+pnpm format
 ```
 
-This will run both `yarn format:ts` & `yarn format:sol` to write all files with the necessary plugins.
+This will run both `pnpm format:ts` & `pnpm format:sol` to write all files with the necessary plugins.
 
 ### Linting
 
 For TypeScript files we use [ESLint](https://eslint.org/) and for Solidity files we use [Solhint](https://protofire.io/projects/solhint). You can run both with:
 
 ```bash
-yarn format
+pnpm format
 ```
 
-If you want to run them individually use `yarn lint:ts` or `yarn lint:sol`
+If you want to run them individually use `pnpm lint:ts` or `pnpm lint:sol`
 
 ### TypeScript
 
 To check TypeScript for the entire app, run the following command:
 
 ```bash
-yarn type-check
+pnpm type-check
 ```
 
 ### Solidity static analysis
@@ -61,7 +61,7 @@ yarn type-check
 We use [Slither](https://github.com/crytic/slither) in our CI pipeline to check and report any potential vulnerabilities in our contracts. You can also run this analyzer locally which will generate a `SLITHER.md` report. Run the following:
 
 ```bash
-yarn slither
+pnpm slither
 ```
 
 ### Hardhat tests
@@ -69,13 +69,13 @@ yarn slither
 Please write tests for all contracts in the `src/test/` folder. To run all use:
 
 ```bash
-yarn test
+pnpm test
 ```
 
 You can also run a single test using:
 
 ```bash
-yarn test src/test/{desired_test_script}  --network hardhat
+pnpm test src/test/{desired_test_script}  --network hardhat
 ```
 
 > **Note:**
@@ -85,7 +85,7 @@ yarn test src/test/{desired_test_script}  --network hardhat
 
 For deployment we use the [hardhat-deploy](https://github.com/wighawag/hardhat-deploy) plugin. This plugin allows you to write deploy scripts in the `src/deploy` folder and declare nested deploy environments. Each deploy script in the selected build environment will run sequentially.
 
-> **Note:** `yarn deploy` will run on the network selected with .env `ETH_NETWORK` using the default deploy directory listed in `hardhat.config.ts`
+> **Note:** `pnpm deploy:env` will run on the network selected with .env `ETH_NETWORK` using the default deploy directory listed in `hardhat.config.ts`
 
 ### Local Development:
 
@@ -98,7 +98,7 @@ npx hardhat node
 Deploy test contracts on Hardhat Network (this will deploy scripts sequentially in `src/deploy/hardhat`):
 
 ```bash
-yarn deploy:hardhat
+pnpm deploy:hardhat
 ```
 
 ### Tenderly DevNet:
@@ -108,7 +108,7 @@ To use DevNets, go to [Tenderly](https://tenderly.co/devnets) and spawn a new De
 You can now set `ETH_NETWORK` to "tenderly" or run:
 
 ```bash
-yarn deploy:tenderly
+pnpm deploy:tenderly
 ```
 
 ### Testnet:
@@ -116,13 +116,13 @@ yarn deploy:tenderly
 To deploy contracts using an account `PRIVATE_KEY` defined in `.env` on Testnet or Mainnet use:
 
 ```bash
-yarn deploy:remote {network}
+pnpm deploy:remote {network}
 ```
 
 You can also deploy to our preferred testnet, [Sepolia](https://www.alchemy.com/faucets/ethereum-sepolia) using:
 
 ```bash
-yarn deploy:sepolia
+pnpm deploy:sepolia
 ```
 
 ### Mainnet:
@@ -130,7 +130,7 @@ yarn deploy:sepolia
 For mainnet deployment we use [Frame](https://frame.sh/) to deploy with a Ledger signer.
 
 ```bash
-yarn deploy:ledger mainnet
+pnpm deploy:ledger mainnet
 ```
 
 ## Export contracts
@@ -138,7 +138,7 @@ yarn deploy:ledger mainnet
 To export contracts for use in client repositories, run:
 
 ```bash
-yarn export
+pnpm export
 ```
 
 This will create deployment files in `exports/` for both mainnet & sepolia which are git-ignored.
@@ -168,7 +168,7 @@ Copy the .env.example file to a file named .env, and then edit it to fill in the
 To verify all deployments on your selected network, run:
 
 ```bash
-yarn verify
+pnpm verify
 ```
 
 This will use the `etherscan-verify` script from [hardhat-deploy](https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#4-hardhat-etherscan-verify) to quickly verify all deployments!
@@ -182,7 +182,15 @@ If you instead want to target a specific deployment to verify:
 Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:
 
 ```shell
-npx hardhat verify --network {network} DEPLOYED_CONTRACT_ADDRESS
+pnpm hardhat verify --network {network} DEPLOYED_CONTRACT_ADDRESS
+```
+
+#### Verification issues?
+
+You can try flattening the contract source code to manually submit for verification:
+
+```shell
+pnpm hardhat flatten src/contracts/Foo.sol > Flattened.sol
 ```
 
 ## Performance optimizations
