@@ -1,5 +1,6 @@
-// solhint-disable const-name-snakecase
 // SPDX-License-Identifier: MIT
+// solhint-disable const-name-snakecase
+
 pragma solidity 0.8.19;
 
 library Bytes {
