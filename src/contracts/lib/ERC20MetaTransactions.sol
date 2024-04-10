@@ -1,11 +1,12 @@
-//SPDX-License-Identifier: Apache 2.0
+// SPDX-License-Identifier: MIT
 // solhint-disable custom-errors, gas-custom-errors, gas-small-strings, reason-string, no-inline-assembly
 
 pragma solidity 0.8.19;
 
-import {EIP712Upgradeable} from "./EIP712Upgradeable.sol";
+import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
+import {IERC20MetaTransactions} from "../interfaces/IERC20MetaTransactions.sol";
 
-contract EIP712MetaTransaction is EIP712Upgradeable {
+abstract contract ERC20MetaTransactions is ERC20Permit, IERC20MetaTransactions {
     /*
      * Meta transaction structure.
      * No point of including value field here as if user is doing value transfer then he has the funds to pay for gas
@@ -86,14 +87,18 @@ contract EIP712MetaTransaction is EIP712Upgradeable {
         nonce = _nonces[user];
     }
 
-    function _msgSender() internal view virtual returns (address sender) {
+    /**
+     * @dev Internal function to get the address of the message sender.
+     * @return sender address of the message sender.
+     */
+    function _msgSender() internal view virtual override returns (address sender) {
         if (msg.sender == address(this)) {
             bytes memory array = msg.data;
-            uint256 index = msg.data.length;
+            uint256 calldataLength = msg.data.length;
             // slither-disable-next-line assembly
             assembly {
                 // Load the 32 bytes word from memory with the address on the lower 20 bytes, and mask those.
-                sender := and(mload(add(array, index)), 0xffffffffffffffffffffffffffffffffffffffff)
+                sender := and(mload(add(array, calldataLength)), 0xffffffffffffffffffffffffffffffffffffffff)
             }
         } else {
             sender = msg.sender;

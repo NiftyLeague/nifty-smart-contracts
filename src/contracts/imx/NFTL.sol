@@ -1,42 +1,28 @@
-// Copyright Immutable Pty Ltd 2018 - 2023
-// SPDX-License-Identifier: Apache 2.0
+// SPDX-License-Identifier: MIT
 
 pragma solidity 0.8.19;
 
-import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import {IERC20MetadataUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import {ContextUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
+import {ERC20Votes} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 
-import {EIP712MetaTransaction} from "../lib/EIP712MetaTransaction.sol";
+import {ERC20MetaTransactions} from "../lib/ERC20MetaTransactions.sol";
 import {IChildERC20} from "../interfaces/IChildERC20.sol";
 
 /**
  *   @title NFTL - ChildERC20
  *   @author @NiftyAndy, Nifty League, Polygon Technology (@QEDK)
- *   @notice Child token template for ChildERC20 predicate deployments
- *   @dev All child tokens are clones of this contract. Burning and minting is controlled by the ChildERC20Bridge.
- *
- *   @dev Upgradability:
- *        This contract is deployed using cloneDeterministic. It is then initialized using an initialize function.
- *        However, the contract is accessed directly, and not via a transparent upgrade proxy. As such, this contract is not upgradeable.
- *
- *   @dev Cloning and Initialization:
- *        During the bootstrap process this contract is deployed on-chain.
- *        When a token is initially mapped by the ChildERC20Bridge the deployed contract is cloned by the ChildERC20Bridge to a deterministic address.
- *        The new ChildERC20 token is created using cloneDeterministic with the keccak256 hash of the rootToken's address as the salt.
- *        This new ChildERC20 token is then initialized with the same name, symbol and decimals as the rootToken.
- *        This deterministic cloning approach allows the token mapping on the root and child bridges to stay congruent.
+ *   @notice Child token for ChildERC20 predicate deployments
+ *   This contract is based on OpenZeppelin's ERC20, ERC20Permit, ERC20Votes contracts for token governance.
  */
 
-contract ChildERC20 is EIP712MetaTransaction, ERC20Upgradeable, IChildERC20 {
+contract NFTL is ERC20, ERC20Permit, ERC20Votes, ERC20MetaTransactions, IChildERC20 {
     ///  @dev The bridge contract address
     address private _bridge;
 
     ///  @dev The root token contract address
     address private _rootToken;
-
-    ///  @dev The number of decimals for the token
-    uint8 private _decimals;
 
     error InvalidInitialization(string message);
     error Unauthorized(string message);
@@ -50,23 +36,17 @@ contract ChildERC20 is EIP712MetaTransaction, ERC20Upgradeable, IChildERC20 {
         _;
     }
 
-    /**
-     * @inheritdoc IChildERC20
-     */
-    function initialize(
+    constructor(
         address rootToken_,
-        string calldata name_,
-        string calldata symbol_,
-        uint8 decimals_
-    ) external initializer {
+        address bridge_,
+        string memory name_,
+        string memory symbol_
+    ) ERC20(name_, symbol_) ERC20Permit(name_) {
         if (rootToken_ == address(0)) revert InvalidInitialization("Token address must be defined");
         if (bytes(name_).length == 0) revert InvalidInitialization("Name cannot be empty");
         if (bytes(symbol_).length == 0) revert InvalidInitialization("Symbol cannot be empty");
         _rootToken = rootToken_;
-        _decimals = decimals_;
-        _bridge = msg.sender;
-        __ERC20_init(name_, symbol_);
-        _initializeEIP712(name_, "1");
+        _bridge = bridge_;
     }
 
     /**
@@ -102,20 +82,42 @@ contract ChildERC20 is EIP712MetaTransaction, ERC20Upgradeable, IChildERC20 {
     }
 
     /**
-     * @inheritdoc ERC20Upgradeable
-     * @notice Returns the decimals places of the token
-     * @return uint8 Returns the decimals places of the token.
+     * @dev Internal function that is called after a token transfer.
+     * It calls the _afterTokenTransfer function from the ERC20 and ERC20Votes contracts.
+     * @param from The address transferring the tokens.
+     * @param to The address receiving the tokens.
+     * @param amount The amount of tokens being transferred.
      */
-    function decimals() public view virtual override(ERC20Upgradeable, IERC20MetadataUpgradeable) returns (uint8) {
-        return _decimals;
+    function _afterTokenTransfer(address from, address to, uint256 amount) internal override(ERC20, ERC20Votes) {
+        super._afterTokenTransfer(from, to, amount);
     }
 
     /**
-     * @inheritdoc ContextUpgradeable
-     * @notice Returns the address of the sender of the message
-     * @return address Returns the address of the sender of the message.
+     * @dev Internal function that mints new tokens.
+     * It calls the _mint function from the ERC20 and ERC20Votes contracts.
+     * @param to The address receiving the minted tokens.
+     * @param amount The amount of tokens to mint.
      */
-    function _msgSender() internal view virtual override(EIP712MetaTransaction, ContextUpgradeable) returns (address) {
-        return EIP712MetaTransaction._msgSender();
+    function _mint(address to, uint256 amount) internal override(ERC20, ERC20Votes) {
+        super._mint(to, amount);
+    }
+
+    /**
+     * @dev Internal function that burns tokens.
+     * It calls the _burn function from the ERC20 and ERC20Votes contracts.
+     * @param account The address from which tokens are burned.
+     * @param amount The amount of tokens to burn.
+     */
+    function _burn(address account, uint256 amount) internal override(ERC20, ERC20Votes) {
+        super._burn(account, amount);
+    }
+
+    /**
+     * @dev Returns the address of the message sender to enable meta transactions execution on behalf of the user.
+     * Overrides the internal _msgSender() function from ERC20 Context with ERC20MetaTransactions.
+     * @return address address of the message sender.
+     */
+    function _msgSender() internal view virtual override(Context, ERC20MetaTransactions) returns (address) {
+        return ERC20MetaTransactions._msgSender();
     }
 }

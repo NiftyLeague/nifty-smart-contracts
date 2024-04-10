@@ -3,19 +3,19 @@
 
 pragma solidity 0.8.19;
 
-import {IERC20MetadataUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 /**
  * @dev Interface of IChildERC20
  */
-interface IChildERC20 is IERC20MetadataUpgradeable {
+interface IChildERC20 is IERC20Metadata {
     /**
      * @dev Sets the values for {rootToken}, {name}, {symbol} and {decimals}.
      *
      * All these values are immutable: they can only be set once during
      * initialization.
      */
-    function initialize(address rootToken_, string calldata name_, string calldata symbol_, uint8 decimals_) external;
+    // function initialize(address rootToken_, string calldata name_, string calldata symbol_, uint8 decimals_) external;
 
     /**
      * @notice Mints an amount of tokens to a particular address
