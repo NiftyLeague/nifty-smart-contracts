@@ -10,14 +10,6 @@ import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IER
  */
 interface IChildERC20 is IERC20Metadata {
     /**
-     * @dev Sets the values for {rootToken}, {name}, {symbol} and {decimals}.
-     *
-     * All these values are immutable: they can only be set once during
-     * initialization.
-     */
-    // function initialize(address rootToken_, string calldata name_, string calldata symbol_, uint8 decimals_) external;
-
-    /**
      * @notice Mints an amount of tokens to a particular address
      * @dev Can only be called by the predicate address
      * @param account Account of the user to mint the tokens to

@@ -24,24 +24,25 @@ contract NiftyMarketplace is ImmutableERC1155 {
      * Sets the default admin to `owner`
      * Sets the `baseURI`
      * Sets the royalty receiver and amount (this can not be changed once set)
-     * @param owner The address that will be granted the `DEFAULT_ADMIN_ROLE`
+     * @param owner_ The address that will be granted the `DEFAULT_ADMIN_ROLE`
      * @param name_ The name of the collection
+     * @param symbol_ The symbol or short-name for the collection
      * @param baseURI_ The base URI for the collection
      * @param contractURI_ The contract URI for the collection
-     * @param _operatorAllowlist The address of the OAL
-     * @param _receiver The address that will receive the royalty payments
-     * @param _feeNumerator The percentage of the sale price that will be paid as a royalty
+     * @param operatorAllowlist_ The address of the OAL
+     * @param receiver_ The address that will receive the royalty payments
+     * @param feeNumerator_ The percentage of the sale price that will be paid as a royalty
      */
     constructor(
-        address owner,
+        address owner_,
         string memory name_,
         string memory symbol_,
         string memory baseURI_,
         string memory contractURI_,
-        address _operatorAllowlist,
-        address _receiver,
-        uint96 _feeNumerator
-    ) ImmutableERC1155(owner, name_, baseURI_, contractURI_, _operatorAllowlist, _receiver, _feeNumerator) {
+        address operatorAllowlist_,
+        address receiver_,
+        uint96 feeNumerator_
+    ) ImmutableERC1155(owner_, name_, baseURI_, contractURI_, operatorAllowlist_, receiver_, feeNumerator_) {
         name = name_;
         symbol = symbol_;
     }

@@ -25,18 +25,8 @@ abstract contract ERC20MetaTransactions is ERC20Permit, IERC20MetaTransactions {
     /// @dev A mapping of users nonces to prevent replay attacks
     mapping(address user => uint256 nonce) private _nonces;
 
-    /// @dev Event emitted when a meta transaction is successfully executed.
-    event MetaTransactionExecuted(address userAddress, address relayerAddress, bytes functionSignature);
-
     /**
-     * @notice Executes a meta transaction on behalf of the user.
-     * @dev This function allows a user to sign a transaction off-chain and have it executed by another entity.
-     * @param userAddress The address of the user initiating the transaction.
-     * @param functionSignature The signature of the function to be executed.
-     * @param sigR Part of the signature data.
-     * @param sigS Part of the signature data.
-     * @param sigV Recovery byte of the signature.
-     * @return returnData The bytes returned from the executed function.
+     * @inheritdoc IERC20MetaTransactions
      */
     function executeMetaTransaction(
         address userAddress,
@@ -71,24 +61,22 @@ abstract contract ERC20MetaTransactions is ERC20Permit, IERC20MetaTransactions {
     }
 
     /**
-     * @notice Invalidates next "offset" number of nonces for the calling address
-     * @param offset The number of nonces, from the current nonce, to invalidate.
+     * @inheritdoc IERC20MetaTransactions
      */
     function invalidateNext(uint256 offset) external {
         _nonces[msg.sender] += offset;
     }
 
     /**
-     * @notice Retrieves the current nonce for a user.
-     * @param user The address of the user.
-     * @return nonce The current nonce of the user.
+     * @inheritdoc IERC20MetaTransactions
      */
     function getNonce(address user) external view returns (uint256 nonce) {
         nonce = _nonces[user];
     }
 
     /**
-     * @dev Internal function to get the address of the message sender.
+     * @dev Returns the address of the message sender to enable meta transactions execution on behalf of the user.
+     * Overrides the internal _msgSender() function from ERC20 Context with ERC20MetaTransactions.
      * @return sender address of the message sender.
      */
     function _msgSender() internal view virtual override returns (address sender) {
