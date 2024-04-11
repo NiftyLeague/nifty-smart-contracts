@@ -12,17 +12,17 @@ import {IChildERC20} from "../interfaces/IChildERC20.sol";
 
 /**
  *   @title NFTL - ChildERC20
- *   @author @NiftyAndy, Nifty League, Polygon Technology (@QEDK)
+ *   @author @NiftyAndy, Nifty League, Immutable
  *   @notice Child token for ChildERC20 predicate deployments
  *   This contract is based on OpenZeppelin's ERC20, ERC20Permit, ERC20Votes contracts for token governance.
  */
 
 contract NFTL is ERC20, ERC20Permit, ERC20Votes, ERC20MetaTransactions, IChildERC20 {
     ///  @dev The bridge contract address
-    address private _bridge;
+    address private immutable _BRIDGE;
 
     ///  @dev The root token contract address
-    address private _rootToken;
+    address private immutable _ROOT_TOKEN;
 
     error InvalidInitialization(string message);
     error Unauthorized(string message);
@@ -32,21 +32,22 @@ contract NFTL is ERC20, ERC20Permit, ERC20Votes, ERC20MetaTransactions, IChildER
      * Throws an `Unauthorized` error if called by any other address.
      */
     modifier onlyBridge() {
-        if (msg.sender != _bridge) revert Unauthorized("Only bridge can call");
+        if (_msgSender() != bridge()) revert Unauthorized("Only bridge can call");
         _;
     }
 
     constructor(
-        address rootToken_,
         address bridge_,
+        address rootToken_,
         string memory name_,
         string memory symbol_
     ) ERC20(name_, symbol_) ERC20Permit(name_) {
+        if (bridge_ == address(0)) revert InvalidInitialization("Bridge address must be defined");
         if (rootToken_ == address(0)) revert InvalidInitialization("Token address must be defined");
         if (bytes(name_).length == 0) revert InvalidInitialization("Name cannot be empty");
         if (bytes(symbol_).length == 0) revert InvalidInitialization("Symbol cannot be empty");
-        _rootToken = rootToken_;
-        _bridge = bridge_;
+        _BRIDGE = bridge_;
+        _ROOT_TOKEN = rootToken_;
     }
 
     /**
@@ -70,52 +71,40 @@ contract NFTL is ERC20, ERC20Permit, ERC20Votes, ERC20MetaTransactions, IChildER
     /**
      * @inheritdoc IChildERC20
      */
-    function bridge() external view virtual returns (address) {
-        return _bridge;
+    function bridge() public view virtual returns (address) {
+        return _BRIDGE;
     }
 
     /**
      * @inheritdoc IChildERC20
      */
-    function rootToken() external view virtual returns (address) {
-        return _rootToken;
+    function rootToken() public view virtual returns (address) {
+        return _ROOT_TOKEN;
     }
 
     /**
-     * @dev Internal function that is called after a token transfer.
-     * It calls the _afterTokenTransfer function from the ERC20 and ERC20Votes contracts.
-     * @param from The address transferring the tokens.
-     * @param to The address receiving the tokens.
-     * @param amount The amount of tokens being transferred.
+     * @inheritdoc ERC20Votes
      */
     function _afterTokenTransfer(address from, address to, uint256 amount) internal override(ERC20, ERC20Votes) {
         super._afterTokenTransfer(from, to, amount);
     }
 
     /**
-     * @dev Internal function that mints new tokens.
-     * It calls the _mint function from the ERC20 and ERC20Votes contracts.
-     * @param to The address receiving the minted tokens.
-     * @param amount The amount of tokens to mint.
+     * @inheritdoc ERC20Votes
      */
     function _mint(address to, uint256 amount) internal override(ERC20, ERC20Votes) {
         super._mint(to, amount);
     }
 
     /**
-     * @dev Internal function that burns tokens.
-     * It calls the _burn function from the ERC20 and ERC20Votes contracts.
-     * @param account The address from which tokens are burned.
-     * @param amount The amount of tokens to burn.
+     * @inheritdoc ERC20Votes
      */
     function _burn(address account, uint256 amount) internal override(ERC20, ERC20Votes) {
         super._burn(account, amount);
     }
 
     /**
-     * @dev Returns the address of the message sender to enable meta transactions execution on behalf of the user.
-     * Overrides the internal _msgSender() function from ERC20 Context with ERC20MetaTransactions.
-     * @return address address of the message sender.
+     * @inheritdoc ERC20MetaTransactions
      */
     function _msgSender() internal view virtual override(Context, ERC20MetaTransactions) returns (address) {
         return ERC20MetaTransactions._msgSender();
