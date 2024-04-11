@@ -58,6 +58,7 @@ const config: HardhatUserConfig = {
       tags: ['local'],
     },
     sepolia: {
+      // url: 'http://127.0.0.1:1248', // this is the RPC endpoint exposed by Frame
       // url: `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
       // url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
       url: `https://sepolia.gateway.tenderly.co/${process.env.TENDERLY_ACCESS_KEY}`,
@@ -67,6 +68,9 @@ const config: HardhatUserConfig = {
     },
     mainnet: {
       url: 'http://127.0.0.1:1248', // this is the RPC endpoint exposed by Frame
+      // url: `https://mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
+      // url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      // url: `https://mainnet.gateway.tenderly.co/${process.env.TENDERLY_ACCESS_KEY}`,
       deploy: ['src/deploy/ledger'],
       tags: ['prod'],
     },
