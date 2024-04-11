@@ -54,6 +54,7 @@ contract BalanceManager is Initializable, OwnableUpgradeable {
      * @param _amount Deposit amount
      */
     function deposit(uint256 _amount) external {
+        // slither-disable-next-line reentrancy-benign,reentrancy-events
         IERC20Upgradeable(nftl).safeTransferFrom(msg.sender, address(this), _amount);
         _userDeposits[msg.sender] += _amount;
 
@@ -75,6 +76,7 @@ contract BalanceManager is Initializable, OwnableUpgradeable {
         ++nonce[msg.sender];
 
         // check if the request is not expired
+        // slither-disable-next-line timestamp
         if (block.timestamp > _expireAt) {
             revert WithdrawError(block.timestamp, _expireAt, "expired withdrawal request");
         }

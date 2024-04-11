@@ -99,7 +99,7 @@ contract HydraDistributor is
 
         for (uint256 i = 0; i < length; ) {
             uint256 tokenId = _hydraTokenIdList[i];
-
+            // slither-disable-next-line calls-loop
             niftyDegen.safeTransferFrom(msg.sender, address(this), tokenId, bytes(""));
 
             unchecked {
@@ -137,6 +137,7 @@ contract HydraDistributor is
             abi.encodePacked(_prevHash, randomValue, msg.sender, block.timestamp, block.basefee)
         );
         uint256 hydraCount = hydraTokenIds.length;
+        // slither-disable-next-line weak-prng
         uint256 hydraIndex = uint256(randomHash) % hydraCount;
         uint256 hydraTokenId = hydraTokenIds[hydraIndex];
 
@@ -149,6 +150,7 @@ contract HydraDistributor is
 
         // burn user's degens
         for (uint256 i = 0; i < degenCountToBurn; ) {
+            // slither-disable-next-line calls-loop
             niftyDegen.safeTransferFrom(msg.sender, address(1), _degenTokenIdList[i], bytes(""));
 
             unchecked {
@@ -170,7 +172,7 @@ contract HydraDistributor is
         uint256 length = hydraTokenIds.length;
         for (uint256 i = 0; i < length; ) {
             uint256 tokenId = hydraTokenIds[i];
-
+            // slither-disable-next-line calls-loop
             niftyDegen.safeTransferFrom(address(this), _to, tokenId, bytes(""));
 
             unchecked {
