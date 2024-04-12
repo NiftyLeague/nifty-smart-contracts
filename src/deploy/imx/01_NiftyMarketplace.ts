@@ -19,6 +19,7 @@ const COLLECTION = {
   baseUri: 'https://api.niftyleague.com/imx/marketplace/metadata/',
   contractUri: 'https://api.niftyleague.com/imx/marketplace/collection.json',
   royalties: {
+    // TODO: Replace with Deployed Gnosis Safe
     receiver: NIFTY_LEDGER_DEPLOYER,
     feeNumerator: 250, // 2.5%
   },
