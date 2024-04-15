@@ -2,13 +2,12 @@ import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
 import type { Signer } from 'ethers';
 import type { ComicsBurner, NiftyMarketplace } from '~/types/typechain';
-import { PANIC_CODES } from '@nomicfoundation/hardhat-chai-matchers/panic';
 
-import { getPermitSignature } from '../scripts/permit';
+import { getERC1155Permit } from '../scripts/permit';
 import { deployMarketplace } from './utils/contracts';
 import { forkImmutable } from './utils/network';
 
-describe('IMX', function () {
+describe('IMX - Comics Burning', function () {
   let signer: Signer;
   let bob: Signer;
   let niftyMarketplace: NiftyMarketplace;
@@ -99,16 +98,16 @@ describe('IMX', function () {
 
     it('Should revert with expired permit', async function () {
       const deadline = BigInt(0);
-      const { signature } = await getPermitSignature(signer, niftyMarketplace, comicsBurner, deadline);
+      const { signature } = await getERC1155Permit(signer, niftyMarketplace, comicsBurner, deadline);
       await expect(comicsBurner.burnComicsWithPermit([1], [3], deadline, signature)).to.be.revertedWithCustomError(
         niftyMarketplace,
         'PermitExpired',
       );
     });
 
-    it('Correctly signs owner approval for contract', async function () {
+    it('Should correctly sign owner approval for contract', async function () {
       const deadline = ethers.MaxUint256;
-      const { signature } = await getPermitSignature(signer, niftyMarketplace, comicsBurner, deadline);
+      const { signature } = await getERC1155Permit(signer, niftyMarketplace, comicsBurner, deadline);
       await comicsBurner.burnComicsWithPermit([1], [3], deadline, signature);
       expect(await niftyMarketplace.isApprovedForAll(owner, spender)).to.be.true;
 
@@ -125,7 +124,7 @@ describe('IMX', function () {
 
     it('Should be able to call with a new permit', async function () {
       const deadline = ethers.MaxUint256;
-      const { signature } = await getPermitSignature(signer, niftyMarketplace, comicsBurner, deadline);
+      const { signature } = await getERC1155Permit(signer, niftyMarketplace, comicsBurner, deadline);
       await comicsBurner.burnComicsWithPermit([3], [1], deadline, signature);
       expect(await niftyMarketplace.balanceOf(owner, 3)).to.equal(7);
       expect(await niftyMarketplace.balanceOf(owner, 103)).to.equal(1);
@@ -133,7 +132,7 @@ describe('IMX', function () {
 
     it('Should be able to call on behalf of owner with permit', async function () {
       const deadline = ethers.MaxUint256;
-      const { signature } = await getPermitSignature(bob, niftyMarketplace, comicsBurner, deadline);
+      const { signature } = await getERC1155Permit(bob, niftyMarketplace, comicsBurner, deadline);
       await comicsBurner.burnComicsForWithPermit(bob, [1], [1], deadline, signature);
       expect(await niftyMarketplace.balanceOf(bob, 1)).to.equal(4);
       expect(await niftyMarketplace.balanceOf(bob, 101)).to.equal(1);
@@ -157,7 +156,13 @@ describe('IMX', function () {
         .withArgs('Invalid comic ID');
     });
 
-    it('Should revert with invalid burn values', async function () {
+    it('Should revert if no comics are burnt', async function () {
+      await expect(comicsBurner.burnComics([1, 2, 3], [0, 0, 0]))
+        .to.be.revertedWithCustomError(comicsBurner, 'InvalidInput')
+        .withArgs('No items to mint');
+    });
+
+    it('Should revert with excess burn values', async function () {
       await expect(comicsBurner.burnComics([1], [15])).to.be.revertedWith('ERC1155: burn amount exceeds totalSupply');
       await expect(comicsBurner.burnComics([1], [8])).to.be.revertedWith('ERC1155: burn amount exceeds balance');
     });
@@ -215,7 +220,7 @@ describe('IMX', function () {
 
     it('Should burn remaining comics with permit', async function () {
       const deadline = ethers.MaxUint256;
-      const { signature } = await getPermitSignature(signer, niftyMarketplace, comicsBurner, deadline);
+      const { signature } = await getERC1155Permit(signer, niftyMarketplace, comicsBurner, deadline);
       await expect(comicsBurner.burnComicsWithPermit([1, 2, 3, 4, 5, 6], [2, 2, 1, 1, 0, 0], deadline, signature))
         .to.emit(comicsBurner, 'ComicsBurned')
         .withArgs(signer, [1, 2, 3, 4, 5, 6], [2, 2, 1, 1, 0, 0])
@@ -236,7 +241,7 @@ describe('IMX', function () {
 
     it('Should be able to burn on behalf of owner given signature', async function () {
       const deadline = ethers.MaxUint256;
-      const { signature } = await getPermitSignature(bob, niftyMarketplace, comicsBurner, deadline);
+      const { signature } = await getERC1155Permit(bob, niftyMarketplace, comicsBurner, deadline);
       await expect(
         comicsBurner.burnComicsForWithPermit(bob, [1, 2, 3, 4, 5, 6], [4, 4, 4, 4, 4, 4], deadline, signature),
       )

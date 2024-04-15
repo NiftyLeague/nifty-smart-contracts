@@ -2,14 +2,14 @@
 
 pragma solidity 0.8.19;
 
+import {ContextUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import {ContextUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 
 import {INiftyMarketplace} from "../interfaces/INiftyMarketplace.sol";
 
-contract ComicsBurner is ContextUpgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable, PausableUpgradeable {
+contract ComicsBurner is ContextUpgradeable, OwnableUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
     /// @dev Nifty Marketplace address
     address public marketplace;
 
@@ -46,8 +46,8 @@ contract ComicsBurner is ContextUpgradeable, OwnableUpgradeable, ReentrancyGuard
 
     /**
      * @notice Burns comic page(s) with prior approval to receive items associated with each page in return.
-     * @param comicIds The list of comic IDs to burn
-     * @param comicValues Number of comics to burn, nth value means the number of nth comics(tokenId = n) to burn
+     * @param comicIds The list of comic IDs to burn.
+     * @param comicValues Number of comics to burn, nth value means the number of nth comics(tokenId = n) to burn.
      */
     function burnComics(
         uint256[] calldata comicIds,
@@ -58,10 +58,10 @@ contract ComicsBurner is ContextUpgradeable, OwnableUpgradeable, ReentrancyGuard
 
     /**
      * @notice Burns comic page(s) without prior approval to receive items associated with each page in return.
-     * @param comicIds The list of comic IDs to burn
-     * @param comicValues Number of comics to burn, nth value means the number of nth comics(tokenId = n) to burn
-     * @param deadline The deadline timestamp for the permit signature
-     * @param sig The permit signature
+     * @param comicIds The list of comic IDs to burn.
+     * @param comicValues Number of comics to burn, nth value means the number of nth comics(tokenId = n) to burn.
+     * @param deadline The deadline timestamp for the permit signature.
+     * @param sig The permit signature.
      */
     function burnComicsWithPermit(
         uint256[] calldata comicIds,
@@ -74,11 +74,11 @@ contract ComicsBurner is ContextUpgradeable, OwnableUpgradeable, ReentrancyGuard
 
     /**
      * @notice Burns comic page(s) on behalf of owner to provide items associated with each page in return.
-     * @param owner The NFT owner burning comics
-     * @param comicIds The list of comic IDs to burn
-     * @param comicValues Number of comics to burn, nth value means the number of nth comics(tokenId = n) to burn
-     * @param deadline The deadline timestamp for the permit signature
-     * @param sig The permit signature
+     * @param owner The NFT owner burning comics.
+     * @param comicIds The list of comic IDs to burn.
+     * @param comicValues Number of comics to burn, nth value means the number of nth comics(tokenId = n) to burn.
+     * @param deadline The deadline timestamp for the permit signature.
+     * @param sig The permit signature.
      */
     function burnComicsForWithPermit(
         address owner,
@@ -109,8 +109,9 @@ contract ComicsBurner is ContextUpgradeable, OwnableUpgradeable, ReentrancyGuard
     /**
      * @dev Users can burn all 6 comics at once to receive a Citadel Key.
      * Comic IDs are tokenId #1-6. Matching items are #101-106. Citadel Key is #107.
-     * @param comicIds The list of comic IDs to burn
-     * @param comicValues Number of comics to burn, nth value means the number of nth comics(tokenId = n) to burn
+     * @param account The NFT owner burning comics.
+     * @param comicIds The list of comic IDs to burn.
+     * @param comicValues Number of comics to burn, nth value means the number of nth comics(tokenId = n) to burn.
      */
     function _burnComics(address account, uint256[] calldata comicIds, uint256[] calldata comicValues) internal {
         if (comicIds.length != comicValues.length) revert InvalidInput("Arrays must have the same length");
@@ -121,17 +122,22 @@ contract ComicsBurner is ContextUpgradeable, OwnableUpgradeable, ReentrancyGuard
         uint256 maxnm = length + (numberOfKeys > 0 ? 1 : 0);
         uint256[] memory itemIds = new uint256[](maxnm);
         uint256[] memory itemValues = new uint256[](maxnm);
+        uint256 itemsToMint = numberOfKeys;
 
         for (uint256 i; i < length; ++i) {
             if (comicIds[i] > 6) revert InvalidInput("Invalid comic ID");
             itemIds[i] = comicIds[i] + 100;
-            itemValues[i] = comicValues[i] - numberOfKeys;
+            uint256 itemCount = comicValues[i] - numberOfKeys;
+            itemValues[i] = itemCount;
+            itemsToMint += itemCount;
         }
 
         if (numberOfKeys > 0) {
             itemIds[length] = 107;
             itemValues[length] = numberOfKeys;
         }
+
+        if (itemsToMint == 0) revert InvalidInput("No items to mint");
 
         INiftyMarketplace(marketplace).burnBatch(account, comicIds, comicValues);
         emit ComicsBurned(account, comicIds, comicValues);
