@@ -12,6 +12,11 @@ export const initContractRoles = async (network: NetworkName, contract: NiftyMar
   await contract.grantMinterRole(NIFTY_LEDGER_DEPLOYER);
   await contract.grantMinterRole(MINTER_API_ADDRESS[network] as Address);
   await contract.grantRole(ADMIN_ROLE, NIFTY_LEDGER_DEPLOYER);
-  await contract.revokeRole(ADMIN_ROLE, deployer);
+  console.log('✅ Complete');
+};
+
+export const renounceContractRole = async (role: string, contract: NiftyMarketplace, address: Address) => {
+  console.log(`Renouncing NiftyMarketplace role for ${address}...`);
+  await contract.renounceRole(role, address);
   console.log('✅ Complete');
 };
