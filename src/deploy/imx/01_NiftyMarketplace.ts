@@ -4,7 +4,7 @@ import type { NiftyMarketplace } from '~/types/typechain';
 import { NetworkName } from '~/types';
 
 import { NIFTY_LEDGER_DEPLOYER, OPERATOR_ALLOWLIST_ADDRESS } from '~/constants/addresses';
-import { initContractRoles, MINTER_ROLE } from '~/scripts/imx/initContractRoles';
+import { initContractRoles, renounceContractRole, MINTER_ROLE } from '~/scripts/imx/initContractRoles';
 import { refreshMetadata } from '~/scripts/imx/refreshMetadata';
 import { batchMintItems } from '~/scripts/imx/mintAssets';
 
@@ -62,7 +62,7 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
     // Batch mint comics & items
     await batchMintItems(network, contract);
     // Revoke minter role from deployer
-    await contract.renounceRole(MINTER_ROLE, deployer);
+    await renounceContractRole(MINTER_ROLE, contract, deployer);
   } else if (REFRESH_METADATA) {
     // Refresh metadata for all tokens
     const comics = [1, 2, 3, 4, 5, 6];
