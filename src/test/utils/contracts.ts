@@ -3,6 +3,7 @@ import type {
   MockERC1155,
   MockERC20,
   MockERC721,
+  NFTL,
   NFTLToken,
   NiftyDegen,
   NiftyLaunchComics,
@@ -37,6 +38,18 @@ export const deployComics = async (): Promise<NiftyLaunchComics> => {
   return (await deployMockERC1155()) as unknown as NiftyLaunchComics;
 };
 
+export const deployChildNFTL = async (): Promise<NFTL> => {
+  const deployer = (await ethers.getNamedSigners()).deployer;
+  // Mock bridge address so deployer can mint tokens
+  const bridgeAddress = deployer.address; // BRIDGE_PROXY_ADDRESS['imtbl-zkevm-testnet'] as `0x${string}`;
+  const NFTLToken = await deployNFTL();
+  const rootToken = await NFTLToken.getAddress();
+  const TOKEN = { name: 'Nifty League', symbol: 'NFTL' };
+
+  const NFTL = await ethers.getContractFactory('NFTL');
+  return (await NFTL.deploy(bridgeAddress, rootToken, TOKEN.name, TOKEN.symbol)) as NFTL;
+};
+
 export const deployMarketplace = async (): Promise<NiftyMarketplace> => {
   const deployer = (await ethers.getNamedSigners()).deployer;
   const COLLECTION = {
@@ -45,7 +58,7 @@ export const deployMarketplace = async (): Promise<NiftyMarketplace> => {
     baseUri: 'https://api.niftyleague.com/imx/marketplace/metadata/',
     contractUri: 'https://api.niftyleague.com/imx/marketplace/collection.json',
     royalties: { receiver: deployer, feeNumerator: 250 },
-    operatorAllowlist: OPERATOR_ALLOWLIST_ADDRESS['imtbl-zkevm-testnet'] as string,
+    operatorAllowlist: OPERATOR_ALLOWLIST_ADDRESS['imtbl-zkevm-testnet'] as `0x${string}`,
   };
 
   const NiftyMarketplace = await ethers.getContractFactory('NiftyMarketplace');

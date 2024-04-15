@@ -1,6 +1,7 @@
 import type { HardhatRuntimeEnvironment } from 'hardhat/types';
 import type { DeployFunction } from 'hardhat-deploy/types';
-import type { NiftyMarketplace } from '~/types/typechain';
+import type { ComicsBurner, NiftyMarketplace } from '~/types/typechain';
+import { NIFTY_LEDGER_DEPLOYER } from '~/constants/addresses';
 
 const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
@@ -8,7 +9,7 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
 
   const niftyMarketplace = await hre.ethers.getContract<NiftyMarketplace>('NiftyMarketplace');
 
-  const comicsBurner = await deploy('ComicsBurner', {
+  const ComicsBurner = await deploy('ComicsBurner', {
     from: deployer,
     args: [],
     log: true,
@@ -24,12 +25,14 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
     },
   });
 
-  if (comicsBurner.newlyDeployed) {
-    console.log(`Granting ComicsBurner minter role...`);
-    await niftyMarketplace.grantMinterRole(comicsBurner.address);
+  if (ComicsBurner.newlyDeployed) {
+    console.log(`Granting ComicsBurner minter role & updating owner...`);
+    await niftyMarketplace.grantMinterRole(ComicsBurner.address);
+    const comicsBurner = await hre.ethers.getContract<ComicsBurner>('ComicsBurner');
+    await comicsBurner.transferOwnership(NIFTY_LEDGER_DEPLOYER);
     console.log('✅ Complete');
   }
 };
 
 module.exports = deployFunction;
-deployFunction.tags = ['NiftyGovernor'];
+deployFunction.tags = ['ComicsBurner'];
