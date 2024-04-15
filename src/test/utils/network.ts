@@ -13,6 +13,19 @@ export const forkMainnet = async () => {
   });
 };
 
+export const forkImmutable = async () => {
+  await network.provider.request({
+    method: 'hardhat_reset',
+    params: [
+      {
+        forking: {
+          jsonRpcUrl: `https://rpc.testnet.immutable.com`,
+        },
+      },
+    ],
+  });
+};
+
 export const impersonate = async (addr: string, fund = true): Promise<Signer> => {
   await network.provider.request({
     method: 'hardhat_impersonateAccount',
