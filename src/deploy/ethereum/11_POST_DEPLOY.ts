@@ -7,10 +7,6 @@ import { mintDegen } from '~/scripts/mint';
 import { BURN_ADDY1, BURN_ADDY2 } from '~/constants/addresses';
 
 const postDeployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const chainId = await hre.getChainId();
-  if (chainId === '1') return console.log(`Skipping post deploy on ${hre.network.name}`);
-  console.log(`\nRunning post deploy scripts on ${hre.network.name}...`);
-
   const { deployer } = await hre.getNamedAccounts();
   const degenContract = await hre.ethers.getContract<NiftyDegen>('NiftyDegen');
   const totalSupply = await degenContract.totalSupply();
@@ -19,7 +15,7 @@ const postDeployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment
   for (let i = totalSupply; i < 10000; i++) {
     await mintDegen(hre, deployer);
   }
-  console.log('✅ Minted remaining DEGENs');
+  console.log('\n✅ Minted remaining DEGENs');
   // Burn any testnet DEGENs burnt on mainnet
   const burnBalance = (await degenContract.balanceOf(BURN_ADDY1)) + (await degenContract.balanceOf(BURN_ADDY2));
   if (burnBalance < 800) {
@@ -35,3 +31,11 @@ const postDeployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment
 
 module.exports = postDeployFunction;
 postDeployFunction.tags = ['PostDeploy'];
+postDeployFunction.skip = async (hre: HardhatRuntimeEnvironment) => {
+  const chainId = await hre.getChainId();
+  if (chainId === '1') {
+    console.log(`Skipping post deploy on ${hre.network.name}`);
+    return true;
+  }
+  return false;
+};

@@ -43,7 +43,7 @@ This will run both `pnpm format:ts` & `pnpm format:sol` to write all files with 
 For TypeScript files we use [ESLint](https://eslint.org/) and for Solidity files we use [Solhint](https://protofire.io/projects/solhint). You can run both with:
 
 ```bash
-pnpm format
+pnpm lint
 ```
 
 If you want to run them individually use `pnpm lint:ts` or `pnpm lint:sol`
@@ -85,7 +85,7 @@ pnpm test src/test/{desired_test_script}  --network hardhat
 
 For deployment we use the [hardhat-deploy](https://github.com/wighawag/hardhat-deploy) plugin. This plugin allows you to write deploy scripts in the `src/deploy` folder and declare nested deploy environments. Each deploy script in the selected build environment will run sequentially.
 
-> **Note:** `pnpm deploy:env` will run on the network selected with .env `ETH_NETWORK` using the default deploy directory listed in `hardhat.config.ts`
+> **Note:** Local & Testnet networks are all configured to use an account `PRIVATE_KEY` defined in `.env` while mainnet networks are configured to check for Ledger. You can quickly change these settings in `hardhat.config.ts` defining `accounts` or `ledgerAccounts`.
 
 ### Local Development:
 
@@ -101,6 +101,8 @@ Deploy test contracts on Hardhat Network (this will deploy scripts sequentially 
 pnpm deploy:hardhat
 ```
 
+> **Note:** you can also use `pnpm deploy:env` which will run on the network selected with .env `ETH_NETWORK` using the default deploy directory listed in `hardhat.config.ts`
+
 ### Tenderly DevNet:
 
 To use DevNets, go to [Tenderly](https://tenderly.co/devnets) and spawn a new DevNet. You will need to copy the RPC details into .env `TENDERLY_DEV_NET=<slug>/<devnet-id>`
@@ -113,24 +115,20 @@ pnpm deploy:tenderly
 
 ### Testnet:
 
-To deploy contracts using an account `PRIVATE_KEY` defined in `.env` on Testnet or Mainnet use:
-
-```bash
-pnpm deploy:remote {network}
-```
-
-You can also deploy to our preferred testnet, [Sepolia](https://www.alchemy.com/faucets/ethereum-sepolia) using:
+To deploy to our preferred testnet, [Sepolia](https://www.alchemy.com/faucets/ethereum-sepolia):
 
 ```bash
 pnpm deploy:sepolia
 ```
+
+> **Note:** hardhat will use an account `PRIVATE_KEY` defined in `.env`
 
 ### Mainnet:
 
 For mainnet deployment we use [Frame](https://frame.sh/) to deploy with a Ledger signer.
 
 ```bash
-pnpm deploy:ledger mainnet
+pnpm deploy:mainnet
 ```
 
 ## Export contracts
