@@ -12,6 +12,14 @@ export enum NetworkName {
 
 export type ContractAddressRecord = Partial<Record<NetworkName, Address>>;
 
+export type InterchainTokenData = {
+  salt?: string;
+  transactionHash?: string;
+  interchainTokenId?: string;
+  tokenManagerAddress?: Address;
+};
+export type InterchainTokenRecord = Partial<Record<NetworkName, InterchainTokenData>>;
+
 export type DegenPurchaseArgs = [
   character: [bigint, bigint, bigint, bigint, bigint],
   head: [bigint, bigint, bigint],
