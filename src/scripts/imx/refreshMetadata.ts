@@ -5,7 +5,9 @@ import { NetworkName } from '~/types';
 export async function refreshMetadata(network: NetworkName, contract: NiftyMarketplace, tokenId: string | number) {
   console.log(`⚠️  Refreshing Immutable data for tokenID:`, tokenId);
   const address = await contract.getAddress();
-  const metadata = await fetch(`${BASE_METADATA_URI}/imx/marketplace/metadata/${tokenId}`).then(res => res.json());
+  const metadata = await fetch(`${BASE_METADATA_URI(network)}/imx/marketplace/metadata/${tokenId}`).then(res =>
+    res.json(),
+  );
 
   const options = {
     method: 'POST',
@@ -29,7 +31,7 @@ export async function refreshMetadata(network: NetworkName, contract: NiftyMarke
     }),
   };
 
-  const refreshAPI = `${IMX_BASE_API}/chains/${network}/collections/${address}/nfts/refresh-metadata`;
+  const refreshAPI = `${IMX_BASE_API(network)}/chains/${network}/collections/${address}/nfts/refresh-metadata`;
   const response = await fetch(refreshAPI, options);
 
   if (response.status < 400) {

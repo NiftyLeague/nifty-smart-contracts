@@ -12,26 +12,18 @@ interface IChildERC20 is IERC20Metadata {
     /**
      * @notice Mints an amount of tokens to a particular address
      * @dev Can only be called by the predicate address
-     * @param account Account of the user to mint the tokens to
+     * @param to Account of the user to mint the tokens to
      * @param amount Amount of tokens to mint to the account
-     * @return bool Returns true if function call is succesful
      */
-    function mint(address account, uint256 amount) external returns (bool);
+    function mint(address to, uint256 amount) external;
 
     /**
-     * @notice Burns an amount of tokens from a particular address
+     * @notice Destroys `amount` of tokens from `account`, deducting from the caller's allowance.
      * @dev Can only be called by the predicate address
-     * @param account Account of the user to burn the tokens from
+     * @param from Account of the user to burn the tokens from
      * @param amount Amount of tokens to burn from the account
-     * @return bool Returns true if function call is succesful
      */
-    function burn(address account, uint256 amount) external returns (bool);
-
-    /**
-     * @notice Returns bridge address controlling the child token
-     * @return address Returns the address of the Bridge
-     */
-    function bridge() external view returns (address);
+    function burn(address from, uint256 amount) external;
 
     /**
      * @notice Returns the address of the mapped token on the root chain

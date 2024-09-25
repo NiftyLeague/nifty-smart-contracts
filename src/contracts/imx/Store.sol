@@ -48,12 +48,7 @@ contract Store is ContextUpgradeable, OwnableUpgradeable, PausableUpgradeable, R
      * @param deadline The deadline timestamp for the permit.
      * @param sig The signature for the permit.
      */
-    modifier withPermit(
-        address owner,
-        uint256 value,
-        uint256 deadline,
-        Signature calldata sig
-    ) {
+    modifier withPermit(address owner, uint256 value, uint256 deadline, Signature calldata sig) {
         IGovToken(nftl).permit(owner, address(this), value, deadline, sig.v, sig.r, sig.s);
         _;
     }

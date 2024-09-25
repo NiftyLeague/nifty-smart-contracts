@@ -6,8 +6,9 @@ import { NIFTY_LEDGER_DEPLOYER } from '~/constants/addresses';
 const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
+  const signer = await hre.ethers.getSigner(deployer);
 
-  const niftyMarketplace = await hre.ethers.getContract<NiftyMarketplace>('NiftyMarketplace');
+  const niftyMarketplace = await hre.ethers.getContract<NiftyMarketplace>('NiftyMarketplace', signer);
 
   const ComicsBurner = await deploy('ComicsBurner', {
     from: deployer,
@@ -28,7 +29,7 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
   if (ComicsBurner.newlyDeployed) {
     console.log(`Granting ComicsBurner minter role & updating owner...`);
     await niftyMarketplace.grantMinterRole(ComicsBurner.address);
-    const comicsBurner = await hre.ethers.getContract<ComicsBurner>('ComicsBurner');
+    const comicsBurner = await hre.ethers.getContract<ComicsBurner>('ComicsBurner', signer);
     await comicsBurner.transferOwnership(NIFTY_LEDGER_DEPLOYER);
     console.log('✅ Complete');
   }
@@ -36,3 +37,4 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
 
 module.exports = deployFunction;
 deployFunction.tags = ['ComicsBurner'];
+deployFunction.skip = async () => true; // TODO: Remove this line when ready to deploy
