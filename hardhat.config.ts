@@ -12,9 +12,6 @@ dotEnvConfig();
 import { NIFTY_LEDGER_DEPLOYER } from './src/constants/addresses';
 import { NetworkName } from './src/types';
 
-// Select the network you want to deploy to here:
-const defaultNetwork = process.env.ETH_NETWORK;
-
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
@@ -29,7 +26,7 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 
 const config: HardhatUserConfig = {
-  defaultNetwork,
+  defaultNetwork: NetworkName.Mainnet,
   paths: {
     sources: './src/contracts',
     tests: './src/tests',

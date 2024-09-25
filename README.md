@@ -101,8 +101,6 @@ Deploy test contracts on Hardhat Network (this will deploy scripts sequentially 
 pnpm deploy:hardhat
 ```
 
-> **Note:** you can also use `pnpm deploy:env` which will run on the network selected with .env `ETH_NETWORK` using the default deploy directory listed in `hardhat.config.ts`
-
 ### Tenderly DevNet:
 
 To use DevNets, go to [Tenderly](https://tenderly.co/devnets) and spawn a new DevNet. You will need to copy the RPC details into .env `TENDERLY_DEV_NET=<slug>/<devnet-id>`
