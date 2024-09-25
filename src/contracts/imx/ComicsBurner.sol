@@ -25,11 +25,7 @@ contract ComicsBurner is ContextUpgradeable, OwnableUpgradeable, PausableUpgrade
      * @param deadline The deadline timestamp for the permit.
      * @param sig The signature for the permit.
      */
-    modifier withPermit(
-        address owner,
-        uint256 deadline,
-        bytes memory sig
-    ) {
+    modifier withPermit(address owner, uint256 deadline, bytes memory sig) {
         // owner, spender, approved, deadline, signature
         INiftyMarketplace(marketplace).permit(owner, address(this), true, deadline, sig);
         _;

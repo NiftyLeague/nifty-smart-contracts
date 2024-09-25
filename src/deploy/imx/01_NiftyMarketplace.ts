@@ -4,10 +4,11 @@ import type { NiftyMarketplace } from '~/types/typechain';
 import { NetworkName } from '~/types';
 
 import { NIFTY_LEDGER_DEPLOYER, OPERATOR_ALLOWLIST_ADDRESS } from '~/constants/addresses';
-import { initContractRoles, renounceContractRole, MINTER_ROLE } from '~/scripts/imx/initContractRoles';
+import { initMarketplaceRoles, renounceMarketplaceRole, MINTER_ROLE } from '~/scripts/imx/contractRoles';
 import { refreshMetadata } from '~/scripts/imx/refreshMetadata';
 import { batchMintItems } from '~/scripts/imx/mintAssets';
 
+const BATCH_MINT_NFTS = false;
 const REFRESH_METADATA = false;
 
 const COLLECTION = {
@@ -39,6 +40,7 @@ type DeploymentArgs = [
 const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
+  const signer = await hre.ethers.getSigner(deployer);
   const network = hre.network.name as NetworkName;
 
   const args: DeploymentArgs = [
@@ -54,15 +56,18 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
 
   const deployResult = await deploy('NiftyMarketplace', { from: deployer, args, log: true });
 
-  const contract = await hre.ethers.getContract<NiftyMarketplace>('NiftyMarketplace');
+  const contract = await hre.ethers.getContract<NiftyMarketplace>('NiftyMarketplace', signer);
 
   if (deployResult.newlyDeployed) {
     // Config contract admin & minter roles
-    await initContractRoles(network, contract, deployer);
+    await initMarketplaceRoles(network, contract, deployer);
+  } else if (BATCH_MINT_NFTS) {
+    const hasMinterRole = await contract.hasRole(MINTER_ROLE, deployer);
+    if (!hasMinterRole) await contract.grantRole(MINTER_ROLE, deployer);
     // Batch mint comics & items
     await batchMintItems(network, contract);
     // Revoke minter role from deployer
-    await renounceContractRole(MINTER_ROLE, contract, deployer);
+    await renounceMarketplaceRole(MINTER_ROLE, contract, deployer);
   } else if (REFRESH_METADATA) {
     // Refresh metadata for all tokens
     const comics = [1, 2, 3, 4, 5, 6];

@@ -24,6 +24,8 @@ describe('IMX - Store', function () {
 
     // deploy NFTL ERC-20 contract
     nftlToken = await deployChildNFTL();
+    const BRIDGE_ROLE = await nftlToken.BRIDGE_ROLE();
+    await nftlToken.grantRole(BRIDGE_ROLE, await signer.getAddress());
 
     // deploy Store contract
     const Store = await ethers.getContractFactory('Store');

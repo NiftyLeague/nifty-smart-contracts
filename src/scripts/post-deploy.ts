@@ -1,4 +1,4 @@
-import type { PostDeployFunction } from '~/types';
+import type { NetworkName, PostDeployFunction } from '~/types';
 import { MINT_TARGETS, NIFTY_ANDY, NIFTY_DAO_SAFE, NIFTY_SPIKE, NIFTY_TEAM_SAFE, SNARFY } from '~/constants/addresses';
 import { ALLOWED_COLORS } from '~/constants/allowedColors';
 import { BASE_DEGENS_URI } from '~/constants/other';
@@ -21,9 +21,10 @@ export const initColorsStorage: PostDeployFunction = async (hre, deployer) => {
 
 export const initNiftyDegen: PostDeployFunction = async (hre, deployer) => {
   const { execute, get } = hre.deployments;
+  const network = hre.network.name as NetworkName;
   const NiftyDegen = await get('NiftyDegen');
   await execute('NFTLToken', { from: deployer, log: true }, 'setNFTAddress', NiftyDegen.address);
-  await execute('NiftyDegen', { from: deployer, log: true }, 'setBaseURI', BASE_DEGENS_URI);
+  await execute('NiftyDegen', { from: deployer, log: true }, 'setBaseURI', BASE_DEGENS_URI(network));
   await execute('NiftyDegen', { from: deployer, log: true }, 'initPoolSizes');
 
   await mintDegen(hre, deployer, NIFTY_ANDY);

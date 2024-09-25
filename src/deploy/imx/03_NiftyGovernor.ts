@@ -36,6 +36,7 @@ const QUORUM_NUMERATOR = 4; // 4% of supply. By default the denominator is 100.
 const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
+  const signer = await hre.ethers.getSigner(deployer);
 
   const NFTLToken = await hre.deployments.get('NFTL');
 
@@ -55,7 +56,7 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
 
   if (Governor.newlyDeployed) {
     console.log(`Initializing Timelock roles...`);
-    const timelockContract = await hre.ethers.getContract<Timelock>('Timelock');
+    const timelockContract = await hre.ethers.getContract<Timelock>('Timelock', signer);
     // Grant proposer role to governor
     await timelockContract.grantRole(await timelockContract.PROPOSER_ROLE(), Governor.address);
     // Grant executer/cancel roles to multi-sig

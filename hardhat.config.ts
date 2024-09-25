@@ -1,4 +1,5 @@
 import { HardhatUserConfig, task } from 'hardhat/config';
+import '@nomicfoundation/hardhat-ledger';
 import '@nomicfoundation/hardhat-toolbox';
 import '@openzeppelin/hardhat-upgrades';
 import 'hardhat-deploy-ethers';
@@ -8,8 +9,8 @@ import { config as dotEnvConfig } from 'dotenv';
 import 'tsconfig-paths/register';
 dotEnvConfig();
 
-// Select the network you want to deploy to here:
-const defaultNetwork = process.env.ETH_NETWORK;
+import { NIFTY_LEDGER_DEPLOYER } from './src/constants/addresses';
+import { NetworkName } from './src/types';
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -25,7 +26,7 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 
 const config: HardhatUserConfig = {
-  defaultNetwork,
+  defaultNetwork: NetworkName.Mainnet,
   paths: {
     sources: './src/contracts',
     tests: './src/tests',
@@ -45,41 +46,44 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
-    hardhat: {
+    [NetworkName.Hardhat]: {
       allowUnlimitedContractSize: true,
       deploy: ['src/deploy/hardhat'],
       tags: ['test', 'local'],
     },
-    tenderly: {
+    [NetworkName.Tenderly]: {
       url: `https://rpc.vnet.tenderly.co/devnet/${process.env.TENDERLY_DEV_NET}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-      deploy: ['src/deploy/remote'],
+      deploy: ['src/deploy/ethereum'],
       saveDeployments: false,
       tags: ['local'],
     },
-    sepolia: {
+    [NetworkName.Sepolia]: {
       // url: 'http://127.0.0.1:1248', // this is the RPC endpoint exposed by Frame
       // url: `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
       // url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
       url: `https://sepolia.gateway.tenderly.co/${process.env.TENDERLY_ACCESS_KEY}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-      deploy: ['src/deploy/remote'],
+      companionNetworks: { L2: NetworkName.IMXzkEVMTestnet }, // https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#companionnetworks
+      deploy: ['src/deploy/ethereum'],
       tags: ['staging'],
     },
-    mainnet: {
-      url: 'http://127.0.0.1:1248', // this is the RPC endpoint exposed by Frame
+    [NetworkName.Mainnet]: {
+      // url: 'http://127.0.0.1:1248', // this is the RPC endpoint exposed by Frame
       // url: `https://mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
       // url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-      // url: `https://mainnet.gateway.tenderly.co/${process.env.TENDERLY_ACCESS_KEY}`,
-      deploy: ['src/deploy/ledger'],
+      url: `https://mainnet.gateway.tenderly.co/${process.env.TENDERLY_ACCESS_KEY}`,
+      ledgerAccounts: [NIFTY_LEDGER_DEPLOYER],
+      companionNetworks: { L2: NetworkName.IMXzkEVMMainnet }, // https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#companionnetworks
+      deploy: ['src/deploy/ethereum'],
       tags: ['prod'],
     },
     // Immutable zkEVM: https://docs.immutable.com/docs/zkEVM/architecture/chain-config
-    'imtbl-zkevm-testnet': {
+    [NetworkName.IMXzkEVMTestnet]: {
       chainId: 13473,
       url: 'https://rpc.testnet.immutable.com',
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-      companionNetworks: { L1: 'sepolia' }, // https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#companionnetworks
+      companionNetworks: { L1: NetworkName.Sepolia }, // https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#companionnetworks
       deploy: ['src/deploy/imx'],
       tags: ['staging'],
       verify: {
@@ -89,11 +93,11 @@ const config: HardhatUserConfig = {
         },
       },
     },
-    'imtbl-zkevm-mainnet': {
+    [NetworkName.IMXzkEVMMainnet]: {
       chainId: 13371,
       url: 'https://rpc.immutable.com',
-      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-      companionNetworks: { L1: 'mainnet' }, // https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#companionnetworks
+      ledgerAccounts: [NIFTY_LEDGER_DEPLOYER],
+      companionNetworks: { L1: NetworkName.Mainnet }, // https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#companionnetworks
       deploy: ['src/deploy/imx'],
       tags: ['prod'],
       verify: {
@@ -106,7 +110,8 @@ const config: HardhatUserConfig = {
   },
   namedAccounts: {
     deployer: {
-      default: 0, // here this will by default take the first account as deployer
+      default: 0, // default assign the first account as deployer
+      13371: 1, // for IMXzkEVMMainnet, assign the second account as deployer
     },
   },
   gasReporter: {
