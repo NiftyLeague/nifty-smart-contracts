@@ -111,7 +111,8 @@ const config: HardhatUserConfig = {
   namedAccounts: {
     deployer: {
       default: 0, // default assign the first account as deployer
-      13371: 1, // for IMXzkEVMMainnet, assign the second account as deployer
+      1: NIFTY_LEDGER_DEPLOYER, // Mainnet
+      13371: NIFTY_LEDGER_DEPLOYER, // IMXzkEVMMainnet
     },
   },
   gasReporter: {
