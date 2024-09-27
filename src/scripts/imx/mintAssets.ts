@@ -1,6 +1,6 @@
 import { ZeroHash } from 'ethers';
 import { BASE_METADATA_URI } from '~/constants/other';
-import { HOLDER_LIST } from '~/constants/snapshot_marketplaceMigration';
+import HOLDER_LIST from '~/data/marketplace_migration.json';
 import type { NiftyMarketplace } from '~/types/typechain';
 import { NetworkName } from '~/types';
 
