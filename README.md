@@ -75,7 +75,7 @@ pnpm test
 You can also run a single test using:
 
 ```bash
-pnpm test src/test/{desired_test_script}  --network hardhat
+hardhat test src/test/{desired_test_script}.test.ts --typecheck --network hardhat
 ```
 
 > **Note:**
