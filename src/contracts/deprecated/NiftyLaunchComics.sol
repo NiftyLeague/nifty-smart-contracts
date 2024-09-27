@@ -7,7 +7,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
 
-import {INiftyLaunchComics} from "./interfaces/INiftyLaunchComics.sol";
+import {INiftyLaunchComics} from "../interfaces/INiftyLaunchComics.sol";
 
 /**
  * @dev {ERC1155} token, including:
