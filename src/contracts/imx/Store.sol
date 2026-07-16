@@ -58,8 +58,8 @@ contract Store is ContextUpgradeable, OwnableUpgradeable, PausableUpgradeable, R
         if (nftl_ == address(0)) revert InvalidInput("Invalid NFTL address");
         if (treasury_ == address(0)) revert InvalidInput("Invalid Treasury address");
         __Ownable_init();
-        __ReentrancyGuard_init();
         __Pausable_init();
+        __ReentrancyGuard_init();
 
         marketplace = marketplace_;
         nftl = nftl_;
