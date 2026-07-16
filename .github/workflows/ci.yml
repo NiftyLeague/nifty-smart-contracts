@@ -1,43 +1,53 @@
-name: Validate, build, and test on every push
+name: CI
 
-on: [push]
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+    branches: [main, staging]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  test:
+    if: github.event_name != 'pull_request' || github.head_ref != 'staging'
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20]
+    timeout-minutes: 30
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
         with:
-          version: 8
-      - name: Setup Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+          version: 11.13.1
+          run_install: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Enable Yarn for Immutable's vendored Seaport build
+        run: corepack enable yarn && corepack install --global yarn@1.22.22
       - name: Install dependencies
-        run: pnpm install
-      - name: Hardhat compile
-        run: pnpm build
-      - name: Run Prettier
-        run: pnpm format
-      - name: Lint TS Scripts
-        run: pnpm lint:ts
-      - name: Lint Solidity files
+        run: pnpm install --frozen-lockfile --strict-peer-dependencies
+      - name: Check formatting
+        run: pnpm format:check
+      - name: Lint TypeScript
+        run: pnpm lint:ts:check
+      - name: Lint Solidity
         run: pnpm lint:sol
-      - name: Check TypeScript
+      - name: Compile contracts
+        run: pnpm build
+      - name: Type-check
         run: pnpm type-check
-      - name: Run Hardhat tests
-        run: pnpm test
-        env:
-          TENDERLY_ACCESS_KEY: ${{ secrets.TENDERLY_ACCESS_KEY }}
-      - name: Check Solidity coverage
-        run: pnpm coverage
+      - name: Test with coverage
+        run: pnpm test:coverage
       - name: Test contract deployment
-        continue-on-error: false
-        run: pnpm hardhat run --network hardhat src/scripts/deploy_test.ts
+        run: pnpm hardhat run --no-compile --network hardhat src/scripts/deploy_test.ts
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level=high

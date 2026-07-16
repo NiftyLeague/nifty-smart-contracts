@@ -9,6 +9,7 @@ pnpm-lock.yaml
 artifacts
 cache
 deployments
+typechain
 gasReporterOutput.json
 Flattened.sol
 SLITHER.md

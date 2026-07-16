@@ -6,7 +6,7 @@ import type { NFTL, NiftyMarketplace, Store } from '~/types/typechain';
 import { NIFTY_LEDGER_DEPLOYER } from '~/constants/addresses';
 import { getERC20Permit } from '../scripts/permit';
 import { deployChildNFTL, deployMarketplace } from './utils/contracts';
-import { forkImmutable } from './utils/network';
+import { resetLocalNetwork } from './utils/network';
 
 describe('IMX - Store', function () {
   let signer: Signer;
@@ -16,7 +16,7 @@ describe('IMX - Store', function () {
   let storeContract: Store;
 
   before(async () => {
-    await forkImmutable();
+    await resetLocalNetwork();
     [signer, bob] = await ethers.getSigners();
 
     // deploy NiftyMarketplace ERC-1155 contract
