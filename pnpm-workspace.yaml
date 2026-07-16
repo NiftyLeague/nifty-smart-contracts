@@ -1,0 +1,18 @@
+blockExoticSubdeps: false
+
+allowBuilds:
+  '@arbitrum/nitro-contracts': true
+  '@axelar-network/axelarjs-sdk': true
+  '@imtbl/contracts': true
+  keccak: true
+  node-hid: true
+  protobufjs: true
+  'seaport@https://codeload.github.com/immutable/seaport/tar.gz/ae061dc008105dd8d05937df9ad9a676f878cbf9': true
+  secp256k1: true
+  usb: true
+
+peerDependencyRules:
+  allowedVersions:
+    ethers: ^6.13.2
+    hardhat-deploy: ^0.12.4
+    hardhat-gas-reporter: ^2.2.1
