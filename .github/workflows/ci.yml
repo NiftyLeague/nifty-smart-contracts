@@ -11,33 +11,28 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 8
-      - name: Setup Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          bun-version: "1.3.14"
       - name: Install dependencies
-        run: pnpm install
+        run: bun install
       - name: Hardhat compile
-        run: pnpm build
+        run: bun build
       - name: Run Prettier
-        run: pnpm format
+        run: bun format
       - name: Lint TS Scripts
-        run: pnpm lint:ts
+        run: bun lint:ts
       - name: Lint Solidity files
-        run: pnpm lint:sol
+        run: bun lint:sol
       - name: Check TypeScript
-        run: pnpm type-check
+        run: bun type-check
       - name: Run Hardhat tests
-        run: pnpm test
+        run: bun test
         env:
           TENDERLY_ACCESS_KEY: ${{ secrets.TENDERLY_ACCESS_KEY }}
       - name: Check Solidity coverage
-        run: pnpm coverage
+        run: bun coverage
       - name: Test contract deployment
         continue-on-error: false
-        run: pnpm hardhat run --network hardhat src/scripts/deploy_test.ts
+        run: bun hardhat run --network hardhat src/scripts/deploy_test.ts
