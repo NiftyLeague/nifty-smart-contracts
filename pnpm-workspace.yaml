@@ -1,5 +1,8 @@
 blockExoticSubdeps: false
 
+overrides:
+  protobufjs: 7.6.5
+
 allowBuilds:
   '@arbitrum/nitro-contracts': true
   '@axelar-network/axelarjs-sdk': true
