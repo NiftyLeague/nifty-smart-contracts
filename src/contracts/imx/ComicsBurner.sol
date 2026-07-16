@@ -34,8 +34,8 @@ contract ComicsBurner is ContextUpgradeable, OwnableUpgradeable, PausableUpgrade
     function initialize(address marketplace_) public initializer {
         if (marketplace_ == address(0)) revert InvalidInput("Invalid comics address");
         __Ownable_init();
-        __ReentrancyGuard_init();
         __Pausable_init();
+        __ReentrancyGuard_init();
 
         marketplace = marketplace_;
     }

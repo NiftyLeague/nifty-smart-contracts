@@ -26,14 +26,12 @@ type NewFormat = { address: string; earnings: bigint; reasons: string };
 export function parseBalanceMap(balances: OldFormat | NewFormat[]): MerkleDistributorInfo {
   const balancesInNewFormat: NewFormat[] = Array.isArray(balances)
     ? balances
-    : Object.keys(balances).map(
-        (account): NewFormat => ({
-          address: account,
-          // Convert string number to 18 decimals ether formatted string
-          earnings: parseEther(balances[account]),
-          reasons: '',
-        }),
-      );
+    : Object.keys(balances).map((account): NewFormat => ({
+        address: account,
+        // Convert string number to 18 decimals ether formatted string
+        earnings: parseEther(balances[account]),
+        reasons: '',
+      }));
 
   const dataByAddress = balancesInNewFormat.reduce<{
     [address: string]: { amount: bigint; flags?: { [flag: string]: boolean } };

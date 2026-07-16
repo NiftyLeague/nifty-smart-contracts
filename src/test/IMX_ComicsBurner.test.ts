@@ -5,7 +5,7 @@ import type { ComicsBurner, NiftyMarketplace } from '~/types/typechain';
 
 import { getERC1155Permit } from '../scripts/permit';
 import { deployMarketplace } from './utils/contracts';
-import { forkImmutable } from './utils/network';
+import { resetLocalNetwork } from './utils/network';
 
 describe('IMX - Comics Burning', function () {
   let signer: Signer;
@@ -14,7 +14,7 @@ describe('IMX - Comics Burning', function () {
   let comicsBurner: ComicsBurner;
 
   before(async () => {
-    await forkImmutable();
+    await resetLocalNetwork();
     [signer, bob] = await ethers.getSigners();
 
     // deploy NiftyMarketplace ERC-1155 contract
