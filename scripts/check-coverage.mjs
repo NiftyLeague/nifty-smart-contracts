@@ -1,6 +1,11 @@
 import { readFile } from 'node:fs/promises';
 
-const threshold = 25;
+const thresholds = {
+  statements: 54,
+  branches: 40,
+  functions: 48,
+  lines: 53,
+};
 const reportPath = new URL('../coverage/coverage-summary.json', import.meta.url);
 
 let report;
@@ -11,8 +16,8 @@ try {
   process.exit(1);
 }
 
-const metrics = ['statements', 'branches', 'functions', 'lines'];
-const failures = metrics.filter(metric => report.total?.[metric]?.pct < threshold);
+const metrics = Object.keys(thresholds);
+const failures = metrics.filter(metric => report.total?.[metric]?.pct < thresholds[metric]);
 
 for (const metric of metrics) {
   const percentage = report.total?.[metric]?.pct;
@@ -24,8 +29,12 @@ for (const metric of metrics) {
 }
 
 if (failures.length > 0) {
-  console.error(`Coverage must be at least ${threshold}% for: ${failures.join(', ')}.`);
+  console.error(
+    `Coverage is below its required floor for: ${failures
+      .map(metric => `${metric} (${thresholds[metric]}%)`)
+      .join(', ')}.`,
+  );
   process.exit(1);
 }
 
-console.log(`Solidity coverage gate passed (minimum ${threshold}% for every metric).`);
+console.log(`Solidity coverage gate passed (${metrics.map(metric => `${metric} ${thresholds[metric]}%`).join(', ')}).`);
