@@ -1,16 +1,15 @@
-import { ethers } from 'hardhat';
+import { artifacts, ethers, network } from 'hardhat';
 import type {
   MockERC1155,
   MockERC20,
   MockERC721,
+  MockLinkToken,
   NFTL,
   NFTLToken,
   NiftyDegen,
   NiftyLaunchComics,
   NiftyMarketplace,
 } from '~/types/typechain';
-import { OPERATOR_ALLOWLIST_ADDRESS } from '~/constants/addresses';
-import { NetworkName } from '~/types';
 
 export const deployMockERC20 = async (): Promise<MockERC20> => {
   const MockERC20 = await ethers.getContractFactory('MockERC20');
@@ -53,13 +52,15 @@ export const deployChildNFTL = async (): Promise<NFTL> => {
 
 export const deployMarketplace = async (): Promise<NiftyMarketplace> => {
   const deployer = (await ethers.getNamedSigners()).deployer;
+  const MockOperatorAllowlist = await ethers.getContractFactory('MockOperatorAllowlist');
+  const operatorAllowlist = await MockOperatorAllowlist.deploy();
   const COLLECTION = {
     name: 'Nifty Marketplace',
     symbol: 'NIFTY',
     baseUri: 'https://api.niftyleague.com/imx/marketplace/metadata/',
     contractUri: 'https://api.niftyleague.com/imx/marketplace/collection.json',
     royalties: { receiver: deployer, feeNumerator: 250 },
-    operatorAllowlist: OPERATOR_ALLOWLIST_ADDRESS[NetworkName.IMXzkEVMTestnet] as `0x${string}`,
+    operatorAllowlist: await operatorAllowlist.getAddress(),
   };
 
   const NiftyMarketplace = await ethers.getContractFactory('NiftyMarketplace');
@@ -73,4 +74,10 @@ export const deployMarketplace = async (): Promise<NiftyMarketplace> => {
     COLLECTION.royalties.receiver,
     COLLECTION.royalties.feeNumerator,
   )) as NiftyMarketplace;
+};
+
+export const installMockLinkToken = async (address: string): Promise<MockLinkToken> => {
+  const { deployedBytecode } = await artifacts.readArtifact('MockLinkToken');
+  await network.provider.send('hardhat_setCode', [address, deployedBytecode]);
+  return ethers.getContractAt('MockLinkToken', address) as Promise<MockLinkToken>;
 };
