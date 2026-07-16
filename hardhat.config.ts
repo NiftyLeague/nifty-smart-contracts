@@ -29,7 +29,7 @@ const config: HardhatUserConfig = {
   defaultNetwork: NetworkName.Mainnet,
   paths: {
     sources: './src/contracts',
-    tests: './src/tests',
+    tests: './src/test',
   },
   solidity: {
     compilers: [
@@ -116,7 +116,7 @@ const config: HardhatUserConfig = {
     },
   },
   gasReporter: {
-    enabled: true,
+    enabled: process.env.REPORT_GAS === 'true',
     gasPrice: 50,
     currency: 'USD',
   },

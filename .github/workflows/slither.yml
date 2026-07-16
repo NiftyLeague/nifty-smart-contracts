@@ -1,51 +1,54 @@
-name: Slither Analysis
+name: Slither analysis
 
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
   pull_request:
-    branches: [main]
+    branches: [main, staging]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: slither-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   analyze:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20]
+    timeout-minutes: 30
     permissions:
       contents: read
       security-events: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
         with:
-          version: 8
-
-      - name: Setup Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+          version: 11.13.1
+          run_install: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
-
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Enable Yarn for Immutable's vendored Seaport build
+        run: corepack enable yarn && corepack install --global yarn@1.22.22
       - name: Install dependencies
-        run: pnpm install
-
-      - name: Build the contracts
+        run: pnpm install --frozen-lockfile
+      - name: Compile contracts
         run: pnpm build
-
       - name: Run Slither
-        uses: crytic/slither-action@v0.3.2
+        uses: crytic/slither-action@v0.4.2
         id: slither
         with:
           ignore-compile: true
-          node-version: ${{ matrix.node-version }}
+          node-version: 24.18.0
           sarif: results.sarif
           fail-on: low
-
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
+      - name: Upload SARIF
+        if: always() && steps.slither.outputs.sarif != ''
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: ${{ steps.slither.outputs.sarif }}
