@@ -2,9 +2,9 @@ import { readFile } from 'node:fs/promises';
 
 const thresholds = {
   statements: 54,
-  branches: 40,
-  functions: 48,
-  lines: 53,
+  branches: 41,
+  functions: 50,
+  lines: 54,
 };
 const reportPath = new URL('../coverage/coverage-summary.json', import.meta.url);
 
