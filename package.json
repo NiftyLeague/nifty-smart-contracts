@@ -18,12 +18,15 @@
     "format:ts": "prettier --ignore-path .prettierignore --write .",
     "format:sol": "prettier --write --plugin=prettier-plugin-solidity \"src/contracts/**/*.sol\"",
     "format": "pnpm format:ts && pnpm format:sol",
+    "format:check": "prettier --ignore-path .prettierignore --check .",
     "lint:ts": "eslint --ignore-path .eslintignore . --ext .ts,.js --fix",
+    "lint:ts:check": "eslint --ignore-path .eslintignore . --ext .ts,.js --max-warnings=0",
     "lint:sol": "solhint \"src/contracts/**/*.sol\" --ignore-path .solhintignore",
     "lint": "pnpm lint:ts && pnpm lint:sol",
     "type-check": "tsc --noEmit",
-    "test": "hardhat test src/test/*.ts --typecheck --network hardhat",
+    "test": "hardhat test --typecheck --network hardhat",
     "coverage": "hardhat coverage",
+    "test:coverage": "pnpm coverage && node scripts/check-coverage.mjs",
     "slither": "slither . --checklist --markdown-root ./ > SLITHER.md",
     "generate-merkle-root": "ts-node src/scripts/merkle-distributor/generate-merkle-root.ts",
     "generate-merkle-root:balance-manager": "pnpm generate-merkle-root --input src/data/dynamodb_account_balances.json",
@@ -47,7 +50,7 @@
     "@axelar-network/axelarjs-sdk": "^0.16.2",
     "@axelar-network/interchain-token-service": "^1.2.4",
     "@chainlink/contracts": "^1.2.0",
-    "@imtbl/contracts": "^2.2.10",
+    "@imtbl/contracts": "2.2.10",
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.7",
     "@nomicfoundation/hardhat-ethers": "^3.0.8",
     "@nomicfoundation/hardhat-ignition": "^0.15.5",
@@ -63,7 +66,7 @@
     "@typechain/hardhat": "^9.1.0",
     "@types/chai": "^4.3.19",
     "@types/mocha": "^10.0.8",
-    "@types/node": "^20.16.5",
+    "@types/node": "^24.10.1",
     "@types/ramda": "^0.29.12",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
@@ -96,18 +99,9 @@
     "typechain": "^8.3.2",
     "typescript": "^5.6.2"
   },
-  "pnpm": {
-    "peerDependencyRules": {
-      "allowedVersions": {
-        "ethers": "^6.13.2",
-        "hardhat-deploy": "^0.12.4",
-        "hardhat-gas-reporter": "^2.2.1"
-      }
-    }
-  },
   "engines": {
-    "node": ">=20.x",
-    "pnpm": ">=8.x"
+    "node": "24.18.0",
+    "pnpm": "11.13.1"
   },
-  "packageManager": "pnpm@8.15.6+sha256.01c01eeb990e379b31ef19c03e9d06a14afa5250b82e81303f88721c99ff2e6f"
+  "packageManager": "pnpm@11.13.1"
 }

@@ -2,15 +2,9 @@ import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
 import { BigNumberish, type Signer } from 'ethers';
 
-import type {
-  NFTLRaffle,
-  MockERC20,
-  MockERC721,
-  VRFCoordinatorV2Interface,
-  LinkTokenInterface,
-} from '~/types/typechain';
-import { deployMockERC721, deployNFTL } from './utils/contracts';
-import { forkMainnet, impersonate, modifyTokenBalance } from './utils/network';
+import type { NFTLRaffle, MockERC20, MockERC721, MockLinkToken, MockVRFCoordinator } from '~/types/typechain';
+import { deployMockERC721, deployNFTL, installMockLinkToken } from './utils/contracts';
+import { impersonate, resetLocalNetwork } from './utils/network';
 
 describe('NFTLRaffle', function () {
   let deployer: Signer;
@@ -21,8 +15,9 @@ describe('NFTLRaffle', function () {
   let nftlRaffle: NFTLRaffle;
   let nftlToken: MockERC20;
   let prizeNFT: MockERC721;
-  let vrfCoordinator: VRFCoordinatorV2Interface;
-  let linkToken: LinkTokenInterface;
+  let vrfCoordinator: MockVRFCoordinator;
+  let vrfCoordinatorAddress: string;
+  let linkToken: MockLinkToken;
 
   const pendingPeriod = 86400 * 2; // 2 days
   const totalWinnerTicketCount = 5;
@@ -30,11 +25,10 @@ describe('NFTLRaffle', function () {
   const initialNFTLAmount = nftlAmountPerTicket * 1000n;
 
   const ZERO_ADDRESS = ethers.ZeroAddress;
-  const VRF_COORDINATOR_ADDRESS = '0x271682DEB8C4E0901D1a1550aD2e64D568E69909';
   const LINK_TOKEN_ADDRESS = '0x514910771AF9Ca656af840dff83E8264EcF986CA';
 
   before(async () => {
-    await forkMainnet();
+    await resetLocalNetwork();
 
     [deployer, alice, bob, john, dan] = await ethers.getSigners();
 
@@ -44,11 +38,13 @@ describe('NFTLRaffle', function () {
     // deploy MockERC721 contract
     prizeNFT = await deployMockERC721();
 
-    // get VRFCoordinatorV2 contract
-    vrfCoordinator = await ethers.getContractAt('VRFCoordinatorV2Interface', VRF_COORDINATOR_ADDRESS);
+    // deploy a local VRFCoordinatorV2 contract
+    const MockVRFCoordinator = await ethers.getContractFactory('MockVRFCoordinator');
+    vrfCoordinator = await MockVRFCoordinator.deploy();
+    vrfCoordinatorAddress = await vrfCoordinator.getAddress();
 
-    // get Link contract
-    linkToken = await ethers.getContractAt('LinkTokenInterface', LINK_TOKEN_ADDRESS);
+    // install a local LINK token at the address hardcoded by the deprecated raffle
+    linkToken = await installMockLinkToken(LINK_TOKEN_ADDRESS);
 
     // deploy NFTLRaffle contract
     const NFTLRaffle = await ethers.getContractFactory('NFTLRaffle');
@@ -57,7 +53,7 @@ describe('NFTLRaffle', function () {
       pendingPeriod,
       totalWinnerTicketCount,
       await prizeNFT.getAddress(),
-      await vrfCoordinator.getAddress(),
+      vrfCoordinatorAddress,
     ])) as unknown as NFTLRaffle;
 
     // mint NFTL tokens
@@ -71,7 +67,7 @@ describe('NFTLRaffle', function () {
     }
 
     // fund LINK tokens
-    await modifyTokenBalance(ethers.parseEther('100'), await deployer.getAddress(), LINK_TOKEN_ADDRESS, 1);
+    await linkToken.mint(await deployer.getAddress(), ethers.parseEther('100'));
 
     // allow deposit
     await nftlRaffle.allowUserDeposit();
@@ -85,7 +81,7 @@ describe('NFTLRaffle', function () {
         pendingPeriod,
         totalWinnerTicketCount,
         await prizeNFT.getAddress(),
-        await vrfCoordinator.getAddress(),
+        vrfCoordinatorAddress,
       ])) as unknown as NFTLRaffle;
     });
 
@@ -97,7 +93,7 @@ describe('NFTLRaffle', function () {
           pendingPeriod,
           totalWinnerTicketCount,
           await prizeNFT.getAddress(),
-          await vrfCoordinator.getAddress(),
+          vrfCoordinatorAddress,
         ]),
       ).to.be.revertedWithCustomError(NFTLRaffle, 'AddressError');
     });
@@ -110,7 +106,7 @@ describe('NFTLRaffle', function () {
           86400,
           totalWinnerTicketCount,
           await prizeNFT.getAddress(),
-          await vrfCoordinator.getAddress(),
+          vrfCoordinatorAddress,
         ]),
       )
         .to.be.revertedWithCustomError(NFTLRaffle, 'InputError')
@@ -125,7 +121,7 @@ describe('NFTLRaffle', function () {
           pendingPeriod,
           0,
           await prizeNFT.getAddress(),
-          await vrfCoordinator.getAddress(),
+          vrfCoordinatorAddress,
         ]),
       )
         .to.be.revertedWithCustomError(NFTLRaffle, 'InputError')
@@ -500,7 +496,7 @@ describe('NFTLRaffle', function () {
     it('Should not request the random words if it already exists', async () => {
       expect(await nftlRaffle.getRandomWordsList()).to.be.empty;
 
-      const impersonatedCoordinator = await impersonate(VRF_COORDINATOR_ADDRESS);
+      const impersonatedCoordinator = await impersonate(vrfCoordinatorAddress);
 
       // request
       let requestId = 1n;
@@ -568,7 +564,7 @@ describe('NFTLRaffle', function () {
     it('Should revert if the request is overflow', async () => {
       expect(await nftlRaffle.currentWinnerTicketCount()).to.equal(4);
       // receive 1 random word
-      const impersonatedCoordinator = await impersonate(VRF_COORDINATOR_ADDRESS);
+      const impersonatedCoordinator = await impersonate(vrfCoordinatorAddress);
 
       let randomWords = [50n] as BigNumberish[];
       await nftlRaffle.connect(impersonatedCoordinator).rawFulfillRandomWords(1n, randomWords);
