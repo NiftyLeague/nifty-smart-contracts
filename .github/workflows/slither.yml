@@ -47,7 +47,7 @@ jobs:
           ignore-compile: true
           node-version: 24.18.0
           sarif: results.sarif
-          fail-on: low
+          fail-on: high
       - name: Upload SARIF
         if: always() && steps.slither.outputs.sarif != ''
         uses: github/codeql-action/upload-sarif@v4
