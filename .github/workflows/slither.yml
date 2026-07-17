@@ -37,7 +37,7 @@ jobs:
           ignore-compile: true
           node-version: ${{ matrix.node-version }}
           sarif: results.sarif
-          fail-on: low
+          fail-on: high
 
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v3
