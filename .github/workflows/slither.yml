@@ -28,7 +28,7 @@ jobs:
         run: bun install
 
       - name: Build the contracts
-        run: bun build
+        run: bunx hardhat compile
 
       - name: Run Slither
         uses: crytic/slither-action@v0.3.2
