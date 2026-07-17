@@ -9,7 +9,7 @@ import {IERC5267} from "@openzeppelin/contracts/interfaces/IERC5267.sol";
 import {IAccessControlEnumerable} from "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 
 import {IERC1155Permit} from "@imtbl/contracts/contracts/token/erc1155/abstract/IERC1155Permit.sol";
-import {IImmutableERC1155Errors} from "@imtbl/contracts/contracts/errors/Errors.sol";
+import {IImmutableERC1155Errors} from "@imtbl/contracts/contracts/token/erc1155/interfaces/IImmutableERC1155Errors.sol";
 
 /**
  * @title INiftyMarketplace
