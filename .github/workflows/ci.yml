@@ -34,7 +34,7 @@ jobs:
       - name: Lint Solidity
         run: bun run lint:sol
       - name: Compile contracts
-        run: bun run build
+        run: bunx hardhat compile
       - name: Type-check
         run: bun run type-check
       - name: Test with coverage
