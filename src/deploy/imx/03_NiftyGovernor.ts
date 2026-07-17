@@ -41,7 +41,12 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
   const NFTLToken = await hre.deployments.get('NFTL');
 
   const timelockArgs: TimelockArgs = [MIN_DELAY, [], [], deployer];
-  const Timelock = await deploy('Timelock', { from: deployer, args: timelockArgs, log: true });
+  const Timelock = await deploy('Timelock', {
+    from: deployer,
+    args: timelockArgs,
+    log: true,
+    skipIfAlreadyDeployed: true,
+  });
 
   const govArgs: GovernorArgs = [
     NFTLToken.address,
@@ -52,7 +57,12 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
     QUORUM_NUMERATOR,
   ];
 
-  const Governor = await deploy('NiftyGovernor', { from: deployer, args: govArgs, log: true });
+  const Governor = await deploy('NiftyGovernor', {
+    from: deployer,
+    args: govArgs,
+    log: true,
+    skipIfAlreadyDeployed: true,
+  });
 
   if (Governor.newlyDeployed) {
     console.log(`Initializing Timelock roles...`);

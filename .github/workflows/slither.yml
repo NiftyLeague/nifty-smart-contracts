@@ -1,55 +1,45 @@
-name: Slither analysis
+name: Slither Analysis
 
 on:
   push:
-    branches: [main, staging]
+    branches: [main]
   pull_request:
-    branches: [main, staging]
-
-permissions:
-  contents: read
-
-concurrency:
-  group: slither-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    branches: [main]
 
 jobs:
   analyze:
-    if: github.event_name != 'pull_request' || github.head_ref != 'staging'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    strategy:
+      matrix:
+        node-version: [20]
     permissions:
       contents: read
       security-events: write
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v7
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 11.13.1
-          run_install: false
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-      - name: Enable Yarn for Immutable's vendored Seaport build
-        run: corepack enable yarn && corepack install --global yarn@1.22.22
+          bun-version: "1.3.14"
+
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Compile contracts
-        run: pnpm build
+        run: bun install
+
+      - name: Build the contracts
+        run: bun build
+
       - name: Run Slither
-        uses: crytic/slither-action@v0.4.2
+        uses: crytic/slither-action@v0.3.2
         id: slither
         with:
           ignore-compile: true
-          node-version: 24.18.0
+          node-version: ${{ matrix.node-version }}
           sarif: results.sarif
-          fail-on: high
-      - name: Upload SARIF
-        if: always() && steps.slither.outputs.sarif != ''
-        uses: github/codeql-action/upload-sarif@v4
+          fail-on: low
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ${{ steps.slither.outputs.sarif }}
