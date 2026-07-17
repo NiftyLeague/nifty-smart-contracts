@@ -21,33 +21,25 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 11.13.1
-          run_install: false
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-      - name: Enable Yarn for Immutable's vendored Seaport build
-        run: corepack enable yarn && corepack install --global yarn@1.22.22
+          bun-version: '1.3.14'
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --strict-peer-dependencies
+        run: bun install --frozen-lockfile
       - name: Check formatting
-        run: pnpm format:check
+        run: bun run format:check
       - name: Lint TypeScript
-        run: pnpm lint:ts:check
+        run: bun run lint:ts:check
       - name: Lint Solidity
-        run: pnpm lint:sol
+        run: bun run lint:sol
       - name: Compile contracts
-        run: pnpm build
+        run: bun run build
       - name: Type-check
-        run: pnpm type-check
+        run: bun run type-check
       - name: Test with coverage
-        run: pnpm test:coverage
+        run: bun run test:coverage
       - name: Test contract deployment
-        run: pnpm hardhat run --no-compile --network hardhat src/scripts/deploy_test.ts
+        run: bunx hardhat run --no-compile --network hardhat src/scripts/deploy_test.ts
       - name: Audit production dependencies
-        run: pnpm audit --prod --audit-level=high
+        run: bun pm audit --audit-level=high
