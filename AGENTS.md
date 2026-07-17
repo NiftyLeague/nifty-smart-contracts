@@ -4,6 +4,7 @@
 > Any AI agent (Hermes / Codex / opencode / Kilo) working here MUST follow this. No guessing.
 
 ## Global Constitution (locked — applies to ALL ~/Developer repos)
+
 - **TypeScript (web)** → Bun. Next.js/React dominant. Do NOT rewrite web in Rust+WASM (tooling not ready).
 - **Python** → uv preferred; BUT use the repo's actual PM if it's Poetry/conda. pip banned for new agents.
 - **Rust** → cargo. Aspirational default for CLI/systems tools where crates exist. Otherwise leave `# TODO(rust-migration)`.
@@ -17,18 +18,18 @@
 
 **Solidity + Hardhat** — Solidity smart contracts managed with [Hardhat](https://hardhat.org/) v2.28.6, `hardhat-deploy` for deployments, and [TypeChain](https://github.com/dethcrypto/TypeChain) (ethers-v6) for type-safe contract bindings.
 
-| Layer | Technology |
-|-------|-----------|
-| Language | Solidity (primary 0.8.19, secondary 0.8.20; WETH.sol overridden to 0.4.18) |
-| Runtime | Hardhat + hardhat-deploy + hardhat-deploy-ethers |
-| Tests | Mocha + Chai + @nomicfoundation/hardhat-chai-matchers |
-| Package manager | `bun` (v1.3.14, specified via `packageManager` field) |
-| TypeScript | TS 5.9, ts-node, tsconfig-paths |
-| Libraries | OpenZeppelin Contracts (4.9.6) + Upgrades (4.9.6), Chainlink v1.5.0, Axelar ITS v1.2.4, @imtbl/contracts v3.1.1 |
-| Linting | ESLint (TS), Solhint + prettier-plugin-solidity (Sol) |
-| Static analysis | Slither (generates `SLITHER.md`) |
-| Gas | hardhat-gas-reporter |
-| Coverage | solidity-coverage |
+| Layer           | Technology                                                                                                      |
+| --------------- | --------------------------------------------------------------------------------------------------------------- |
+| Language        | Solidity (primary 0.8.19, secondary 0.8.20; WETH.sol overridden to 0.4.18)                                      |
+| Runtime         | Hardhat + hardhat-deploy + hardhat-deploy-ethers                                                                |
+| Tests           | Mocha + Chai + @nomicfoundation/hardhat-chai-matchers                                                           |
+| Package manager | `bun` (v1.3.14, specified via `packageManager` field)                                                           |
+| TypeScript      | TS 5.9, ts-node, tsconfig-paths                                                                                 |
+| Libraries       | OpenZeppelin Contracts (4.9.6) + Upgrades (4.9.6), Chainlink v1.5.0, Axelar ITS v1.2.4, @imtbl/contracts v3.1.1 |
+| Linting         | ESLint (TS), Solhint + prettier-plugin-solidity (Sol)                                                           |
+| Static analysis | Slither (generates `SLITHER.md`)                                                                                |
+| Gas             | hardhat-gas-reporter                                                                                            |
+| Coverage        | solidity-coverage                                                                                               |
 
 Optimizer enabled, 200 runs across all versions.
 
@@ -90,24 +91,24 @@ bun run verify-merkle-root                            # verify generated merkle 
 
 ### Contracts (`src/contracts/`) — 44 `.sol` files
 
-| Directory | Key Contracts |
-|-----------|---------------|
-| **root** | `NiftyDegen.sol`, `NFTLToken.sol` |
-| **imx/** | `NiftyMarketplace.sol`, `NFTL.sol`, `Store.sol`, `ComicsBurner.sol`, `BalanceManagerDistributor.sol`, `NiftyGovernor.sol`, `Timelock.sol` |
-| **lib/** | `MerkleDistributor.sol`, `MerkleDistributorWithDeadline.sol`, `NiftyLeagueCharacter.sol`, `NameableCharacter.sol`, `AllowedColorsStorage.sol`, `ERC20MetaTransactions.sol` |
-| **interfaces/** | 9 interfaces (`IMerkleDistributor`, `IChildERC20`, `INiftyMarketplace`, `IGovToken`, `IMintable`, etc.) |
+| Directory       | Key Contracts                                                                                                                                                                                     |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **root**        | `NiftyDegen.sol`, `NFTLToken.sol`                                                                                                                                                                 |
+| **imx/**        | `NiftyMarketplace.sol`, `NFTL.sol`, `Store.sol`, `ComicsBurner.sol`, `BalanceManagerDistributor.sol`, `NiftyGovernor.sol`, `Timelock.sol`                                                         |
+| **lib/**        | `MerkleDistributor.sol`, `MerkleDistributorWithDeadline.sol`, `NiftyLeagueCharacter.sol`, `NameableCharacter.sol`, `AllowedColorsStorage.sol`, `ERC20MetaTransactions.sol`                        |
+| **interfaces/** | 9 interfaces (`IMerkleDistributor`, `IChildERC20`, `INiftyMarketplace`, `IGovToken`, `IMintable`, etc.)                                                                                           |
 | **deprecated/** | 9 deprecated contracts (legacy `NiftyLaunchComics`, `BalanceManager`, `NiftyItemL2`, `NiftyBurningComicsL2`, `NiftyItemSale`, `NiftyEquipment`, `NFTLRaffle`, `HydraDistributor`, `NFTLTimelock`) |
-| **mocks/** | 7 mock contracts (ERC20, ERC721, ERC1155, VRFCoordinator, etc.) |
-| **utils/** | `Minting.sol`, `Bytes.sol` |
-| **external/** | `WETH.sol` (compiled with Solidity 0.4.18) |
+| **mocks/**      | 7 mock contracts (ERC20, ERC721, ERC1155, VRFCoordinator, etc.)                                                                                                                                   |
+| **utils/**      | `Minting.sol`, `Bytes.sol`                                                                                                                                                                        |
+| **external/**   | `WETH.sol` (compiled with Solidity 0.4.18)                                                                                                                                                        |
 
 ### Deploy Scripts (`src/deploy/`)
 
-| Network path | Contents |
-|--------------|----------|
-| `ethereum/` | N1 `NFTLToken` → N2 `AllowedColorsStorage` → ... → N11 `POST_DEPLOY` |
-| `imx/` | N1 `NiftyMarketplace` → N2 `NFTL` → ... → N8 `UpdateTimelock` |
-| `hardhat/` | Mock contracts for local testing |
+| Network path | Contents                                                             |
+| ------------ | -------------------------------------------------------------------- |
+| `ethereum/`  | N1 `NFTLToken` → N2 `AllowedColorsStorage` → ... → N11 `POST_DEPLOY` |
+| `imx/`       | N1 `NiftyMarketplace` → N2 `NFTL` → ... → N8 `UpdateTimelock`        |
+| `hardhat/`   | Mock contracts for local testing                                     |
 
 ### Test Files (`src/test/`)
 
@@ -121,14 +122,14 @@ Utility scripts: `merkle-distributor/` (merkle root generation/verification help
 
 ## Networks
 
-| Network | Config Key | Deploy Dir | Signer | Tags |
-|---------|-----------|------------|--------|------|
-| Hardhat (local) | `hardhat` | `src/deploy/hardhat` | PRIVATE_KEY | `test`, `local` |
-| Tenderly DevNet | `tenderly` | `src/deploy/ethereum` | PRIVATE_KEY | `local` |
-| Sepolia (testnet) | `sepolia` | `src/deploy/ethereum` | PRIVATE_KEY | `staging` |
-| Ethereum Mainnet | `mainnet` | `src/deploy/ethereum` | Ledger (NIFTY_LEDGER_DEPLOYER) | `prod` |
-| Immutable zkEVM Testnet | `imtbl-zkevm-testnet` | `src/deploy/imx` | PRIVATE_KEY | `staging` |
-| Immutable zkEVM Mainnet | `imtbl-zkevm-mainnet` | `src/deploy/imx` | Ledger (NIFTY_LEDGER_DEPLOYER) | `prod` |
+| Network                 | Config Key            | Deploy Dir            | Signer                         | Tags            |
+| ----------------------- | --------------------- | --------------------- | ------------------------------ | --------------- |
+| Hardhat (local)         | `hardhat`             | `src/deploy/hardhat`  | PRIVATE_KEY                    | `test`, `local` |
+| Tenderly DevNet         | `tenderly`            | `src/deploy/ethereum` | PRIVATE_KEY                    | `local`         |
+| Sepolia (testnet)       | `sepolia`             | `src/deploy/ethereum` | PRIVATE_KEY                    | `staging`       |
+| Ethereum Mainnet        | `mainnet`             | `src/deploy/ethereum` | Ledger (NIFTY_LEDGER_DEPLOYER) | `prod`          |
+| Immutable zkEVM Testnet | `imtbl-zkevm-testnet` | `src/deploy/imx`      | PRIVATE_KEY                    | `staging`       |
+| Immutable zkEVM Mainnet | `imtbl-zkevm-mainnet` | `src/deploy/imx`      | Ledger (NIFTY_LEDGER_DEPLOYER) | `prod`          |
 
 Ethereum → Immutable zkEVM companion networks are configured for cross-chain ITS/axelar flows.
 
