@@ -27,7 +27,7 @@
     "type:check": "tsc --noEmit",
     "dev": "hardhat node",
     "start": "hardhat node",
-    "test": "hardhat test --typecheck --network hardhat",
+    "test": "bun test bun-tests",
     "coverage": "hardhat coverage",
     "test:coverage": "bun coverage && node scripts/check-coverage.mjs",
     "slither": "slither . --checklist --markdown-root ./ > SLITHER.md",
@@ -48,7 +48,8 @@
     "verify:imx:testnet": "bun verify --network imtbl-zkevm-testnet --show-stack-traces",
     "verify:imx:mainnet": "bun verify --network imtbl-zkevm-mainnet --show-stack-traces",
     "verify": "hardhat etherscan-verify",
-    "postinstall": "node scripts/setup-oz-symlinks.mjs"
+    "postinstall": "node scripts/setup-oz-symlinks.mjs",
+    "test:hardhat": "hardhat test --typecheck --network hardhat"
   },
   "devDependencies": {
     "@axelar-network/axelarjs-sdk": "^0.16.2",
