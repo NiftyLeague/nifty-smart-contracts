@@ -17,6 +17,7 @@
     "not-rely-on-time": "off",
     "ordering": "warn",
     "prettier/prettier": "error",
+    "use-natspec": "off",
     "private-vars-leading-underscore": ["warn", { "strict": false }]
   }
 }

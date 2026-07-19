@@ -81,7 +81,7 @@
     "chalk": "^5.6.2",
     "commander": "15.0.0",
     "dotenv": "17.4.2",
-    "eslint": "10.7.0",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
     "eth-provider": "^0.13.7",
@@ -104,7 +104,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typechain": "^8.3.2",
-    "typescript": "7.0.2"
+    "typescript": "^5.9.0"
   },
   "engines": {
     "node": "24.18.0"
