@@ -2,9 +2,6 @@
 set -euo pipefail
 
 ALLOWLIST=(
-<<<<<<< HEAD
-  # Populate after first run: osv-scanner will show detected vulns
-=======
   GHSA-2mjp-6q6p-2qxm
   GHSA-2pr8-phx7-x9h3
   GHSA-35jp-ww65-95wh
@@ -85,7 +82,6 @@ ALLOWLIST=(
   GHSA-xx6v-rp6x-q39c
   GHSA-xxjr-mmjv-4gpg
   MAL-2025-21003
->>>>>>> de33548 (fix(ci): align workflows with repo conventions + add security scan)
 )
 
 SCAN_JSON=$(osv-scanner --lockfile bun.lock --format json 2>/dev/null || true)
@@ -103,11 +99,7 @@ if [ -z "$FOUND" ]; then
   exit 0
 fi
 
-<<<<<<< HEAD
 ALLOW=" ${ALLOWLIST[*]} "
-=======
-ALLOW=" ${ALLOWLIST[*]:-} "
->>>>>>> de33548 (fix(ci): align workflows with repo conventions + add security scan)
 NEW=0
 while IFS= read -r id; do
   [ -z "$id" ] && continue
@@ -126,8 +118,4 @@ if [ "$NEW" -gt 0 ]; then
 fi
 
 echo ""
-<<<<<<< HEAD
 echo "✅ All detected vulnerabilities are pre-approved (dev-only, no upstream fix)."
-=======
-echo "✅ All detected vulnerabilities are pre-approved (dev-only, no upstream fix)."
->>>>>>> de33548 (fix(ci): align workflows with repo conventions + add security scan)
