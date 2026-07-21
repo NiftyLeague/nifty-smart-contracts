@@ -12,8 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: CI / Build, Format, Lint & Type Check
+  quality:
+    name: Build, Format, Lint & Type Check
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -34,9 +34,9 @@ jobs:
         run: bun run type-check
 
   test:
-    name: CI / Test
+    name: Test
     runs-on: ubuntu-latest
-    needs: build
+    needs: quality
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
