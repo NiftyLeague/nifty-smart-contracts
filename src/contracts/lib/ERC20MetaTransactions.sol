@@ -19,8 +19,9 @@ abstract contract ERC20MetaTransactions is ERC20Permit, IERC20MetaTransactions {
     }
 
     /// @dev EIP712 typehash for the contract's domain
-    bytes32 private constant _META_TRANSACTION_TYPEHASH =
-        keccak256(bytes("MetaTransaction(uint256 nonce,address from,bytes functionSignature)"));
+    bytes32 private constant _META_TRANSACTION_TYPEHASH = keccak256(
+        bytes("MetaTransaction(uint256 nonce,address from,bytes functionSignature)")
+    );
 
     /// @dev A mapping of users nonces to prevent replay attacks
     mapping(address user => uint256 nonce) private _nonces;
