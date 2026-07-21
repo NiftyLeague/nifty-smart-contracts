@@ -7,9 +7,6 @@ on:
 jobs:
   analyze:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20]
     permissions:
       contents: read
       security-events: write
@@ -33,7 +30,7 @@ jobs:
         id: slither
         with:
           ignore-compile: true
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
           sarif: results.sarif
           fail-on: high
 
