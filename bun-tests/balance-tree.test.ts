@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test';
 import BalanceTree from '../src/scripts/merkle-distributor/helpers/balance-tree';
 
 function proofToBuffers(proof: string[]): Buffer[] {
-  return proof.map((p) => Buffer.from(p.slice(2), 'hex'));
+  return proof.map(p => Buffer.from(p.slice(2), 'hex'));
 }
 
 describe('BalanceTree', () => {
@@ -64,9 +64,7 @@ describe('BalanceTree', () => {
     const otherTree = new BalanceTree(otherBalances);
     const wrongProof = proofToBuffers(otherTree.getProof(0, otherBalances[0].account, otherBalances[0].amount));
 
-    expect(
-      BalanceTree.verifyProof(0, balances[0].account, balances[0].amount, wrongProof, root),
-    ).toBe(false);
+    expect(BalanceTree.verifyProof(0, balances[0].account, balances[0].amount, wrongProof, root)).toBe(false);
   });
 
   it('verifies with bigint index input', () => {
