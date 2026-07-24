@@ -26,7 +26,6 @@ ALLOWLIST=(
   GHSA-66ff-xgx4-vchm
   GHSA-685m-2w69-288q
   GHSA-6chq-wfr3-2hj9
-  GHSA-73rr-hh4g-fpgx
   GHSA-75px-5xx7-5xc7
   GHSA-777c-7fjr-54vf
   GHSA-7q8q-rj6j-mhjq
@@ -67,7 +66,6 @@ ALLOWLIST=(
   GHSA-q8qp-cvcw-x6jj
   GHSA-qj8w-gfj5-8c6v
   GHSA-r5fr-rjxr-66jc
-  GHSA-v2hh-gcrm-f6hx
   GHSA-v9p9-hfj2-hcw8
   GHSA-vf2m-468p-8v99
   GHSA-vjh7-7g9h-fjfh
