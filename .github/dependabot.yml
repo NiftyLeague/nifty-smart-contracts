@@ -2,18 +2,29 @@ version: 2
 updates:
   - package-ecosystem: npm
     directory: /
+    target-branch: staging
     schedule:
       interval: weekly
-    target-branch: staging
-    open-pull-requests-limit: 5
+      day: monday
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
     groups:
       production-dependencies:
         dependency-type: production
+        update-types:
+          - patch
+          - minor
       development-dependencies:
         dependency-type: development
+
   - package-ecosystem: github-actions
     directory: /
+    target-branch: staging
     schedule:
       interval: weekly
-    target-branch: staging
+      day: monday
     open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - ci
