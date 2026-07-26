@@ -33,8 +33,6 @@ jobs:
 
       - name: Create draft PR
         if: steps.check-pr.outputs.existing == '0'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH="${{ github.ref_name }}"
           gh pr create \
@@ -46,14 +44,10 @@ jobs:
 
             This PR is a draft and should not be merged until CI passes and a reviewer (or the Daily Review agent) marks it ready.
 
-            **CI Status:** Pending — this workflow triggered on push to \`$BRANCH\`.
-
-            **Standard checks:** \`bun run compile\`, \`bun run lint:sol\`, \`bun run format:check\`, \`bun run test:hardhat\`, \`bun run slither\`."
+            **CI Status:** Pending — this workflow triggered on push to \`$BRANCH\`."
 
       - name: Mark PR ready when CI passes
         if: steps.check-pr.outputs.existing == '0'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH="${{ github.ref_name }}"
           PR_NUMBER=$(gh pr list --base staging --head "$BRANCH" --state all --json number 2>/dev/null | jq '.[0].number')
