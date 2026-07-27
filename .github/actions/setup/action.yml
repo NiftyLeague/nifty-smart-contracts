@@ -584,6 +584,15 @@ runs:
       if: inputs.install == 'true' && inputs.install-rust == 'true' && steps.rust-packages.outputs.cache-hit == 'true' && hashFiles('**/Cargo.lock') != ''
       shell: bash
       run: echo 'CARGO_NET_OFFLINE=true' >> "$GITHUB_ENV"
+    - name: Setup uv
+      if: >-
+        steps.profile.outputs.python == 'true' &&
+        (inputs.mise-scope == 'python' ||
+        (inputs.install == 'true' && inputs.install-python == 'true'))
+      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      with:
+        version: 0.11.32
+        enable-cache: false
     - name: Install
       if: inputs.install == 'true'
       shell: bash
