@@ -14,6 +14,7 @@ jobs:
   release:
     name: Release / Version
     runs-on: ubuntu-slim
+    timeout-minutes: 20
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: false
@@ -70,6 +71,7 @@ jobs:
     needs: release
     if: needs.release.outputs.release_created == 'true' && needs.release.outputs.npm_publish == 'true'
     runs-on: ubuntu-slim
+    timeout-minutes: 15
     permissions:
       contents: read
       id-token: write
