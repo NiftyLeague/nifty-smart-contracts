@@ -1,14 +1,14 @@
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { DeployFunction } from 'hardhat-deploy/types';
-import { PENDING_PERIOD, TOTAL_WINNER_TICKET_COUNT } from '~/constants/other';
+import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { DeployFunction } from 'hardhat-deploy/types'
+import { PENDING_PERIOD, TOTAL_WINNER_TICKET_COUNT } from '~/constants/other'
 
 const deployNFTLRaffle: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deploy } = hre.deployments;
-  const { deployer } = await hre.getNamedAccounts();
+  const { deploy } = hre.deployments
+  const { deployer } = await hre.getNamedAccounts()
 
   // get contracts
-  const MockERC721 = await hre.deployments.get('MockERC721');
-  const MockVRFCoordinator = await hre.deployments.get('MockVRFCoordinator');
+  const MockERC721 = await hre.deployments.get('MockERC721')
+  const MockVRFCoordinator = await hre.deployments.get('MockVRFCoordinator')
 
   await deploy('NFTLRaffle', {
     from: deployer,
@@ -30,8 +30,8 @@ const deployNFTLRaffle: DeployFunction = async (hre: HardhatRuntimeEnvironment) 
         },
       },
     },
-  });
-};
+  })
+}
 
-module.exports = deployNFTLRaffle;
-deployNFTLRaffle.tags = ['NFTLRaffle'];
+module.exports = deployNFTLRaffle
+deployNFTLRaffle.tags = ['NFTLRaffle']

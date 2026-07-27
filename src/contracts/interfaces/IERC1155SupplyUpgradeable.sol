@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.19;
 
-import {IERC1155Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol";
+import {IERC1155Upgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol';
 
 interface IERC1155SupplyUpgradeable is IERC1155Upgradeable {
-    function totalSupply(uint256 id) external view returns (uint256 res);
+  function totalSupply(uint256 id) external view returns (uint256 res);
 }

@@ -1,26 +1,26 @@
-import { HardhatUserConfig, task } from 'hardhat/config';
-import '@nomicfoundation/hardhat-ledger';
-import '@nomicfoundation/hardhat-toolbox';
-import '@openzeppelin/hardhat-upgrades';
-import 'hardhat-deploy-ethers';
-import 'hardhat-deploy';
+import { HardhatUserConfig, task } from 'hardhat/config'
+import '@nomicfoundation/hardhat-ledger'
+import '@nomicfoundation/hardhat-toolbox'
+import '@openzeppelin/hardhat-upgrades'
+import 'hardhat-deploy-ethers'
+import 'hardhat-deploy'
 
-import { config as dotEnvConfig } from 'dotenv';
-import 'tsconfig-paths/register';
-dotEnvConfig();
+import { config as dotEnvConfig } from 'dotenv'
+import 'tsconfig-paths/register'
+dotEnvConfig()
 
-import { NIFTY_LEDGER_DEPLOYER } from './src/constants/addresses';
-import { NetworkName } from './src/types';
+import { NIFTY_LEDGER_DEPLOYER } from './src/constants/addresses'
+import { NetworkName } from './src/types'
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
+  const accounts = await hre.ethers.getSigners()
 
   for (const account of accounts) {
-    console.log(account.address);
+    console.log(account.address)
   }
-});
+})
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
@@ -139,6 +139,6 @@ const config: HardhatUserConfig = {
     outDir: 'src/types/typechain',
     target: 'ethers-v6',
   },
-};
+}
 
-export default config;
+export default config

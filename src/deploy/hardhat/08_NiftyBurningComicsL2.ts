@@ -1,11 +1,11 @@
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { DeployFunction } from 'hardhat-deploy/types';
+import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { DeployFunction } from 'hardhat-deploy/types'
 
 const NiftyBurningComicsL2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deploy } = hre.deployments;
-  const { deployer } = await hre.getNamedAccounts();
+  const { deploy } = hre.deployments
+  const { deployer } = await hre.getNamedAccounts()
 
-  const MockERC1155 = await hre.deployments.get('MockERC1155');
+  const MockERC1155 = await hre.deployments.get('MockERC1155')
 
   await deploy('NiftyBurningComicsL2', {
     from: deployer,
@@ -21,8 +21,8 @@ const NiftyBurningComicsL2: DeployFunction = async (hre: HardhatRuntimeEnvironme
         },
       },
     },
-  });
-};
+  })
+}
 
-module.exports = NiftyBurningComicsL2;
-NiftyBurningComicsL2.tags = ['NiftyBurningComicsL2'];
+module.exports = NiftyBurningComicsL2
+NiftyBurningComicsL2.tags = ['NiftyBurningComicsL2']
