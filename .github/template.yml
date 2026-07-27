@@ -1,4 +1,5 @@
 version: 1
+template: repo-foundry@0.1.4
 languages: typescript,solidity
 features: all
 package_manager: bun
