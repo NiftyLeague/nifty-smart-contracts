@@ -8,13 +8,12 @@ has_script() {
 }
 
 has_javascript() {
-  find . -type f \( -name '*.js' -o -name '*.jsx' -o -name '*.ts' -o -name '*.tsx' \) \
-    -not -path './.git/*' -not -path './node_modules/*' -print -quit | grep -q .
+  git ls-files -- '*.js' '*.jsx' '*.ts' '*.tsx' | grep -q .
 }
 
 has_python() {
   [ -f pyproject.toml ] || [ -f requirements.txt ] || [ -f requirements-dev.txt ] || \
-    find . -type f -name '*.py' -not -path './.git/*' -not -path './.venv/*' -print -quit | grep -q .
+    git ls-files -- '*.py' | grep -q .
 }
 
 package_manager() {
