@@ -3,6 +3,7 @@ name: Slither Analysis
 on:
   push:
     branches: [main, staging]
+  workflow_dispatch:
 
 concurrency:
   group: slither-${{ github.ref }}
