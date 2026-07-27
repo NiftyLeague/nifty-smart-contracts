@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Nifty League Smart Contracts",
   "author": "Nifty Andy",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
   "homepage": "https://github.com/NiftyLeague/nifty-smart-contracts#readme",
   "repository": {
     "type": "git",
@@ -91,7 +91,6 @@
     "hardhat-deploy": "^0.14.1",
     "hardhat-deploy-ethers": "^0.4.2",
     "hardhat-gas-reporter": "^2.3.0",
-    "husky": "^9.1.7",
     "lint-staged": "^17.1.0",
     "mocha": "^10.8.2",
     "prettier": "^3.9.5",
