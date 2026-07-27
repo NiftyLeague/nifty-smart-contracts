@@ -1,36 +1,66 @@
-# Package manager
-node_modules
-package-lock.json
-yarn.lock
+# Operating system
+.DS_Store
+Thumbs.db
+.Trashes
 
-# Editor
-.vscode
-.idea
+# Secrets and local environment
 .env
-/.DS_Store
+.env.*
+!.env.example
+*.pem
+*.key
 
-# Hardhat files
-cache
-artifacts
-typechain
-deployments/localhost
-deployments/hardhat
-deployments/tenderly
-exports/
-.pendingTransactions
-Flattened.sol
+# JavaScript and TypeScript
+node_modules/
+.pnp/
+.pnp.js
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
 
-#Coverage
-coverage
-coverage.json
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
 
-# openzeppelin dev files
-.openzeppelin
+# Rust
+target/
 
-# Logs
-logs
+# Build and test output
+dist/
+build/
+out/
+coverage/
+htmlcov/
+.coverage*
+.next/
+
+# Logs and temporary files
 *.log
+*.tmp
 npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
 
-# Testing
-SLITHER.md
+# Editors, agents, and local tools
+.claude/
+.kilo/
+.codex/
+.cursor/
+.windsurf/
+.vscode/
+.idea/
+.zed/
+.fleet/
+.opencode/
+.kluster/
+.direnv/
+.envrc
+.vercel/
+mise.local.toml
+.mise.local.toml
+*.code-workspace
