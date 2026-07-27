@@ -16,6 +16,7 @@
     "named-parameters-mapping": "warn",
     "not-rely-on-time": "off",
     "ordering": "warn",
+    "quotes": "off",
     "prettier/prettier": "error",
     "use-natspec": "off",
     "private-vars-leading-underscore": ["warn", { "strict": false }]
