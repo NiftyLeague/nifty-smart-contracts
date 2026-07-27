@@ -1,7 +1,7 @@
 version: 1
 template: repo-foundry@0.1.4
-languages: typescript,solidity
+languages: auto
 features: all
-package_manager: bun
+package_manager: auto
 release_type: auto
 npm_publish: false
