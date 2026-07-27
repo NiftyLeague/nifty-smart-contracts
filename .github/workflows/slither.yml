@@ -5,7 +5,7 @@ on:
     branches: [main, staging]
 
 concurrency:
-  group: slither-${{ github.sha }}
+  group: slither-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
