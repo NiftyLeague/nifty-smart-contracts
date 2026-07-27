@@ -70,6 +70,8 @@ pnpm-debug.log*
 .vercel/
 mise.local.toml
 .mise.local.toml
+mise.local.lock
+.mise.local.lock
 *.code-workspace
 
 # Repository-specific rules

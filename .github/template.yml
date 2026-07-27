@@ -3,3 +3,5 @@ template: repo-foundry@0.1.4
 languages: typescript,solidity
 features: all
 package_manager: bun
+release_type: auto
+npm_publish: false
