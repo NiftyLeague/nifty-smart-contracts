@@ -41,13 +41,6 @@ htmlcov/
 artifacts/
 cache/
 typechain/
-deployments/localhost/
-deployments/hardhat/
-deployments/tenderly/
-exports/
-.pendingTransactions
-Flattened.sol
-.openzeppelin/
 coverage.json
 tests/.bin/
 **/.app/
@@ -78,3 +71,12 @@ pnpm-debug.log*
 mise.local.toml
 .mise.local.toml
 *.code-workspace
+
+# Repository-specific rules
+deployments/localhost/
+deployments/hardhat/
+deployments/tenderly/
+exports/
+.pendingTransactions
+Flattened.sol
+.openzeppelin/
