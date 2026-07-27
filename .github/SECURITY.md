@@ -1,16 +1,23 @@
 # Security Policy
 
+## Supported Versions
+
+The latest commit on `staging` receives security patches. Patches are promoted to `main` through the next release cycle.
+
+| Branch           | Supported |
+| ---------------- | --------- |
+| `staging`        | ✅        |
+| `main`           | ✅        |
+| Feature branches | ❌        |
+
 ## Reporting a Vulnerability
 
-If there are any vulnerabilities in **nifty-smart-contracts**, don't hesitate to _report them_.
+Do not open a public GitHub issue for a security vulnerability. Report it privately through the repository's Security tab, GitHub security advisory flow, or the private contact method listed on the repository page.
 
-1. Use any of the [contact options](https://github.com/NiftyLeague/nifty-smart-contracts#support).
-2. Describe the vulnerability.
+Include the affected version or commit, impact, reproduction steps, relevant logs, and suggested mitigation when possible.
 
-   If you have a fix, that is most welcome -- please attach or summarize it in your message!
+Maintainers will acknowledge receipt, provide an assessment timeline, coordinate a fix, and agree with the reporter on responsible disclosure. Public disclosure should occur only after a fix or mitigation is available.
 
-3. We will evaluate the vulnerability and, if necessary, release a fix or mitigating steps to address it. We will contact you to let you know the outcome, and will credit you in the report.
+## Scope
 
-   Please **do not disclose the vulnerability publicly** until a fix is released!
-
-4. Once we have either a) published a fix, or b) declined to address the vulnerability for whatever reason, you are free to publicly disclose it.
+This policy covers the code, configuration, dependencies, workflows, and generated artifacts maintained in this repository. Review `Security / Dependency Audit` results for supported ecosystems. Never commit credentials, tokens, private keys, or sensitive environment files. Report accidental secret exposure privately and rotate the credential immediately.
