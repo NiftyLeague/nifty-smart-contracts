@@ -1,13 +1,13 @@
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { DeployFunction } from 'hardhat-deploy/types';
-import { BALANCE_MANAGER_MAINTAINER } from '~/constants/addresses';
+import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { DeployFunction } from 'hardhat-deploy/types'
+import { BALANCE_MANAGER_MAINTAINER } from '~/constants/addresses'
 
 const deployBalanceManager: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deploy } = hre.deployments;
-  const { deployer } = await hre.getNamedAccounts();
+  const { deploy } = hre.deployments
+  const { deployer } = await hre.getNamedAccounts()
 
   // get contracts
-  const MockERC20 = await hre.deployments.get('MockERC20');
+  const MockERC20 = await hre.deployments.get('MockERC20')
 
   await deploy('BalanceManager', {
     from: deployer,
@@ -23,8 +23,8 @@ const deployBalanceManager: DeployFunction = async (hre: HardhatRuntimeEnvironme
         },
       },
     },
-  });
-};
+  })
+}
 
-module.exports = deployBalanceManager;
-deployBalanceManager.tags = ['BalanceManager'];
+module.exports = deployBalanceManager
+deployBalanceManager.tags = ['BalanceManager']

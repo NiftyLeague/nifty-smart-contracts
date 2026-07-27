@@ -1,4 +1,4 @@
-import { artifacts, ethers, network } from 'hardhat';
+import { artifacts, ethers, network } from 'hardhat'
 import type {
   MockERC1155,
   MockERC20,
@@ -9,51 +9,51 @@ import type {
   NiftyDegen,
   NiftyLaunchComics,
   NiftyMarketplace,
-} from '~/types/typechain';
+} from '~/types/typechain'
 
 export const deployMockERC20 = async (): Promise<MockERC20> => {
-  const MockERC20 = await ethers.getContractFactory('MockERC20');
-  return (await MockERC20.deploy()) as unknown as MockERC20;
-};
+  const MockERC20 = await ethers.getContractFactory('MockERC20')
+  return (await MockERC20.deploy()) as unknown as MockERC20
+}
 
 export const deployMockERC721 = async (): Promise<MockERC721> => {
-  const MockERC721 = await ethers.getContractFactory('MockERC721');
-  return (await MockERC721.deploy()) as unknown as MockERC721;
-};
+  const MockERC721 = await ethers.getContractFactory('MockERC721')
+  return (await MockERC721.deploy()) as unknown as MockERC721
+}
 
 export const deployMockERC1155 = async (): Promise<MockERC1155> => {
-  const MockERC1155 = await ethers.getContractFactory('MockERC1155');
-  return (await MockERC1155.deploy()) as unknown as MockERC1155;
-};
+  const MockERC1155 = await ethers.getContractFactory('MockERC1155')
+  return (await MockERC1155.deploy()) as unknown as MockERC1155
+}
 
 export const deployNFTL = async (): Promise<NFTLToken> => {
-  return (await deployMockERC20()) as NFTLToken;
-};
+  return (await deployMockERC20()) as NFTLToken
+}
 
 export const deployDegens = async (): Promise<NiftyDegen> => {
-  return (await deployMockERC721()) as unknown as NiftyDegen;
-};
+  return (await deployMockERC721()) as unknown as NiftyDegen
+}
 
 export const deployComics = async (): Promise<NiftyLaunchComics> => {
-  return (await deployMockERC1155()) as unknown as NiftyLaunchComics;
-};
+  return (await deployMockERC1155()) as unknown as NiftyLaunchComics
+}
 
 export const deployChildNFTL = async (): Promise<NFTL> => {
-  const deployer = (await ethers.getNamedSigners()).deployer;
+  const deployer = (await ethers.getNamedSigners()).deployer
   // Mock bridge address so deployer can mint tokens
-  const bridgeAddress = deployer.address; // BRIDGE_PROXY_ADDRESS[NetworkName.IMXzkEVMTestnet] as `0x${string}`;
-  const NFTLToken = await deployNFTL();
-  const rootToken = await NFTLToken.getAddress();
-  const TOKEN = { name: 'Nifty League', symbol: 'NFTL' };
+  const bridgeAddress = deployer.address // BRIDGE_PROXY_ADDRESS[NetworkName.IMXzkEVMTestnet] as `0x${string}`;
+  const NFTLToken = await deployNFTL()
+  const rootToken = await NFTLToken.getAddress()
+  const TOKEN = { name: 'Nifty League', symbol: 'NFTL' }
 
-  const NFTL = await ethers.getContractFactory('NFTL');
-  return (await NFTL.deploy(bridgeAddress, rootToken, TOKEN.name, TOKEN.symbol)) as NFTL;
-};
+  const NFTL = await ethers.getContractFactory('NFTL')
+  return (await NFTL.deploy(bridgeAddress, rootToken, TOKEN.name, TOKEN.symbol)) as NFTL
+}
 
 export const deployMarketplace = async (): Promise<NiftyMarketplace> => {
-  const deployer = (await ethers.getNamedSigners()).deployer;
-  const MockOperatorAllowlist = await ethers.getContractFactory('MockOperatorAllowlist');
-  const operatorAllowlist = await MockOperatorAllowlist.deploy();
+  const deployer = (await ethers.getNamedSigners()).deployer
+  const MockOperatorAllowlist = await ethers.getContractFactory('MockOperatorAllowlist')
+  const operatorAllowlist = await MockOperatorAllowlist.deploy()
   const COLLECTION = {
     name: 'Nifty Marketplace',
     symbol: 'NIFTY',
@@ -61,9 +61,9 @@ export const deployMarketplace = async (): Promise<NiftyMarketplace> => {
     contractUri: 'https://api.niftyleague.com/imx/marketplace/collection.json',
     royalties: { receiver: deployer, feeNumerator: 250 },
     operatorAllowlist: await operatorAllowlist.getAddress(),
-  };
+  }
 
-  const NiftyMarketplace = await ethers.getContractFactory('NiftyMarketplace');
+  const NiftyMarketplace = await ethers.getContractFactory('NiftyMarketplace')
   return (await NiftyMarketplace.deploy(
     deployer,
     COLLECTION.name,
@@ -72,12 +72,12 @@ export const deployMarketplace = async (): Promise<NiftyMarketplace> => {
     COLLECTION.contractUri,
     COLLECTION.operatorAllowlist,
     COLLECTION.royalties.receiver,
-    COLLECTION.royalties.feeNumerator,
-  )) as NiftyMarketplace;
-};
+    COLLECTION.royalties.feeNumerator
+  )) as NiftyMarketplace
+}
 
 export const installMockLinkToken = async (address: string): Promise<MockLinkToken> => {
-  const { deployedBytecode } = await artifacts.readArtifact('MockLinkToken');
-  await network.provider.send('hardhat_setCode', [address, deployedBytecode]);
-  return ethers.getContractAt('MockLinkToken', address) as Promise<MockLinkToken>;
-};
+  const { deployedBytecode } = await artifacts.readArtifact('MockLinkToken')
+  await network.provider.send('hardhat_setCode', [address, deployedBytecode])
+  return ethers.getContractAt('MockLinkToken', address) as Promise<MockLinkToken>
+}

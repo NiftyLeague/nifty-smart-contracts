@@ -1,10 +1,10 @@
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { DeployFunction } from 'hardhat-deploy/types';
-import { STARK_CONTRACT_ADDRESS } from '~/constants/addresses';
+import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { DeployFunction } from 'hardhat-deploy/types'
+import { STARK_CONTRACT_ADDRESS } from '~/constants/addresses'
 
 const NiftyItemL2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deploy } = hre.deployments;
-  const { deployer } = await hre.getNamedAccounts();
+  const { deploy } = hre.deployments
+  const { deployer } = await hre.getNamedAccounts()
 
   await deploy('NiftyItemL2', {
     from: deployer,
@@ -20,8 +20,8 @@ const NiftyItemL2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         },
       },
     },
-  });
-};
+  })
+}
 
-module.exports = NiftyItemL2;
-NiftyItemL2.tags = ['NiftyItemL2'];
+module.exports = NiftyItemL2
+NiftyItemL2.tags = ['NiftyItemL2']
