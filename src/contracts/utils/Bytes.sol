@@ -24,10 +24,12 @@ library Bytes {
       temp /= 10;
     }
     bytes memory buffer = new bytes(digits);
-    uint256 index = digits - 1;
     temp = value;
+    uint256 idx = digits;
     while (temp != 0) {
-      buffer[--index] = bytes1(uint8(48 + (temp % 10)));
+      unchecked {
+        buffer[--idx] = bytes1(uint8(48 + (temp % 10)));
+      }
       temp /= 10;
     }
     return string(buffer);
