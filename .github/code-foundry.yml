@@ -1,5 +1,4 @@
 version: 1
-template: code-foundry@0.22.2
 profile: application
 languages: typescript,solidity
 features: all
