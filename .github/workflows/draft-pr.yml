@@ -1,4 +1,4 @@
-name: Draft PR Workflow
+name: Code Foundry
 
 on:
   push:
@@ -16,47 +16,9 @@ permissions:
   pull-requests: write
 
 jobs:
-  create-draft-pr:
-    name: Create Draft PR into staging
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: Check if PR already exists
-        id: check-pr
-        run: |
-          BRANCH="${{ github.ref_name }}"
-          EXISTING=$(gh pr list --base staging --head "$BRANCH" --state all --json number,title 2>/dev/null | jq 'length')
-          echo "existing=$EXISTING" >> "$GITHUB_OUTPUT"
-
-      - name: Create draft PR
-        if: steps.check-pr.outputs.existing == '0'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          BRANCH="${{ github.ref_name }}"
-          gh pr create \
-            --base staging \
-            --head "$BRANCH" \
-            --draft \
-            --title "[WIP] $BRANCH" \
-            --body "Draft PR created automatically by CI.
-
-            This PR is a draft and should not be merged until CI passes and a reviewer (or the Daily Review agent) marks it ready.
-
-            **CI Status:** Pending — this workflow triggered on push to \`$BRANCH\`.
-
-            **Standard checks:** \`bun run compile\`, \`bun run lint:sol\`, \`bun run format:check\`, \`bun run test:hardhat\`, \`bun run slither\`."
-
-      - name: Mark PR ready when CI passes
-        if: steps.check-pr.outputs.existing == '0'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          BRANCH="${{ github.ref_name }}"
-          PR_NUMBER=$(gh pr list --base staging --head "$BRANCH" --state all --json number 2>/dev/null | jq '.[0].number')
-          if [ -n "$PR_NUMBER" ]; then
-            gh pr ready "$PR_NUMBER"
-          fi
+  draft-pr:
+    name: Draft PR
+    uses: 0xPlayerOne/code-foundry/.github/workflows/draft-pr.yml@v0.27.15
+    with:
+      runner: ubuntu-slim
+    secrets: inherit

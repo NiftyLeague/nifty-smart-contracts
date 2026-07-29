@@ -2,208 +2,210 @@
 
 pragma solidity 0.8.19;
 
-import {ERC721HolderUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
-import {IERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
-import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import {ERC721HolderUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol';
+import {IERC721Upgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol';
+import {Initializable} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import {OwnableUpgradeable} from '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+import {PausableUpgradeable} from '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
+import {ReentrancyGuardUpgradeable} from '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 
 /**
  * @title HydraDistributor
  * @notice Hydra is the 7th tribe of NiftyDegen.
  */
 contract HydraDistributor is
-    Initializable,
-    OwnableUpgradeable,
-    PausableUpgradeable,
-    ReentrancyGuardUpgradeable,
-    ERC721HolderUpgradeable
+  Initializable,
+  OwnableUpgradeable,
+  PausableUpgradeable,
+  ReentrancyGuardUpgradeable,
+  ERC721HolderUpgradeable
 {
-    /// @dev NiftyDegen NFT address
-    IERC721Upgradeable public niftyDegen;
+  /// @dev NiftyDegen NFT address
+  IERC721Upgradeable public niftyDegen;
 
-    /// @dev Hydra Token Id list
-    uint256[] public hydraTokenIds;
+  /// @dev Hydra Token Id list
+  uint256[] public hydraTokenIds;
 
-    /// @dev NiftyLeague Wallet Address
-    address public niftyWallet;
+  /// @dev NiftyLeague Wallet Address
+  address public niftyWallet;
 
-    /// @dev Random Hash Value
-    bytes32 internal _prevHash;
+  /// @dev Random Hash Value
+  bytes32 internal _prevHash;
 
-    event NiftyDegenSet(address indexed niftyDegen);
-    event NiftyWalletSet(address indexed niftyWallet);
-    event HydraClaimed(address indexed user, uint256[] tokenIdsBurned, uint256 hydraTokenId);
+  event NiftyDegenSet(address indexed niftyDegen);
+  event NiftyWalletSet(address indexed niftyWallet);
+  event HydraClaimed(address indexed user, uint256[] tokenIdsBurned, uint256 hydraTokenId);
 
-    error AddressError(string message);
-    error BurnCountError(uint256 count, string message);
+  error AddressError(string message);
+  error BurnCountError(uint256 count, string message);
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
+  /// @custom:oz-upgrades-unsafe-allow constructor
+  constructor() {
+    _disableInitializers();
+  }
+
+  function initialize(address _niftyDegen, address _niftyWallet) public initializer {
+    __Ownable_init();
+    __Pausable_init();
+    __ReentrancyGuard_init();
+
+    if (_niftyDegen == address(0) || _niftyWallet == address(0)) {
+      revert AddressError('Zero address');
     }
 
-    function initialize(address _niftyDegen, address _niftyWallet) public initializer {
-        __Ownable_init();
-        __Pausable_init();
-        __ReentrancyGuard_init();
+    niftyDegen = IERC721Upgradeable(_niftyDegen);
+    niftyWallet = _niftyWallet;
+  }
 
-        if (_niftyDegen == address(0) || _niftyWallet == address(0)) {
-            revert AddressError("Zero address");
-        }
+  /**
+   * @notice Update the NiftyDegen NFT address
+   * @param _niftyDegen NiftyDegen NFT address
+   */
+  function updateNiftyDegen(address _niftyDegen) external onlyOwner {
+    if (_niftyDegen == address(0)) revert AddressError('Zero address');
 
-        niftyDegen = IERC721Upgradeable(_niftyDegen);
-        niftyWallet = _niftyWallet;
+    niftyDegen = IERC721Upgradeable(_niftyDegen);
+
+    emit NiftyDegenSet(_niftyDegen);
+  }
+
+  /**
+   * @notice Update the NiftyLeague wallet address
+   * @param _niftyWallet NiftyLeague wallet address
+   */
+  function updateNiftyWallet(address _niftyWallet) external onlyOwner {
+    if (_niftyWallet == address(0)) revert AddressError('Zero address');
+
+    niftyWallet = _niftyWallet;
+
+    emit NiftyWalletSet(_niftyWallet);
+  }
+
+  /**
+   * @notice Deposit the Hydra
+   * @param _hydraTokenIdList Token Ids of the Hydra to deposit
+   */
+  function depositHydra(uint256[] calldata _hydraTokenIdList) external onlyOwner {
+    uint256 length = _hydraTokenIdList.length;
+    for (uint256 i = 0; i < length; ) {
+      uint256 tokenId = _hydraTokenIdList[i];
+
+      hydraTokenIds.push(tokenId);
+
+      unchecked {
+        ++i;
+      }
     }
 
-    /**
-     * @notice Update the NiftyDegen NFT address
-     * @param _niftyDegen NiftyDegen NFT address
-     */
-    function updateNiftyDegen(address _niftyDegen) external onlyOwner {
-        if (_niftyDegen == address(0)) revert AddressError("Zero address");
+    for (uint256 i = 0; i < length; ) {
+      uint256 tokenId = _hydraTokenIdList[i];
+      // slither-disable-next-line calls-loop
+      niftyDegen.safeTransferFrom(msg.sender, address(this), tokenId, bytes(''));
 
-        niftyDegen = IERC721Upgradeable(_niftyDegen);
+      unchecked {
+        ++i;
+      }
+    }
+  }
 
-        emit NiftyDegenSet(_niftyDegen);
+  /**
+   * @notice Claim the random Hydra
+   * @dev The users must transfer 8 normal degens to claim 1 random Hydra
+   * @dev NiftyWallet must transfer 12 normal degens to claim 1 random Hydra
+   * @dev All the trasnferred the normal degens are burned
+   * @param _degenTokenIdList Token Ids of the normal degens to burn
+   */
+  function claimRandomHydra(
+    uint256[] calldata _degenTokenIdList
+  ) external nonReentrant whenNotPaused {
+    uint256 degenCountToBurn = _degenTokenIdList.length;
+
+    if (msg.sender == niftyWallet && degenCountToBurn != 12) {
+      revert BurnCountError(degenCountToBurn, 'Need 12 degens');
+    } else if (msg.sender != niftyWallet && degenCountToBurn != 8) {
+      revert BurnCountError(degenCountToBurn, 'Need 8 degens');
     }
 
-    /**
-     * @notice Update the NiftyLeague wallet address
-     * @param _niftyWallet NiftyLeague wallet address
-     */
-    function updateNiftyWallet(address _niftyWallet) external onlyOwner {
-        if (_niftyWallet == address(0)) revert AddressError("Zero address");
-
-        niftyWallet = _niftyWallet;
-
-        emit NiftyWalletSet(_niftyWallet);
+    // get the random Hydra tokenId
+    uint256 randomValue = 1;
+    for (uint256 i = 0; i < degenCountToBurn; ) {
+      unchecked {
+        randomValue *= _degenTokenIdList[i]; // generate the random value, ignore overflow
+        ++i;
+      }
     }
 
-    /**
-     * @notice Deposit the Hydra
-     * @param _hydraTokenIdList Token Ids of the Hydra to deposit
-     */
-    function depositHydra(uint256[] calldata _hydraTokenIdList) external onlyOwner {
-        uint256 length = _hydraTokenIdList.length;
-        for (uint256 i = 0; i < length; ) {
-            uint256 tokenId = _hydraTokenIdList[i];
+    bytes32 randomHash = keccak256(
+      abi.encodePacked(_prevHash, randomValue, msg.sender, block.timestamp, block.basefee)
+    );
+    uint256 hydraCount = hydraTokenIds.length;
+    // slither-disable-next-line weak-prng
+    uint256 hydraIndex = uint256(randomHash) % hydraCount;
+    uint256 hydraTokenId = hydraTokenIds[hydraIndex];
 
-            hydraTokenIds.push(tokenId);
+    // remove the claimed rare degen Id from the list
+    hydraTokenIds[hydraIndex] = hydraTokenIds[hydraCount - 1];
+    hydraTokenIds.pop();
 
-            unchecked {
-                ++i;
-            }
-        }
+    // set the prevHash
+    _prevHash = randomHash;
 
-        for (uint256 i = 0; i < length; ) {
-            uint256 tokenId = _hydraTokenIdList[i];
-            // slither-disable-next-line calls-loop
-            niftyDegen.safeTransferFrom(msg.sender, address(this), tokenId, bytes(""));
+    // burn user's degens
+    for (uint256 i = 0; i < degenCountToBurn; ) {
+      // slither-disable-next-line calls-loop
+      niftyDegen.safeTransferFrom(msg.sender, address(1), _degenTokenIdList[i], bytes(''));
 
-            unchecked {
-                ++i;
-            }
-        }
+      unchecked {
+        ++i;
+      }
     }
 
-    /**
-     * @notice Claim the random Hydra
-     * @dev The users must transfer 8 normal degens to claim 1 random Hydra
-     * @dev NiftyWallet must transfer 12 normal degens to claim 1 random Hydra
-     * @dev All the trasnferred the normal degens are burned
-     * @param _degenTokenIdList Token Ids of the normal degens to burn
-     */
-    function claimRandomHydra(uint256[] calldata _degenTokenIdList) external nonReentrant whenNotPaused {
-        uint256 degenCountToBurn = _degenTokenIdList.length;
+    emit HydraClaimed(msg.sender, _degenTokenIdList, hydraTokenId);
 
-        if (msg.sender == niftyWallet && degenCountToBurn != 12) {
-            revert BurnCountError(degenCountToBurn, "Need 12 degens");
-        } else if (msg.sender != niftyWallet && degenCountToBurn != 8) {
-            revert BurnCountError(degenCountToBurn, "Need 8 degens");
-        }
+    // transfer the random Hydra to the user
+    niftyDegen.safeTransferFrom(address(this), msg.sender, hydraTokenId, bytes(''));
+  }
 
-        // get the random Hydra tokenId
-        uint256 randomValue = 1;
-        for (uint256 i = 0; i < degenCountToBurn; ) {
-            unchecked {
-                randomValue *= _degenTokenIdList[i]; // generate the random value, ignore overflow
-                ++i;
-            }
-        }
+  /**
+   * @notice Withdraw all Hydra
+   * @param _to Address to receive the Hydra
+   */
+  function withdrawAllHydra(address _to) external onlyOwner {
+    uint256 length = hydraTokenIds.length;
+    for (uint256 i = 0; i < length; ) {
+      uint256 tokenId = hydraTokenIds[i];
+      // slither-disable-next-line calls-loop
+      niftyDegen.safeTransferFrom(address(this), _to, tokenId, bytes(''));
 
-        bytes32 randomHash = keccak256(
-            abi.encodePacked(_prevHash, randomValue, msg.sender, block.timestamp, block.basefee)
-        );
-        uint256 hydraCount = hydraTokenIds.length;
-        // slither-disable-next-line weak-prng
-        uint256 hydraIndex = uint256(randomHash) % hydraCount;
-        uint256 hydraTokenId = hydraTokenIds[hydraIndex];
-
-        // remove the claimed rare degen Id from the list
-        hydraTokenIds[hydraIndex] = hydraTokenIds[hydraCount - 1];
-        hydraTokenIds.pop();
-
-        // set the prevHash
-        _prevHash = randomHash;
-
-        // burn user's degens
-        for (uint256 i = 0; i < degenCountToBurn; ) {
-            // slither-disable-next-line calls-loop
-            niftyDegen.safeTransferFrom(msg.sender, address(1), _degenTokenIdList[i], bytes(""));
-
-            unchecked {
-                ++i;
-            }
-        }
-
-        emit HydraClaimed(msg.sender, _degenTokenIdList, hydraTokenId);
-
-        // transfer the random Hydra to the user
-        niftyDegen.safeTransferFrom(address(this), msg.sender, hydraTokenId, bytes(""));
+      unchecked {
+        ++i;
+      }
     }
+  }
 
-    /**
-     * @notice Withdraw all Hydra
-     * @param _to Address to receive the Hydra
-     */
-    function withdrawAllHydra(address _to) external onlyOwner {
-        uint256 length = hydraTokenIds.length;
-        for (uint256 i = 0; i < length; ) {
-            uint256 tokenId = hydraTokenIds[i];
-            // slither-disable-next-line calls-loop
-            niftyDegen.safeTransferFrom(address(this), _to, tokenId, bytes(""));
+  /**
+   * @notice Pause the contract
+   */
+  function pause() external onlyOwner {
+    _pause();
+  }
 
-            unchecked {
-                ++i;
-            }
-        }
-    }
+  /**
+   * @notice Unpause the contract
+   */
+  function unpause() external onlyOwner {
+    _unpause();
+  }
 
-    /**
-     * @notice Pause the contract
-     */
-    function pause() external onlyOwner {
-        _pause();
-    }
+  /**
+   * @notice Returns the number of the Hydra in the contract
+   * @return hydraCount Number of Hydra in the contract
+   */
+  function getHydraCount() external view returns (uint256 hydraCount) {
+    hydraCount = hydraTokenIds.length;
+  }
 
-    /**
-     * @notice Unpause the contract
-     */
-    function unpause() external onlyOwner {
-        _unpause();
-    }
-
-    /**
-     * @notice Returns the number of the Hydra in the contract
-     * @return hydraCount Number of Hydra in the contract
-     */
-    function getHydraCount() external view returns (uint256 hydraCount) {
-        hydraCount = hydraTokenIds.length;
-    }
-
-    function getHydraTokenIds() external view returns (uint256[] memory tokenIds) {
-        return hydraTokenIds;
-    }
+  function getHydraTokenIds() external view returns (uint256[] memory tokenIds) {
+    return hydraTokenIds;
+  }
 }
