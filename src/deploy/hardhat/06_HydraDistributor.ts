@@ -1,13 +1,13 @@
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { DeployFunction } from 'hardhat-deploy/types';
-import { NIFTY_DAO_LEDGER } from '~/constants/addresses';
+import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { DeployFunction } from 'hardhat-deploy/types'
+import { NIFTY_DAO_LEDGER } from '~/constants/addresses'
 
 const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deploy } = hre.deployments;
-  const { deployer } = await hre.getNamedAccounts();
+  const { deploy } = hre.deployments
+  const { deployer } = await hre.getNamedAccounts()
 
   // get contracts
-  const MockERC721 = await hre.deployments.get('MockERC721');
+  const MockERC721 = await hre.deployments.get('MockERC721')
 
   await deploy('HydraDistributor', {
     from: deployer,
@@ -23,8 +23,8 @@ const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnviron
         },
       },
     },
-  });
-};
+  })
+}
 
-module.exports = deployHydraDistributor;
-deployHydraDistributor.tags = ['HydraDistributor'];
+module.exports = deployHydraDistributor
+deployHydraDistributor.tags = ['HydraDistributor']

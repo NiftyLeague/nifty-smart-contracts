@@ -1,11 +1,11 @@
-import type { HardhatRuntimeEnvironment } from 'hardhat/types';
-import type { DeployFunction } from 'hardhat-deploy/types';
-import { deployHydraDistributor } from '~/scripts/deploy';
+import type { HardhatRuntimeEnvironment } from 'hardhat/types'
+import type { DeployFunction } from 'hardhat-deploy/types'
+import { deployHydraDistributor } from '~/scripts/deploy'
 
 const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deployer } = await hre.getNamedAccounts();
-  await deployHydraDistributor(hre, deployer);
-};
+  const { deployer } = await hre.getNamedAccounts()
+  await deployHydraDistributor(hre, deployer)
+}
 
-module.exports = deployFunction;
-deployFunction.tags = ['HydraDistributor'];
+module.exports = deployFunction
+deployFunction.tags = ['HydraDistributor']

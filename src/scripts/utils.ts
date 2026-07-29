@@ -1,20 +1,24 @@
-import { ethers, network, run } from 'hardhat';
-import { type BaseContract } from 'ethers';
-import chalk from 'chalk';
-import R from 'ramda';
-import { NetworkName } from '~/types';
+import { ethers, network, run } from 'hardhat'
+import { type BaseContract } from 'ethers'
+import chalk from 'chalk'
+import R from 'ramda'
+import { NetworkName } from '~/types'
 
-const targetNetwork = network.name as NetworkName;
+const targetNetwork = network.name as NetworkName
 
 // If you want to verify on https://tenderly.co/
 export const tenderlyVerify = async ({
   contractName,
   contractAddress,
 }: {
-  contractName: string;
-  contractAddress: string;
+  contractName: string
+  contractAddress: string
 }) => {
-  console.log(chalk.blue(` 📁 Attempting tenderly verification of ${contractName} on ${targetNetwork} -- DEPRECATED`));
+  console.log(
+    chalk.blue(
+      ` 📁 Attempting tenderly verification of ${contractName} on ${targetNetwork} -- DEPRECATED`
+    )
+  )
   // await tenderly.persistArtifacts({
   //   name: contractName,
   //   address: contractAddress,
@@ -25,45 +29,54 @@ export const tenderlyVerify = async ({
   //   network: targetNetwork,
   // });
   // return verification;
-};
+}
 
 // If you want to verify on https://etherscan.io/
 export const etherscanVerify = async ({
   address,
   constructorArguments = [],
 }: {
-  address: string;
-  constructorArguments?: any[];
+  address: string
+  constructorArguments?: any[]
 }) => {
   try {
-    console.log(chalk.blue(` 📁 Attempting etherscan verification of ${address} on ${targetNetwork}`));
-    return await run('verify:verify', { address, constructorArguments });
+    console.log(
+      chalk.blue(` 📁 Attempting etherscan verification of ${address} on ${targetNetwork}`)
+    )
+    return await run('verify:verify', { address, constructorArguments })
   } catch (e) {
-    return e;
+    return e
   }
-};
+}
 
 // abi encodes contract arguments
 // useful when you want to manually verify the contracts
 // for example, on Etherscan
-export const abiEncodeArgs = (deployed: BaseContract, contractArgs: unknown[], contractType = 0) => {
+export const abiEncodeArgs = (
+  deployed: BaseContract,
+  contractArgs: unknown[],
+  contractType = 0
+) => {
   // not writing abi encoded args if this does not pass
   if (!contractArgs || !deployed || !R.hasPath(['interface', 'deploy'], deployed)) {
-    return '';
+    return ''
   }
-  let encoded;
+  let encoded
   if (contractType == 0) {
-    encoded = ethers.AbiCoder.defaultAbiCoder().encode(deployed.interface.deploy.inputs, contractArgs);
+    encoded = ethers.AbiCoder.defaultAbiCoder().encode(
+      deployed.interface.deploy.inputs,
+      contractArgs
+    )
   } else {
-    const init = deployed.interface.getFunction('initialize');
-    if (init) encoded = ethers.AbiCoder.defaultAbiCoder().encode(init.inputs, contractArgs);
+    const init = deployed.interface.getFunction('initialize')
+    if (init) encoded = ethers.AbiCoder.defaultAbiCoder().encode(init.inputs, contractArgs)
   }
-  return encoded;
-};
+  return encoded
+}
 
 // checks if it is a Solidity file
 export const isSolidity = (fileName: string) =>
-  fileName.indexOf('.sol') >= 0 && fileName.indexOf('.swp') < 0 && fileName.indexOf('.swap') < 0;
+  fileName.indexOf('.sol') >= 0 && fileName.indexOf('.swp') < 0 && fileName.indexOf('.swap') < 0
 
 /**
  * Pauses the execution for the specified number of milliseconds.
@@ -71,11 +84,11 @@ export const isSolidity = (fileName: string) =>
  * @returns A Promise that resolves after the specified number of milliseconds.
  */
 export function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 /**
  * Generates a random Ethereum address.
  * @returns {`0x${string}`} The randomly generated Ethereum address.
  */
-export const generateRandomAddress = () => '0x' + Math.random().toString(16).substr(2, 40);
+export const generateRandomAddress = () => '0x' + Math.random().toString(16).substr(2, 40)

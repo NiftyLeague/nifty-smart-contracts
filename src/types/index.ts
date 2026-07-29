@@ -1,5 +1,5 @@
-import type { HardhatRuntimeEnvironment } from 'hardhat/types';
-import type { Address, DeployResult } from 'hardhat-deploy/types';
+import type { HardhatRuntimeEnvironment } from 'hardhat/types'
+import type { Address, DeployResult } from 'hardhat-deploy/types'
 
 export enum NetworkName {
   Hardhat = 'hardhat',
@@ -10,15 +10,15 @@ export enum NetworkName {
   IMXzkEVMMainnet = 'imtbl-zkevm-mainnet',
 }
 
-export type ContractAddressRecord = Partial<Record<NetworkName, Address>>;
+export type ContractAddressRecord = Partial<Record<NetworkName, Address>>
 
 export type InterchainTokenData = {
-  salt?: string;
-  transactionHash?: string;
-  interchainTokenId?: string;
-  tokenManagerAddress?: Address;
-};
-export type InterchainTokenRecord = Partial<Record<NetworkName, InterchainTokenData>>;
+  salt?: string
+  transactionHash?: string
+  interchainTokenId?: string
+  tokenManagerAddress?: Address
+}
+export type InterchainTokenRecord = Partial<Record<NetworkName, InterchainTokenData>>
 
 export type DegenPurchaseArgs = [
   character: [bigint, bigint, bigint, bigint, bigint],
@@ -26,12 +26,12 @@ export type DegenPurchaseArgs = [
   clothing: [bigint, bigint, bigint, bigint, bigint, bigint],
   accessories: [bigint, bigint, bigint, bigint, bigint, bigint],
   items: [bigint, bigint],
-];
+]
 
 export interface DeployFunctionExt {
-  (hre: HardhatRuntimeEnvironment, deployer: Address): Promise<DeployResult>;
+  (hre: HardhatRuntimeEnvironment, deployer: Address): Promise<DeployResult>
 }
 
 export interface PostDeployFunction {
-  (hre: HardhatRuntimeEnvironment, deployer: Address, deployResult?: DeployResult): Promise<void>;
+  (hre: HardhatRuntimeEnvironment, deployer: Address, deployResult?: DeployResult): Promise<void>
 }
