@@ -1,3 +1,10 @@
+# Generated release metadata is intentionally managed by Release Please.
+CHANGELOG.md
+
+# Runtime files are checked out under .github during CI.
+.github/.code-foundry
+
+# Repository-specific rules
 node_modules
 .code-foundry
 .vscode
@@ -5,7 +12,6 @@ node_modules
 .env
 /.DS_Store
 pnpm-lock.yaml
-
 # Hardhat files
 artifacts
 cache
@@ -14,14 +20,11 @@ typechain
 gasReporterOutput.json
 Flattened.sol
 SLITHER.md
-
 #Coverage
 coverage*
 coverage.json
-
 # openzeppelin dev files
 .openzeppelin
-
 # Logs
 logs
 *.log
