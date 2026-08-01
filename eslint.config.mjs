@@ -22,7 +22,6 @@ export default [
       'src/types/typechain/**',
       'cache/**',
       'deployments/**',
-      'gasReporterOutput.json',
       'Flattened.sol',
       'SLITHER.md',
       'coverage*/**',

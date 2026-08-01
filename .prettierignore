@@ -23,7 +23,6 @@ cache
 deployments
 typechain
 src/types/typechain
-gasReporterOutput.json
 Flattened.sol
 SLITHER.md
 #Coverage
