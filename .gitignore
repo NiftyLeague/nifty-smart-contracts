@@ -39,6 +39,8 @@ htmlcov/
 .coverage*
 .next/
 artifacts/
+generated/
+.coverage-contracts/
 cache/
 !.github/actions/cache/
 !.github/actions/cache/action.yml

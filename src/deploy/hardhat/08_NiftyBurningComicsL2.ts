@@ -24,5 +24,5 @@ const NiftyBurningComicsL2: DeployFunction = async (hre: HardhatRuntimeEnvironme
   })
 }
 
-module.exports = NiftyBurningComicsL2
+export default NiftyBurningComicsL2
 NiftyBurningComicsL2.tags = ['NiftyBurningComicsL2']

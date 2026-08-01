@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { ethers, upgrades } from 'hardhat'
+import { ethers, upgrades } from '~/hardhat'
 import type { Signer } from 'ethers'
 import type { ComicsBurner, NiftyMarketplace } from '~/types/typechain'
 

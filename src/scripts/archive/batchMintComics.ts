@@ -1,4 +1,4 @@
-import { config, ethers } from 'hardhat'
+import { config, ethers } from '~/hardhat'
 import fs from 'fs'
 import { type Contract } from 'ethers'
 

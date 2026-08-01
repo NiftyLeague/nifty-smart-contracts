@@ -18,6 +18,8 @@ export default [
       '.env',
       '.DS_Store',
       'artifacts/**',
+      'generated/**',
+      'src/types/typechain/**',
       'cache/**',
       'deployments/**',
       'gasReporterOutput.json',
