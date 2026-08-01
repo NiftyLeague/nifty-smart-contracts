@@ -3,10 +3,10 @@
 
 pragma solidity 0.8.19;
 
-import {IERC1155} from '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
-import {IERC2981} from '@openzeppelin/contracts/interfaces/IERC2981.sol';
-import {IERC5267} from '@openzeppelin/contracts/interfaces/IERC5267.sol';
-import {IAccessControlEnumerable} from '@openzeppelin/contracts/access/AccessControlEnumerable.sol';
+import {IERC1155} from '@openzeppelin/contracts-v4/token/ERC1155/IERC1155.sol';
+import {IERC2981} from '@openzeppelin/contracts-v4/interfaces/IERC2981.sol';
+import {IERC5267} from '@openzeppelin/contracts-v4/interfaces/IERC5267.sol';
+import {IAccessControlEnumerable} from '@openzeppelin/contracts-v4/access/AccessControlEnumerable.sol';
 
 import {IERC1155Permit} from '@imtbl/contracts/contracts/token/erc1155/abstract/IERC1155Permit.sol';
 import {IImmutableERC1155Errors} from '@imtbl/contracts/contracts/token/erc1155/interfaces/IImmutableERC1155Errors.sol';

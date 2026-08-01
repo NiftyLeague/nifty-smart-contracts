@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.19;
 
-import {IERC20Permit} from '@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol';
-import {IERC5805} from '@openzeppelin/contracts/interfaces/IERC5805.sol';
+import {IERC20Permit} from '@openzeppelin/contracts-v4/token/ERC20/extensions/IERC20Permit.sol';
+import {IERC5805} from '@openzeppelin/contracts-v4/interfaces/IERC5805.sol';
 
 import {IChildERC20} from './IChildERC20.sol';
 

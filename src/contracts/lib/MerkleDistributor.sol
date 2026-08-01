@@ -3,8 +3,8 @@
 
 pragma solidity 0.8.19;
 
-import {IERC20, SafeERC20} from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
-import {MerkleProof} from '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
+import {IERC20, SafeERC20} from '@openzeppelin/contracts-v4/token/ERC20/utils/SafeERC20.sol';
+import {MerkleProof} from '@openzeppelin/contracts-v4/utils/cryptography/MerkleProof.sol';
 import {IMerkleDistributor} from '../interfaces/IMerkleDistributor.sol';
 
 error AlreadyClaimed();
