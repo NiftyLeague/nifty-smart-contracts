@@ -17,6 +17,7 @@ node_modules
 pnpm-lock.yaml
 # Hardhat files
 artifacts
+artifacts/slither
 generated
 cache
 deployments

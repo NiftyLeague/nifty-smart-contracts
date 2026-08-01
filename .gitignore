@@ -41,6 +41,8 @@ htmlcov/
 artifacts/
 generated/
 .coverage-contracts/
+artifacts/slither/
+results.sarif
 cache/
 !.github/actions/cache/
 !.github/actions/cache/action.yml
