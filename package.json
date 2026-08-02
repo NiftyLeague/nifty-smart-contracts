@@ -30,6 +30,8 @@
     "dev": "hardhat node",
     "start": "hardhat node",
     "test": "bun test bun-tests",
+    "test:unit": "bun test bun-tests",
+    "test:integration": "bun run test:hardhat",
     "coverage": "node scripts/run-coverage.mjs",
     "test:coverage": "bun coverage && node scripts/check-coverage.mjs",
     "slither": "slither . --checklist --markdown-root ./ > SLITHER.md",
