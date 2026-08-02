@@ -1,4 +1,4 @@
-import { ethers } from 'hardhat'
+import { ethers } from '~/hardhat'
 import { Address } from 'hardhat-deploy/types'
 import ethProvider from 'eth-provider'
 

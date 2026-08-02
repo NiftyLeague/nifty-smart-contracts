@@ -41,5 +41,5 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
   }
 }
 
-module.exports = deployFunction
+export default deployFunction
 deployFunction.tags = ['UpdateTimelock']

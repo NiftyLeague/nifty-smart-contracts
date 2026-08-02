@@ -26,5 +26,5 @@ const deployBalanceManager: DeployFunction = async (hre: HardhatRuntimeEnvironme
   })
 }
 
-module.exports = deployBalanceManager
+export default deployBalanceManager
 deployBalanceManager.tags = ['BalanceManager']

@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 import fs from 'fs'
-import { config, ethers, network } from 'hardhat'
+import { config, ethers, network } from '~/hardhat'
 
 import { tenderlyVerify, etherscanVerify, abiEncodeArgs } from '../utils'
 import { getLedgerSigner } from '../ledger'

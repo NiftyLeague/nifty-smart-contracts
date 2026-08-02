@@ -23,5 +23,5 @@ const NiftyItemL2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   })
 }
 
-module.exports = NiftyItemL2
+export default NiftyItemL2
 NiftyItemL2.tags = ['NiftyItemL2']

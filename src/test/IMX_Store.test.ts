@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { ethers, upgrades } from 'hardhat'
+import { ethers, upgrades } from '~/hardhat'
 import type { Signer } from 'ethers'
 import type { NFTL, NiftyMarketplace, Store } from '~/types/typechain'
 
@@ -197,7 +197,7 @@ describe('IMX - Store', function () {
 
         await storeContract.setItemsAvailability([10], [true])
         expect(await storeContract.isAvailable(10)).to.be.true
-        await expect(storeContract.purchaseItems([10], [1])).to.not.be.reverted
+        await expect(storeContract.purchaseItems([10], [1])).to.not.revert(ethers)
       })
 
       it('Should allow owner to increase item price', async function () {
@@ -233,7 +233,7 @@ describe('IMX - Store', function () {
           .to.be.revertedWithCustomError(storeContract, 'InvalidInput')
           .withArgs('Item supply exceeded')
 
-        await expect(storeContract.purchaseItems([10], [5])).to.not.be.reverted
+        await expect(storeContract.purchaseItems([10], [5])).to.not.revert(ethers)
       })
 
       it('Should allow owner to list new items', async function () {

@@ -2,9 +2,9 @@
 
 pragma solidity 0.8.19;
 
-import {TimelockController} from '@openzeppelin/contracts/governance/TimelockController.sol';
-import {AccessControl} from '@openzeppelin/contracts/access/AccessControl.sol';
-import {AccessControlEnumerable} from '@openzeppelin/contracts/access/AccessControlEnumerable.sol';
+import {TimelockController} from '@openzeppelin/contracts-v4/governance/TimelockController.sol';
+import {AccessControl} from '@openzeppelin/contracts-v4/access/AccessControl.sol';
+import {AccessControlEnumerable} from '@openzeppelin/contracts-v4/access/AccessControlEnumerable.sol';
 
 contract Timelock is TimelockController, AccessControlEnumerable {
   /**

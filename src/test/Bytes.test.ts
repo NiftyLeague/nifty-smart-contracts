@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { ethers } from 'hardhat'
+import { ethers } from '~/hardhat'
 import type { BytesTestHelper } from '~/types/typechain'
 
 describe('Bytes library', function () {

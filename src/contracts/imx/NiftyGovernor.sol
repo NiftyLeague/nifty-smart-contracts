@@ -2,15 +2,15 @@
 
 pragma solidity 0.8.19;
 
-import {Governor} from '@openzeppelin/contracts/governance/Governor.sol';
-import {GovernorSettings} from '@openzeppelin/contracts/governance/extensions/GovernorSettings.sol';
-import {GovernorCountingSimple} from '@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol';
-import {GovernorVotes} from '@openzeppelin/contracts/governance/extensions/GovernorVotes.sol';
-import {GovernorVotesQuorumFraction} from '@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol';
-import {GovernorTimelockControl} from '@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol';
+import {Governor} from '@openzeppelin/contracts-v4/governance/Governor.sol';
+import {GovernorSettings} from '@openzeppelin/contracts-v4/governance/extensions/GovernorSettings.sol';
+import {GovernorCountingSimple} from '@openzeppelin/contracts-v4/governance/extensions/GovernorCountingSimple.sol';
+import {GovernorVotes} from '@openzeppelin/contracts-v4/governance/extensions/GovernorVotes.sol';
+import {GovernorVotesQuorumFraction} from '@openzeppelin/contracts-v4/governance/extensions/GovernorVotesQuorumFraction.sol';
+import {GovernorTimelockControl} from '@openzeppelin/contracts-v4/governance/extensions/GovernorTimelockControl.sol';
 
-import {TimelockController} from '@openzeppelin/contracts/governance/TimelockController.sol';
-import {IVotes} from '@openzeppelin/contracts/governance/utils/IVotes.sol';
+import {TimelockController} from '@openzeppelin/contracts-v4/governance/TimelockController.sol';
+import {IVotes} from '@openzeppelin/contracts-v4/governance/utils/IVotes.sol';
 
 contract NiftyGovernor is
   Governor,

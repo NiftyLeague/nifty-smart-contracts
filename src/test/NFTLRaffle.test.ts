@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { ethers, upgrades } from 'hardhat'
+import { ethers, upgrades } from '~/hardhat'
 import { BigNumberish, type Signer } from 'ethers'
 
 import type {
@@ -716,8 +716,8 @@ describe('NFTLRaffle', function () {
     })
 
     it('Should revert if the caller is not the owner', async () => {
-      await expect(nftlRaffle.connect(alice).pause()).to.be.reverted
-      await expect(nftlRaffle.connect(alice).unpause()).to.be.reverted
+      await expect(nftlRaffle.connect(alice).pause()).to.revert(ethers)
+      await expect(nftlRaffle.connect(alice).unpause()).to.revert(ethers)
     })
   })
 })

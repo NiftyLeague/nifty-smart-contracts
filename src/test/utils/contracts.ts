@@ -1,4 +1,4 @@
-import { artifacts, ethers, network } from 'hardhat'
+import { artifacts, ethers, network } from '~/hardhat'
 import type {
   MockERC1155,
   MockERC20,

@@ -1,6 +1,6 @@
 import type { BigNumberish, Signer } from 'ethers'
 import type { Address } from 'hardhat-deploy/types'
-import { ethers } from 'hardhat'
+import { ethers } from '~/hardhat'
 
 export const getSignature = async (
   signer: Signer,

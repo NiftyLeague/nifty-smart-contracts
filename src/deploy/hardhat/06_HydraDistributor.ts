@@ -26,5 +26,5 @@ const deployHydraDistributor: DeployFunction = async (hre: HardhatRuntimeEnviron
   })
 }
 
-module.exports = deployHydraDistributor
+export default deployHydraDistributor
 deployHydraDistributor.tags = ['HydraDistributor']

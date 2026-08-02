@@ -1,4 +1,4 @@
-import { ethers, upgrades } from 'hardhat'
+import { ethers, upgrades } from '~/hardhat'
 import { NIFTY_LEDGER_DEPLOYER } from '~/constants/addresses'
 
 async function main() {

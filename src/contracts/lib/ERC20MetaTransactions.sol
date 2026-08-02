@@ -3,7 +3,7 @@
 
 pragma solidity 0.8.19;
 
-import {ERC20Permit} from '@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol';
+import {ERC20Permit} from '@openzeppelin/contracts-v4/token/ERC20/extensions/ERC20Permit.sol';
 import {IERC20MetaTransactions} from '../interfaces/IERC20MetaTransactions.sol';
 
 abstract contract ERC20MetaTransactions is ERC20Permit, IERC20MetaTransactions {

@@ -1,11 +1,10 @@
-import { ethers, network } from 'hardhat'
+import { ethers, network } from '~/hardhat'
 import type { Signer } from 'ethers'
 
+const initialSnapshot = await network.networkHelpers.takeSnapshot()
+
 export const resetLocalNetwork = async () => {
-  await network.provider.request({
-    method: 'hardhat_reset',
-    params: [],
-  })
+  await initialSnapshot.restore()
 }
 
 export const impersonate = async (addr: string, fund = true): Promise<Signer> => {

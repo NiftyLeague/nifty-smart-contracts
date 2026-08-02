@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { ethers, upgrades } from 'hardhat'
+import { ethers, upgrades } from '~/hardhat'
 import type { Signer } from 'ethers'
 
 import type { BalanceManager, NFTLToken } from '~/types/typechain'
@@ -221,8 +221,9 @@ describe('BalanceManager', function () {
 
     it('revert if msg.sender is not a owner', async () => {
       // update maintainer address
-      await expect(balanceManager.connect(alice).updateMaintainer(await deployer.getAddress())).to
-        .be.reverted
+      await expect(
+        balanceManager.connect(alice).updateMaintainer(await deployer.getAddress())
+      ).to.revert(ethers)
     })
   })
 
@@ -257,7 +258,7 @@ describe('BalanceManager', function () {
       // update maintainer address
       await expect(
         balanceManager.connect(alice).withdrawByDAO(await dao.getAddress(), WITHDRAW_AMOUNT)
-      ).to.be.reverted
+      ).to.revert(ethers)
     })
   })
 })

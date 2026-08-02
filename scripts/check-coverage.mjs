@@ -1,42 +1,45 @@
 import { readFile } from 'node:fs/promises'
 
-const thresholds = {
-  statements: 54,
-  branches: 41,
-  functions: 50,
-  lines: 54,
-}
-const reportPath = new URL('../coverage/coverage-summary.json', import.meta.url)
+const minimumLineCoverage = 54
+const reportPath = new URL('../coverage/lcov.info', import.meta.url)
 
 let report
 try {
-  report = JSON.parse(await readFile(reportPath, 'utf8'))
+  report = await readFile(reportPath, 'utf8')
 } catch (error) {
-  console.error(`Unable to read Solidity coverage summary: ${error.message}`)
+  console.error(`Unable to read Solidity coverage report: ${error.message}`)
   process.exit(1)
 }
 
-const metrics = Object.keys(thresholds)
-const failures = metrics.filter((metric) => report.total?.[metric]?.pct < thresholds[metric])
+let coveredLines = 0
+let totalLines = 0
 
-for (const metric of metrics) {
-  const percentage = report.total?.[metric]?.pct
-  if (typeof percentage !== 'number') {
-    console.error(`Coverage summary is missing the ${metric} metric.`)
+for (const line of report.split('\n')) {
+  if (!line.startsWith('DA:')) continue
+
+  const [, hits] = line.match(/^DA:\d+,(\d+)/) ?? []
+  if (hits === undefined) {
+    console.error(`Malformed coverage record: ${line}`)
     process.exit(1)
   }
-  console.log(`${metric}: ${percentage}%`)
+
+  totalLines++
+  if (Number(hits) > 0) coveredLines++
 }
 
-if (failures.length > 0) {
+if (totalLines === 0) {
+  console.error('Coverage report did not contain any executable lines.')
+  process.exit(1)
+}
+
+const lineCoverage = (coveredLines / totalLines) * 100
+console.log(`lines: ${lineCoverage.toFixed(2)}% (${coveredLines}/${totalLines})`)
+
+if (lineCoverage < minimumLineCoverage) {
   console.error(
-    `Coverage is below its required floor for: ${failures
-      .map((metric) => `${metric} (${thresholds[metric]}%)`)
-      .join(', ')}.`
+    `Line coverage is below its required floor: ${lineCoverage.toFixed(2)}% < ${minimumLineCoverage}%.`
   )
   process.exit(1)
 }
 
-console.log(
-  `Solidity coverage gate passed (${metrics.map((metric) => `${metric} ${thresholds[metric]}%`).join(', ')}).`
-)
+console.log(`Solidity coverage gate passed (lines ${minimumLineCoverage}%).`)

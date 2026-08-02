@@ -3,7 +3,7 @@
 pragma solidity >=0.8.19;
 
 import {ImmutableERC1155} from '@imtbl/contracts/contracts/token/erc1155/preset/ImmutableERC1155.sol';
-import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
+import {Strings} from '@openzeppelin/contracts-v4/utils/Strings.sol';
 
 /**
  * @title NiftyMarketplace - ImmutableERC1155

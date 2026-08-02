@@ -1,4 +1,4 @@
-import { ethers } from 'hardhat'
+import { ethers } from '~/hardhat'
 import { type Block } from 'ethers'
 
 export const getCurrentBlock = async (): Promise<Block> => {

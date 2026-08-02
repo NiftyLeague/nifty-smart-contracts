@@ -12,5 +12,5 @@ const deployMockVRFCoordinator: DeployFunction = async (hre: HardhatRuntimeEnvir
   })
 }
 
-module.exports = deployMockVRFCoordinator
+export default deployMockVRFCoordinator
 deployMockVRFCoordinator.tags = ['MockVRFCoordinator']

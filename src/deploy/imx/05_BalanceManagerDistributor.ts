@@ -17,5 +17,5 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
   await deploy('BalanceManagerDistributor', { from: deployer, args, log: true })
 }
 
-module.exports = deployFunction
+export default deployFunction
 deployFunction.tags = ['BalanceManagerDistributor']

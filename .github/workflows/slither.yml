@@ -33,6 +33,9 @@ jobs:
       - name: Build the contracts
         run: bunx hardhat compile
 
+      - name: Prepare Slither artifacts
+        run: node scripts/prepare-slither-build-info.mjs
+
       - name: Setup uv
         uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
@@ -47,6 +50,7 @@ jobs:
           uv tool run --from slither-analyzer==0.11.5 \
             slither . \
             --ignore-compile \
+            --hardhat-artifacts-directory artifacts/slither \
             --sarif=results.sarif \
             --fail-high
           echo 'sarif=results.sarif' >> "$GITHUB_OUTPUT"
