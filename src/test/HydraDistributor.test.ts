@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { ethers, upgrades } from 'hardhat'
+import { ethers, upgrades } from '~/hardhat'
 import { type Signer } from 'ethers'
 
 import type { HydraDistributor, NiftyDegen, MockERC721 } from '~/types/typechain'
@@ -63,8 +63,9 @@ describe('HydraDistributor', function () {
 
     it('Should revert if the caller is not the owner', async () => {
       // set the NiftyDegen address
-      await expect(hydraDistributor.connect(alice).updateNiftyDegen(await bob.getAddress())).to.be
-        .reverted
+      await expect(
+        hydraDistributor.connect(alice).updateNiftyDegen(await bob.getAddress())
+      ).to.revert(ethers)
     })
   })
 
@@ -80,8 +81,9 @@ describe('HydraDistributor', function () {
 
     it('Should revert if the caller is not the owner', async () => {
       // set the nifty wallet address
-      await expect(hydraDistributor.connect(alice).updateNiftyWallet(await bob.getAddress())).to.be
-        .reverted
+      await expect(
+        hydraDistributor.connect(alice).updateNiftyWallet(await bob.getAddress())
+      ).to.revert(ethers)
     })
   })
 
@@ -104,7 +106,7 @@ describe('HydraDistributor', function () {
 
       // deposit the Hydra
       await niftyDegen.connect(alice).setApprovalForAll(await hydraDistributor.getAddress(), true)
-      await expect(hydraDistributor.connect(alice).depositHydra(hydraTokenIds)).to.be.reverted
+      await expect(hydraDistributor.connect(alice).depositHydra(hydraTokenIds)).to.revert(ethers)
     })
   })
 
@@ -196,8 +198,9 @@ describe('HydraDistributor', function () {
       let degenTokenIdList = [0, 1, 2, 3, 4, 5, 6, 7]
 
       await niftyDegen.connect(alice).setApprovalForAll(await hydraDistributor.getAddress(), true)
-      await expect(hydraDistributor.connect(alice).claimRandomHydra(degenTokenIdList)).to.be
-        .reverted
+      await expect(hydraDistributor.connect(alice).claimRandomHydra(degenTokenIdList)).to.revert(
+        ethers
+      )
     })
   })
 
@@ -223,8 +226,9 @@ describe('HydraDistributor', function () {
 
     it('Should revert if the caller is not the owner', async () => {
       // withdraw all Hydra
-      await expect(hydraDistributor.connect(bob).withdrawAllHydra(await bob.getAddress())).to.be
-        .reverted
+      await expect(
+        hydraDistributor.connect(bob).withdrawAllHydra(await bob.getAddress())
+      ).to.revert(ethers)
     })
   })
 
@@ -251,8 +255,8 @@ describe('HydraDistributor', function () {
     })
 
     it('Should revert if the caller is not the owner', async () => {
-      await expect(hydraDistributor.connect(alice).pause()).to.be.reverted
-      await expect(hydraDistributor.connect(alice).unpause()).to.be.reverted
+      await expect(hydraDistributor.connect(alice).pause()).to.revert(ethers)
+      await expect(hydraDistributor.connect(alice).unpause()).to.revert(ethers)
     })
   })
 })

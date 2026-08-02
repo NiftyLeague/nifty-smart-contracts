@@ -17,10 +17,12 @@ node_modules
 pnpm-lock.yaml
 # Hardhat files
 artifacts
+artifacts/slither
+generated
 cache
 deployments
 typechain
-gasReporterOutput.json
+src/types/typechain
 Flattened.sol
 SLITHER.md
 #Coverage

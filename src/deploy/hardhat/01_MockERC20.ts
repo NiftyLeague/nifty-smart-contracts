@@ -12,5 +12,5 @@ const deployMockERC20: DeployFunction = async (hre: HardhatRuntimeEnvironment) =
   })
 }
 
-module.exports = deployMockERC20
+export default deployMockERC20
 deployMockERC20.tags = ['MockERC20']
