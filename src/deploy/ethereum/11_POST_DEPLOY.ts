@@ -32,7 +32,7 @@ const postDeployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment
   )
 }
 
-module.exports = postDeployFunction
+export default postDeployFunction
 postDeployFunction.tags = ['PostDeploy']
 postDeployFunction.skip = async (hre: HardhatRuntimeEnvironment) => {
   const chainId = await hre.getChainId()

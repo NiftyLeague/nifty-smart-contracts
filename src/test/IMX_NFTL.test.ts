@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { ethers } from 'hardhat'
+import { ethers } from '~/hardhat'
 import type { NFTL } from '~/types/typechain'
 
 describe('IMX - NFTL', function () {
@@ -31,13 +31,15 @@ describe('IMX - NFTL', function () {
     const bridgeRole = await token.BRIDGE_ROLE()
 
     expect(await token.rootToken()).to.equal(bridge.address)
-    await expect(token.connect(outsider).mint(holder.address, 10)).to.be.reverted
+    await expect(token.connect(outsider).mint(holder.address, 10)).to.revert(ethers)
 
     await token.connect(owner).grantRole(bridgeRole, bridge.address)
     await token.connect(bridge).mint(holder.address, 10)
     expect(await token.balanceOf(holder.address)).to.equal(10)
 
-    await expect(token.connect(outsider)['burn(address,uint256)'](holder.address, 1)).to.be.reverted
+    await expect(token.connect(outsider)['burn(address,uint256)'](holder.address, 1)).to.revert(
+      ethers
+    )
     await token.connect(bridge)['burn(address,uint256)'](holder.address, 4)
     expect(await token.balanceOf(holder.address)).to.equal(6)
   })

@@ -38,6 +38,6 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
   }
 }
 
-module.exports = deployFunction
+export default deployFunction
 deployFunction.tags = ['ComicsBurner']
 deployFunction.skip = async () => true // TODO: Remove this line when ready to deploy

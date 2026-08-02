@@ -2,10 +2,10 @@
 
 pragma solidity 0.8.19;
 
-import {ContextUpgradeable} from '@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol';
-import {OwnableUpgradeable} from '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
-import {PausableUpgradeable} from '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
-import {ReentrancyGuardUpgradeable} from '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
+import {ContextUpgradeable} from '@openzeppelin/contracts-upgradeable-v4/utils/ContextUpgradeable.sol';
+import {OwnableUpgradeable} from '@openzeppelin/contracts-upgradeable-v4/access/OwnableUpgradeable.sol';
+import {PausableUpgradeable} from '@openzeppelin/contracts-upgradeable-v4/security/PausableUpgradeable.sol';
+import {ReentrancyGuardUpgradeable} from '@openzeppelin/contracts-upgradeable-v4/security/ReentrancyGuardUpgradeable.sol';
 
 import {INiftyMarketplace} from '../interfaces/INiftyMarketplace.sol';
 

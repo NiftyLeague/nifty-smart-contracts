@@ -33,5 +33,5 @@ const deployNFTLRaffle: DeployFunction = async (hre: HardhatRuntimeEnvironment) 
   })
 }
 
-module.exports = deployNFTLRaffle
+export default deployNFTLRaffle
 deployNFTLRaffle.tags = ['NFTLRaffle']

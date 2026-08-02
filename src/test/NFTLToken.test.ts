@@ -1,6 +1,5 @@
 import { expect } from 'chai'
-import { time } from '@nomicfoundation/hardhat-network-helpers'
-import { ethers } from 'hardhat'
+import { ethers, time } from '~/hardhat'
 import type { Signer } from 'ethers'
 import type { MockERC721, NFTLToken } from '~/types/typechain'
 import { deployMockERC721 } from './utils/contracts'
@@ -42,7 +41,7 @@ describe('NFTLToken', function () {
     const fresh = await deployToken(await time.latest())
 
     await expect(fresh.setNFTAddress(ethers.ZeroAddress)).to.be.revertedWith('Invalid NFT address')
-    await expect(fresh.connect(alice).setNFTAddress(await nft.getAddress())).to.be.reverted
+    await expect(fresh.connect(alice).setNFTAddress(await nft.getAddress())).to.revert(ethers)
     await fresh.setNFTAddress(await nft.getAddress())
     await expect(fresh.setNFTAddress(await nft.getAddress())).to.be.revertedWith('Already set')
   })

@@ -1,8 +1,8 @@
 // @imtbl/contracts v3 imports openzeppelin-contracts-4 and openzeppelin-contracts-5
-// as separate hardhat library packages. We install @openzeppelin/contracts (v4)
-// and @openzeppelin/contracts-v5 (v5) and copy them into the alias directories
-// so hardhat sees distinct source paths (symlinks resolve to the same file and
-// hardhat rejects that with HH415).
+// as separate hardhat library packages. We install @openzeppelin/contracts (v5)
+// as the default and keep v4 available via the explicit @openzeppelin/contracts-v4
+// alias. We copy them into the alias directories so hardhat sees distinct source
+// paths (symlinks resolve to the same file and hardhat rejects that with HH415).
 import { cpSync, existsSync, mkdirSync, rmSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -11,8 +11,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const nm = resolve(root, 'node_modules')
 
 const aliases = [
-  ['openzeppelin-contracts-4', '@openzeppelin/contracts'],
-  ['openzeppelin-contracts-5', '@openzeppelin/contracts-v5'],
+  ['openzeppelin-contracts-4', '@openzeppelin/contracts-v4'],
+  ['openzeppelin-contracts-5', '@openzeppelin/contracts'],
 ]
 
 for (const [alias, target] of aliases) {

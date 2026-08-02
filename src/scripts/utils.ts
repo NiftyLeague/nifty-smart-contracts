@@ -1,4 +1,4 @@
-import { ethers, network, run } from 'hardhat'
+import { ethers, network, run } from '~/hardhat'
 import { type BaseContract } from 'ethers'
 import chalk from 'chalk'
 import R from 'ramda'

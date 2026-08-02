@@ -9,5 +9,5 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
   if (deployResult.newlyDeployed) await initNiftyLaunchComics(hre, deployer)
 }
 
-module.exports = deployFunction
+export default deployFunction
 deployFunction.tags = ['NiftyLaunchComics']
