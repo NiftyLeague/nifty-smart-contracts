@@ -4,7 +4,7 @@ languages: typescript,solidity
 features: all
 package_manager: bun
 runtime_repository: 0xPlayerOne/code-foundry
-runtime_ref: v0.34.13
+runtime_ref: v0.35.0
 runner: ubuntu-latest
 unit_runner: ubuntu-slim
 ci_runner: ubuntu-latest
@@ -20,7 +20,7 @@ coverage_minimum: 80
 turbo_remote: auto
 release_type: node
 npm_publish: false
-license: agpl-3.0-or-later
+license: apache-2.0
 git_workflow: staging-release
 merge_strategy: rebase
 codeql: auto
