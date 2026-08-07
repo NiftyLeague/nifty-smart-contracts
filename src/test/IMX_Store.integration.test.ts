@@ -340,5 +340,61 @@ describe('IMX - Store', function () {
         )
       })
     })
+
+    describe('Admin', function () {
+      it('Should allow owner to pause and unpause the store', async function () {
+        await expect(storeContract.pause()).to.emit(storeContract, 'Paused')
+        await expect(storeContract.unpause()).to.emit(storeContract, 'Unpaused')
+      })
+
+      it('Should not allow non-owner to pause or unpause', async function () {
+        await expect(storeContract.connect(bob).pause()).to.be.revertedWith(
+          'Ownable: caller is not the owner'
+        )
+        await expect(storeContract.connect(bob).unpause()).to.be.revertedWith(
+          'Ownable: caller is not the owner'
+        )
+      })
+
+      it('Should revert if setItemsAvailability arrays have mismatched length', async function () {
+        await expect(storeContract.setItemsAvailability([10, 11], [true]))
+          .to.be.revertedWithCustomError(storeContract, 'InvalidInput')
+          .withArgs('Arrays must have the same length')
+      })
+
+      it('Should revert if setItemsPrice arrays have mismatched length', async function () {
+        await expect(storeContract.setItemsPrice([10], [ethers.parseEther('1000'), ethers.parseEther('2000')]))
+          .to.be.revertedWithCustomError(storeContract, 'InvalidInput')
+          .withArgs('Arrays must have the same length')
+      })
+
+      it('Should revert if setItemsMaxSupply arrays have mismatched length', async function () {
+        await expect(storeContract.setItemsMaxSupply([10], [25, 50]))
+          .to.be.revertedWithCustomError(storeContract, 'InvalidInput')
+          .withArgs('Arrays must have the same length')
+      })
+
+      it('Should revert if listNewItems arrays have mismatched length', async function () {
+        await expect(
+          storeContract.listNewItems([10, 11], [ethers.parseEther('1000')], [100])
+        )
+          .to.be.revertedWithCustomError(storeContract, 'InvalidInput')
+          .withArgs('Arrays must have the same length')
+      })
+
+      it('Should revert if updateTreasury is called with zero address', async function () {
+        await expect(storeContract.updateTreasury(ethers.ZeroAddress))
+          .to.be.revertedWithCustomError(storeContract, 'InvalidInput')
+          .withArgs('Invalid Treasury address')
+      })
+
+      it('Should revert if purchasing an item with price 0', async function () {
+        // Use item 12 which still has available supply
+        await storeContract.setItemsPrice([12], [0])
+        await expect(storeContract.purchaseItems([12], [1]))
+          .to.be.revertedWithCustomError(storeContract, 'InvalidInput')
+          .withArgs('Item price not found')
+      })
+    })
   })
 })
