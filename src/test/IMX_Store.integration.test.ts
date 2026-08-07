@@ -363,7 +363,9 @@ describe('IMX - Store', function () {
       })
 
       it('Should revert if setItemsPrice arrays have mismatched length', async function () {
-        await expect(storeContract.setItemsPrice([10], [ethers.parseEther('1000'), ethers.parseEther('2000')]))
+        await expect(
+          storeContract.setItemsPrice([10], [ethers.parseEther('1000'), ethers.parseEther('2000')])
+        )
           .to.be.revertedWithCustomError(storeContract, 'InvalidInput')
           .withArgs('Arrays must have the same length')
       })
@@ -375,9 +377,7 @@ describe('IMX - Store', function () {
       })
 
       it('Should revert if listNewItems arrays have mismatched length', async function () {
-        await expect(
-          storeContract.listNewItems([10, 11], [ethers.parseEther('1000')], [100])
-        )
+        await expect(storeContract.listNewItems([10, 11], [ethers.parseEther('1000')], [100]))
           .to.be.revertedWithCustomError(storeContract, 'InvalidInput')
           .withArgs('Arrays must have the same length')
       })
