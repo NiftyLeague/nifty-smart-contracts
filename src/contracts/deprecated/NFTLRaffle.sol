@@ -167,7 +167,7 @@ contract NFTLRaffle is
       prizeNFTokenIds.push(_prizeNFTTokenIds[i]);
     }
 
-    for (uint256 i = 0; i < totalPrizeCount; ) {
+    for (uint256 i = 0; i < totalPrizeCount;) {
       uint256 prizeNFTTokenId = _prizeNFTTokenIds[i];
       // slither-disable-next-line calls-loop
       prizeNFT.safeTransferFrom(msg.sender, address(this), prizeNFTTokenId, bytes(''));
@@ -197,7 +197,7 @@ contract NFTLRaffle is
     if (holderCount != _keyCount.length) revert InputError('Invalid params');
 
     // distribute 100 tickets to each Citadel Key holders
-    for (uint256 i = 0; i < holderCount; ) {
+    for (uint256 i = 0; i < holderCount;) {
       address holder = _holders[i];
       uint256 userTicketCountToAssign = 100 * _keyCount[i];
 
@@ -224,7 +224,7 @@ contract NFTLRaffle is
     if (userCount != _ticketCount.length) revert InputError('Invalid params');
 
     // distribute tickets to users
-    for (uint256 i = 0; i < userCount; ) {
+    for (uint256 i = 0; i < userCount;) {
       address user = _users[i];
       uint256 userTicketCountToAssign = _ticketCount[i];
 
@@ -266,7 +266,7 @@ contract NFTLRaffle is
     address[] memory users = getUserList();
     uint256 currentTotalTicketCount = 0;
 
-    for (uint256 i = 0; i < totalUserCount; ) {
+    for (uint256 i = 0; i < totalUserCount;) {
       address user = users[i];
       uint256 userTicketCountToAssign = userDeposits[user] / NFTL_AMOUNT_FOR_TICKET;
       if (userTicketCountToAssign != 0) {
@@ -404,7 +404,7 @@ contract NFTLRaffle is
   function _fulfillRandomWords(uint256 /*_requestId*/, uint256[] memory _randomWords) internal {
     // since we'll use the random word in the reverse order, push the last random word first
     uint256 length = _randomWords.length;
-    for (uint256 i = 0; i < length; ) {
+    for (uint256 i = 0; i < length;) {
       randomWordList.push(_randomWords[length - 1 - i]);
 
       unchecked {
