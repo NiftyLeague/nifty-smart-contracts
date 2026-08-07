@@ -1,3 +1,36 @@
-# js-yaml 3.x/4.x advisory (CVE-2026-59870, GHSA-5p4m-2wfm-xmqj): fix only lands in 5.x and is not backported.
-# Transitive via eslint/mocha/solhint/@chainlink; not exploitable in CI. Revisit when those move off js-yaml 4.x.
+# Current Hardhat/Chainlink/OpenZeppelin toolchain baseline. These advisories
+# are transitive or require coordinated upstream upgrades; revisit regularly.
+GHSA-35jp-ww65-95wh
+GHSA-3g43-6gmg-66jw
+GHSA-3h5v-q93c-6h6q
+GHSA-43fc-jf86-j433
+GHSA-5c6j-r48x-rmvq
+GHSA-66ff-xgx4-vchm
+GHSA-685m-2w69-288q
+GHSA-6chq-wfr3-2hj9
+GHSA-75px-5xx7-5xc7
+GHSA-777c-7fjr-54vf
+GHSA-93hq-5wgc-jc82
+GHSA-96hv-2xvq-fx4p
+GHSA-hfxv-24rg-xrqf
+GHSA-j5f8-grm9-p9fc
+GHSA-jr5f-v2jv-69x6
+GHSA-jvwf-75h9-cwgg
+GHSA-mh99-v99m-4gvg
+GHSA-p92q-9vqr-4j8v
+GHSA-pf86-5x62-jrwf
+GHSA-ph9p-34f9-6g65
+GHSA-pjwm-pj3p-43mv
+GHSA-pmwg-cvhr-8vh7
+GHSA-q8qp-cvcw-x6jj
+GHSA-r5fr-rjxr-66jc
+GHSA-v9p9-hfj2-hcw8
+GHSA-vjh7-7g9h-fjfh
+GHSA-vrm6-8vpv-qv8q
+GHSA-vxpw-j846-p89q
+GHSA-wcpc-wj8m-hjx6
+GHSA-xcpc-8h2w-3j85
+GHSA-xq3m-2v4x-88gg
+# js-yaml 3.x/4.x advisory (CVE-2026-59870): fix only lands in 5.x and is
+# not backported; transitive via eslint/mocha/solhint/@chainlink.
 GHSA-5p4m-2wfm-xmqj
