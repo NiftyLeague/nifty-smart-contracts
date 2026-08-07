@@ -87,7 +87,7 @@ contract HydraDistributor is
    */
   function depositHydra(uint256[] calldata _hydraTokenIdList) external onlyOwner {
     uint256 length = _hydraTokenIdList.length;
-    for (uint256 i = 0; i < length; ) {
+    for (uint256 i = 0; i < length;) {
       uint256 tokenId = _hydraTokenIdList[i];
 
       hydraTokenIds.push(tokenId);
@@ -97,7 +97,7 @@ contract HydraDistributor is
       }
     }
 
-    for (uint256 i = 0; i < length; ) {
+    for (uint256 i = 0; i < length;) {
       uint256 tokenId = _hydraTokenIdList[i];
       // slither-disable-next-line calls-loop
       niftyDegen.safeTransferFrom(msg.sender, address(this), tokenId, bytes(''));
@@ -128,7 +128,7 @@ contract HydraDistributor is
 
     // get the random Hydra tokenId
     uint256 randomValue = 1;
-    for (uint256 i = 0; i < degenCountToBurn; ) {
+    for (uint256 i = 0; i < degenCountToBurn;) {
       unchecked {
         randomValue *= _degenTokenIdList[i]; // generate the random value, ignore overflow
         ++i;
@@ -151,7 +151,7 @@ contract HydraDistributor is
     _prevHash = randomHash;
 
     // burn user's degens
-    for (uint256 i = 0; i < degenCountToBurn; ) {
+    for (uint256 i = 0; i < degenCountToBurn;) {
       // slither-disable-next-line calls-loop
       niftyDegen.safeTransferFrom(msg.sender, address(1), _degenTokenIdList[i], bytes(''));
 
@@ -172,7 +172,7 @@ contract HydraDistributor is
    */
   function withdrawAllHydra(address _to) external onlyOwner {
     uint256 length = hydraTokenIds.length;
-    for (uint256 i = 0; i < length; ) {
+    for (uint256 i = 0; i < length;) {
       uint256 tokenId = hydraTokenIds[i];
       // slither-disable-next-line calls-loop
       niftyDegen.safeTransferFrom(address(this), _to, tokenId, bytes(''));
