@@ -2,9 +2,9 @@ name: Slither Analysis
 
 on:
   push:
-    branches: [main, staging]
+    branches: [main]
   pull_request:
-    branches: [staging]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:

@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   scan:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.ref == 'staging'
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.ref == 'main'
     name: Scan
     uses: 0xPlayerOne/opencode-security/.github/workflows/opencode-security.yml@main
     with:
