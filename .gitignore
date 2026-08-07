@@ -84,3 +84,4 @@ exports/
 .pendingTransactions
 Flattened.sol
 .openzeppelin/
+generated/
