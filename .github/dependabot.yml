@@ -7,6 +7,12 @@ updates:
       interval: weekly
       day: sunday
     open-pull-requests-limit: 99
+    ignore:
+      # Code Foundry runtime pins are sync-managed (runtime_ref in
+      # code-foundry.yml). Dependabot must never bump them; a stale
+      # github-actions group PR branched before a sync can resurrect
+      # legacy caller files when merged.
+      - dependency-name: "0xPlayerOne/code-foundry*"
     groups:
       github-actions:
         applies-to: version-updates
@@ -20,5 +26,27 @@ updates:
     open-pull-requests-limit: 99
     groups:
       npm-dependencies:
+        applies-to: version-updates
+        patterns: ['*']
+  - package-ecosystem: cargo
+    directory: /
+    target-branch: main
+    schedule:
+      interval: weekly
+      day: sunday
+    open-pull-requests-limit: 99
+    groups:
+      cargo-dependencies:
+        applies-to: version-updates
+        patterns: ['*']
+  - package-ecosystem: pip
+    directory: /
+    target-branch: main
+    schedule:
+      interval: weekly
+      day: sunday
+    open-pull-requests-limit: 99
+    groups:
+      python-dependencies:
         applies-to: version-updates
         patterns: ['*']
