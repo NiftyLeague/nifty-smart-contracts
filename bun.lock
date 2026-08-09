@@ -22,10 +22,10 @@
         "@openzeppelin/contracts-upgradeable-v4": "npm:@openzeppelin/contracts-upgradeable@4.9.6",
         "@openzeppelin/contracts-v4": "npm:@openzeppelin/contracts@4.9.6",
         "@openzeppelin/hardhat-upgrades": "^4.1.0",
-        "@rocketh/deploy": "0.19.10",
-        "@rocketh/node": "0.19.10",
-        "@rocketh/proxy": "0.19.16",
-        "@rocketh/read-execute": "0.19.5",
+        "@rocketh/deploy": "0.19.11",
+        "@rocketh/node": "0.19.11",
+        "@rocketh/proxy": "0.19.17",
+        "@rocketh/read-execute": "0.19.6",
         "@typechain/ethers-v6": "^0.5.1",
         "@types/chai": "^5.2.3",
         "@types/mocha": "^10.0.10",
@@ -51,7 +51,7 @@
         "prettier": "^3.9.6",
         "prettier-plugin-solidity": "^2.4.0",
         "ramda": "^0.32.0",
-        "rocketh": "0.19.9",
+        "rocketh": "0.19.10",
         "solhint": "^6.2.3",
         "solhint-plugin-prettier": "^0.1.0",
         "solidity-bytes-utils": "^0.8.4",
@@ -567,15 +567,15 @@
 
     "@protobufjs/utf8": ["@protobufjs/utf8@1.1.2", "", {}, "sha512-b1UQwcEZ4yCnMCD8DAL1VlbvBJE9/IX4FTIp7BG1xYpf29SLazLSrqUkj4w7Y5y7cCVP6E5tcqqcI0xemPkHug=="],
 
-    "@rocketh/core": ["@rocketh/core@0.19.5", "", { "dependencies": { "abitype": "^1.2.4", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.48.2" } }, "sha512-qFYGxKVvS3HZZxDg2qdhYsvMTIsveJJF3hUNNrLC7wcYQzmfQ1Ae/geAxCOtxiQiD3OIPIrlvP6bIULw4lWxrA=="],
+    "@rocketh/core": ["@rocketh/core@0.19.6", "", { "dependencies": { "abitype": "^1.2.4", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.48.2" } }, "sha512-g86bthA1kcUl7tl354A1+bHO6v8iHrXmAIebHog5Ria3sB+QKmcVYh1LZBnJ4KxgnQukS1hyMQ1GO4mGNejcvQ=="],
 
-    "@rocketh/deploy": ["@rocketh/deploy@0.19.10", "", { "dependencies": { "@rocketh/core": "0.19.5", "abitype": "^1.2.4", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.48.2" } }, "sha512-Ftfhj81sfqCWPMG451mELJeIIBYmjYPUT/L5pQeCOrX+HhoyPjAVnmv5gX03vmf4uSSeeCAzaqeUSG4zr2F81A=="],
+    "@rocketh/deploy": ["@rocketh/deploy@0.19.11", "", { "dependencies": { "@rocketh/core": "0.19.6", "abitype": "^1.2.4", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.48.2" } }, "sha512-LeEKULCl1ncG+O0BMYvBJyD6Xu8XXSKUIEAeeaMqOWMSsKAaf5A6V+gAq4OeWNKjv2sQ3twtSHCpQoQ/sl3BnA=="],
 
-    "@rocketh/node": ["@rocketh/node@0.19.10", "", { "dependencies": { "@rocketh/core": "0.19.5", "@types/prompts": "^2.4.9", "change-case": "^5.4.4", "commander": "^14.0.3", "eip-1193": "^0.6.5", "ldenv": "^0.5.0", "named-logs": "^0.4.1", "named-logs-console": "^0.5.1", "prompts": "^2.4.2", "tsx": "^4.21.0", "viem": "^2.48.2" }, "peerDependencies": { "rocketh": "0.19.9" }, "bin": { "rocketh": "dist/cli.js" } }, "sha512-b85z9cIsH/Va3hokcxMi2Ybhb+eD1G9kBR0XGU14mDZj8QfH1udfpHpH9IKVgIgXLga50TzofyTR00c0cyxiIg=="],
+    "@rocketh/node": ["@rocketh/node@0.19.11", "", { "dependencies": { "@rocketh/core": "0.19.6", "@types/prompts": "^2.4.9", "change-case": "^5.4.4", "commander": "^14.0.3", "eip-1193": "^0.6.5", "ldenv": "^0.5.0", "named-logs": "^0.4.1", "named-logs-console": "^0.5.1", "prompts": "^2.4.2", "tsx": "^4.21.0", "viem": "^2.48.2" }, "peerDependencies": { "rocketh": "0.19.10" }, "bin": { "rocketh": "dist/cli.js" } }, "sha512-UE3gql2r3pfWnR8k4Ner+5ufyWOUoJvMEWD25viN4wePM4AQnt+GfPQjpCR1jgyn+l6ZNEPjUVQhgtZyzsZujQ=="],
 
-    "@rocketh/proxy": ["@rocketh/proxy@0.19.16", "", { "dependencies": { "@rocketh/core": "0.19.5", "@rocketh/deploy": "0.19.10", "@rocketh/read-execute": "0.19.5", "abitype": "^1.2.4", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.48.2" } }, "sha512-3tAnEhn82WoPygzhTMwjMaAl16ZwYUIvr3pPw9UoRAZQlh3jVoL7YSzuXIrbs/Mp6rmFwHpgXPsnHRbNNbiDSg=="],
+    "@rocketh/proxy": ["@rocketh/proxy@0.19.17", "", { "dependencies": { "@rocketh/core": "0.19.6", "@rocketh/deploy": "0.19.11", "@rocketh/read-execute": "0.19.6", "abitype": "^1.2.4", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.48.2" } }, "sha512-IGu6bn0Eeefb3ArD0w4HDaqmcFicqfsRZmYbtfbYF50o4sfYHNmqRIaAJZIRpiD5DsDd9ksL3pQmcb2NuyWGPA=="],
 
-    "@rocketh/read-execute": ["@rocketh/read-execute@0.19.5", "", { "dependencies": { "@rocketh/core": "0.19.5", "abitype": "^1.2.4", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.48.2" } }, "sha512-4T8/19HnfIf6/AYvJwWueRC5LD4VpRUG1vIXtW15uMYhDlCp3NxKP+A1nOO3xZACtr7phd12ylbpWMHhX2Mb4A=="],
+    "@rocketh/read-execute": ["@rocketh/read-execute@0.19.6", "", { "dependencies": { "@rocketh/core": "0.19.6", "abitype": "^1.2.4", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.48.2" } }, "sha512-nltfaGdzNRy5cVZAoOJRvs/bl6LmcDTd5kIQkOAdeC7KqBHFonRLUSWDWeUMipMwtArKY4FVfqeLCrcoCoWJTQ=="],
 
     "@scroll-tech/contracts": ["@scroll-tech/contracts@2.0.0", "", {}, "sha512-O8sVaA/bVKH/mp+bBfUjZ/vYr5mdBExCpKRLre4r9TbXTtiaY9Uo5xU8dcG3weLxyK0BZqDTP2aCNp4Q0f7SeA=="],
 
@@ -1523,7 +1523,7 @@
 
     "rlp": ["rlp@2.2.7", "", { "dependencies": { "bn.js": "^5.2.0" }, "bin": { "rlp": "bin/rlp" } }, "sha512-d5gdPmgQ0Z+AklL2NVXr/IoSjNZFfTVvQWzL/AM2AOcSzYP2xjlb0AC8YyCLc41MSNf6P6QVtjgPdmVtzb+4lQ=="],
 
-    "rocketh": ["rocketh@0.19.9", "", { "dependencies": { "@rocketh/core": "0.19.5", "abitype": "^1.2.4", "change-case": "^5.4.4", "eip-1193": "^0.6.5", "eip-1193-jsonrpc-provider": "^0.4.3", "ldenv": "^0.5.0", "named-logs": "^0.4.1" } }, "sha512-53/4hu80wUkZlhRFc/L3HAHGVKFtZIIS6qPFcs5rxD9vKJ7ot/ugeLyprX7B97n7P+khO849roI/UuPGysz2BA=="],
+    "rocketh": ["rocketh@0.19.10", "", { "dependencies": { "@rocketh/core": "0.19.6", "abitype": "^1.2.4", "change-case": "^5.4.4", "eip-1193": "^0.6.5", "eip-1193-jsonrpc-provider": "^0.4.3", "ldenv": "^0.5.0", "named-logs": "^0.4.1" } }, "sha512-sdZJpxP8CMuKYG13RwhhYy0wJc4H6KzIdCAj5G4PpNUS0JOfHHOCJ5CPvB5cXJ7MedujMbZqj/AJ8fd/+2zS8A=="],
 
     "rpc-websockets": ["rpc-websockets@9.3.10", "", { "dependencies": { "@swc/helpers": "^0.5.11", "@types/ws": "^8.2.2", "buffer": "^6.0.3", "eventemitter3": "^5.0.1", "ws": "^8.5.0" }, "optionalDependencies": { "bufferutil": "^4.0.1", "utf-8-validate": "^6.0.0" } }, "sha512-QT5PQ6LiWhA5RCS93oWwgxU4XzQltkYm8C3aTmmKEgj0HolGRo3VbdzELw7CEV35l9T7Amha8Vnr4rCfSjVP+w=="],
 
@@ -1985,11 +1985,7 @@
 
     "hardhat/ws": ["ws@8.21.1", "", { "peerDependencies": { "bufferutil": "^4.0.1", "utf-8-validate": ">=5.0.2" }, "optionalPeers": ["bufferutil", "utf-8-validate"] }, "sha512-+0NTnW77fFN/DjQi6k/Sq/Yvk4Sgajw7urW8V+asjXnRgDs9gyGkdb7EzgfhA4goXsRIZKE28fzIXBHEzhuiWw=="],
 
-    "hardhat-deploy/@rocketh/node": ["@rocketh/node@0.19.11", "", { "dependencies": { "@rocketh/core": "0.19.6", "@types/prompts": "^2.4.9", "change-case": "^5.4.4", "commander": "^14.0.3", "eip-1193": "^0.6.5", "ldenv": "^0.5.0", "named-logs": "^0.4.1", "named-logs-console": "^0.5.1", "prompts": "^2.4.2", "tsx": "^4.21.0", "viem": "^2.48.2" }, "peerDependencies": { "rocketh": "0.19.10" }, "bin": { "rocketh": "dist/cli.js" } }, "sha512-UE3gql2r3pfWnR8k4Ner+5ufyWOUoJvMEWD25viN4wePM4AQnt+GfPQjpCR1jgyn+l6ZNEPjUVQhgtZyzsZujQ=="],
-
     "hardhat-deploy/commander": ["commander@14.0.3", "", {}, "sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw=="],
-
-    "hardhat-deploy/rocketh": ["rocketh@0.19.10", "", { "dependencies": { "@rocketh/core": "0.19.6", "abitype": "^1.2.4", "change-case": "^5.4.4", "eip-1193": "^0.6.5", "eip-1193-jsonrpc-provider": "^0.4.3", "ldenv": "^0.5.0", "named-logs": "^0.4.1" } }, "sha512-sdZJpxP8CMuKYG13RwhhYy0wJc4H6KzIdCAj5G4PpNUS0JOfHHOCJ5CPvB5cXJ7MedujMbZqj/AJ8fd/+2zS8A=="],
 
     "hash-base/readable-stream": ["readable-stream@2.3.8", "", { "dependencies": { "core-util-is": "~1.0.0", "inherits": "~2.0.3", "isarray": "~1.0.0", "process-nextick-args": "~2.0.0", "safe-buffer": "~5.1.1", "string_decoder": "~1.1.1", "util-deprecate": "~1.0.1" } }, "sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA=="],
 
@@ -2162,10 +2158,6 @@
     "ethers/@types/node/undici-types": ["undici-types@6.19.8", "", {}, "sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw=="],
 
     "glob/minimatch/brace-expansion": ["brace-expansion@2.1.4", "", { "dependencies": { "balanced-match": "^1.0.0" } }, "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg=="],
-
-    "hardhat-deploy/@rocketh/node/@rocketh/core": ["@rocketh/core@0.19.6", "", { "dependencies": { "abitype": "^1.2.4", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.48.2" } }, "sha512-g86bthA1kcUl7tl354A1+bHO6v8iHrXmAIebHog5Ria3sB+QKmcVYh1LZBnJ4KxgnQukS1hyMQ1GO4mGNejcvQ=="],
-
-    "hardhat-deploy/rocketh/@rocketh/core": ["@rocketh/core@0.19.6", "", { "dependencies": { "abitype": "^1.2.4", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.48.2" } }, "sha512-g86bthA1kcUl7tl354A1+bHO6v8iHrXmAIebHog5Ria3sB+QKmcVYh1LZBnJ4KxgnQukS1hyMQ1GO4mGNejcvQ=="],
 
     "hash-base/readable-stream/safe-buffer": ["safe-buffer@5.1.2", "", {}, "sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g=="],
 
