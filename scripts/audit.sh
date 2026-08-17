@@ -83,6 +83,7 @@ ALLOWLIST=(
   GHSA-xq3m-2v4x-88gg
   GHSA-xx6v-rp6x-q39c
   GHSA-xxjr-mmjv-4gpg
+  GHSA-5p4m-2wfm-xmqj
   MAL-2025-21003
 )
 
