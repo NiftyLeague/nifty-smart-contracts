@@ -22,6 +22,7 @@
         "@openzeppelin/contracts-upgradeable-v4": "npm:@openzeppelin/contracts-upgradeable@4.9.6",
         "@openzeppelin/contracts-v4": "npm:@openzeppelin/contracts@4.9.6",
         "@openzeppelin/hardhat-upgrades": "^4.1.0",
+        "@rocketh/core": "0.19.12",
         "@rocketh/deploy": "0.19.17",
         "@rocketh/node": "0.19.21",
         "@rocketh/proxy": "0.19.23",
