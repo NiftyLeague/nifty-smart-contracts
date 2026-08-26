@@ -1,6 +1,5 @@
-[test]
-# bun:test covers framework-agnostic TS logic (constants, scripts) alongside the
-# Hardhat contract suite (src/test/*.test.ts, run via `hardhat test`). Scoping
-# the root to bun-tests/ keeps bun from trying to execute the Solidity tests.
-root = "./bun-tests"
-exclude = ["node_modules", "dist", "src/test", "artifacts", "cache", "types"]
+[install]
+# Hardhat resolves legacy bare OpenZeppelin aliases relative to dependencies.
+# Keep this workspace's virtual store local so those aliases remain reachable.
+globalStore = false
+linker = "isolated"
