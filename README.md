@@ -7,7 +7,7 @@ This project demonstrates an advanced Hardhat use case, integrating other tools 
 ### Install dependencies
 
 ```bash
-pnpm install
+bun install
 ```
 
 ### Setup environment variables
@@ -21,7 +21,7 @@ cp .env.example .env.local
 ### Compile code
 
 ```bash
-pnpm build
+bun run build
 ```
 
 This command uses `hardhat clean` to clear cache and delete all artifacts. It then runs `hardhat compile` to compile the entire project, building fresh artifacts.
@@ -33,27 +33,27 @@ This command uses `hardhat clean` to clear cache and delete all artifacts. It th
 We use [Prettier](https://prettier.io/) for code formatting!
 
 ```bash
-pnpm format
+bun run format
 ```
 
-This will run both `pnpm format:ts` & `pnpm format:sol` to write all files with the necessary plugins.
+This will run both `bun run format:ts` and `bun run format:sol` to write all files with the necessary plugins.
 
 ### Linting
 
 For TypeScript files we use [ESLint](https://eslint.org/) and for Solidity files we use [Solhint](https://protofire.io/projects/solhint). You can run both with:
 
 ```bash
-pnpm lint
+bun run lint
 ```
 
-If you want to run them individually use `pnpm lint:ts` or `pnpm lint:sol`
+If you want to run them individually use `bun run lint:ts` or `bun run lint:sol`.
 
 ### TypeScript
 
 To check TypeScript for the entire app, run the following command:
 
 ```bash
-pnpm type-check
+bun run type-check
 ```
 
 ### Solidity static analysis
@@ -61,7 +61,7 @@ pnpm type-check
 We use [Slither](https://github.com/crytic/slither) in our CI pipeline to check and report any potential vulnerabilities in our contracts. You can also run this analyzer locally which will generate a `SLITHER.md` report. Run the following:
 
 ```bash
-pnpm slither
+bun run slither
 ```
 
 ### Hardhat tests
@@ -69,7 +69,7 @@ pnpm slither
 Please write tests for all contracts in the `src/test/` folder. To run all use:
 
 ```bash
-pnpm test
+bun run test
 ```
 
 You can also run a single test using:
@@ -98,7 +98,7 @@ npx hardhat node
 Deploy test contracts on Hardhat Network (this will deploy scripts sequentially in `src/deploy/hardhat`):
 
 ```bash
-pnpm deploy:hardhat
+bun run deploy:hardhat
 ```
 
 ### Tenderly DevNet:
@@ -108,7 +108,7 @@ To use DevNets, go to [Tenderly](https://tenderly.co/devnets) and spawn a new De
 You can now set `ETH_NETWORK` to "tenderly" or run:
 
 ```bash
-pnpm deploy:tenderly
+bun run deploy:tenderly
 ```
 
 ### Testnet:
@@ -116,7 +116,7 @@ pnpm deploy:tenderly
 To deploy to our preferred testnet, [Sepolia](https://www.alchemy.com/faucets/ethereum-sepolia):
 
 ```bash
-pnpm deploy:sepolia
+bun run deploy:sepolia
 ```
 
 > **Note:** hardhat will use an account `PRIVATE_KEY` defined in `.env`
@@ -126,7 +126,7 @@ pnpm deploy:sepolia
 For mainnet deployment we use [Frame](https://frame.sh/) to deploy with a Ledger signer.
 
 ```bash
-pnpm deploy:mainnet
+bun run deploy:mainnet
 ```
 
 ## Export contracts
@@ -134,7 +134,7 @@ pnpm deploy:mainnet
 To export contracts for use in client repositories, run:
 
 ```bash
-pnpm export
+bun run export
 ```
 
 This will create deployment files in `exports/` for both mainnet & sepolia which are git-ignored.
@@ -164,7 +164,7 @@ Copy the .env.example file to a file named .env, and then edit it to fill in the
 To verify all deployments on your selected network, run:
 
 ```bash
-pnpm verify
+bun run verify
 ```
 
 This will use the `etherscan-verify` script from [hardhat-deploy](https://github.com/wighawag/hardhat-deploy?tab=readme-ov-file#4-hardhat-etherscan-verify) to quickly verify all deployments!
@@ -178,7 +178,7 @@ If you instead want to target a specific deployment to verify:
 Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:
 
 ```shell
-pnpm hardhat verify --network {network} DEPLOYED_CONTRACT_ADDRESS
+bun run hardhat verify --network {network} DEPLOYED_CONTRACT_ADDRESS
 ```
 
 #### Verification issues?
@@ -186,7 +186,7 @@ pnpm hardhat verify --network {network} DEPLOYED_CONTRACT_ADDRESS
 You can try flattening the contract source code to manually submit for verification:
 
 ```shell
-pnpm hardhat flatten src/contracts/Foo.sol > Flattened.sol
+bun run hardhat flatten src/contracts/Foo.sol > Flattened.sol
 ```
 
 ## Performance optimizations
