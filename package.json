@@ -73,11 +73,11 @@
     "@openzeppelin/contracts-v4": "npm:@openzeppelin/contracts@4.9.6",
     "@openzeppelin/contracts-upgradeable-v4": "npm:@openzeppelin/contracts-upgradeable@4.9.6",
     "@openzeppelin/hardhat-upgrades": "^4.1.0",
-    "@rocketh/core": "0.19.12",
-    "@rocketh/deploy": "0.19.17",
-    "@rocketh/node": "0.19.21",
-    "@rocketh/proxy": "0.19.23",
-    "@rocketh/read-execute": "0.19.12",
+    "@rocketh/core": "0.19.13",
+    "@rocketh/deploy": "0.19.18",
+    "@rocketh/node": "0.19.22",
+    "@rocketh/proxy": "0.19.24",
+    "@rocketh/read-execute": "0.19.13",
     "@typechain/ethers-v6": "^0.5.1",
     "@types/chai": "^5.2.3",
     "@types/mocha": "^10.0.10",
@@ -103,14 +103,14 @@
     "prettier": "^3.9.6",
     "prettier-plugin-solidity": "^2.4.1",
     "ramda": "^0.32.0",
-    "rocketh": "0.19.19",
+    "rocketh": "0.19.20",
     "solhint": "^6.2.4",
     "solhint-plugin-prettier": "^0.1.0",
     "solidity-bytes-utils": "^0.8.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typechain": "^8.3.2",
-    "typescript": "5.9.3"
+    "typescript": "7.0.2"
   },
   "engines": {
     "node": "24.18.0"
