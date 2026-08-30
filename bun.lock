@@ -22,11 +22,11 @@
         "@openzeppelin/contracts-upgradeable-v4": "npm:@openzeppelin/contracts-upgradeable@4.9.6",
         "@openzeppelin/contracts-v4": "npm:@openzeppelin/contracts@4.9.6",
         "@openzeppelin/hardhat-upgrades": "^4.1.0",
-        "@rocketh/core": "0.19.12",
-        "@rocketh/deploy": "0.19.17",
-        "@rocketh/node": "0.19.21",
-        "@rocketh/proxy": "0.19.23",
-        "@rocketh/read-execute": "0.19.12",
+        "@rocketh/core": "0.19.13",
+        "@rocketh/deploy": "0.19.18",
+        "@rocketh/node": "0.19.22",
+        "@rocketh/proxy": "0.19.24",
+        "@rocketh/read-execute": "0.19.13",
         "@typechain/ethers-v6": "^0.5.1",
         "@types/chai": "^5.2.3",
         "@types/mocha": "^10.0.10",
@@ -52,7 +52,7 @@
         "prettier": "^3.9.6",
         "prettier-plugin-solidity": "^2.4.1",
         "ramda": "^0.32.0",
-        "rocketh": "0.19.19",
+        "rocketh": "0.19.20",
         "solhint": "^6.2.4",
         "solhint-plugin-prettier": "^0.1.0",
         "solidity-bytes-utils": "^0.8.4",
@@ -568,15 +568,15 @@
 
     "@protobufjs/utf8": ["@protobufjs/utf8@1.1.2", "", {}, "sha512-b1UQwcEZ4yCnMCD8DAL1VlbvBJE9/IX4FTIp7BG1xYpf29SLazLSrqUkj4w7Y5y7cCVP6E5tcqqcI0xemPkHug=="],
 
-    "@rocketh/core": ["@rocketh/core@0.19.12", "", { "dependencies": { "abitype": "^1.3.0", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.55.13" } }, "sha512-gRZd+EIzjOsg+MSO1Gdyw8VirdxU+B7+WzwTmbXylrtC+umUJD5xKMBH63wWhE22655wbvSZL4cVQKer75q2XQ=="],
+    "@rocketh/core": ["@rocketh/core@0.19.13", "", { "dependencies": { "abitype": "^1.3.0", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.55.13" } }, "sha512-JH1MYMAmKZRhyrKi3yRh7dnDGlXANdA5fVW73vlqbcDNrTtlM77zt9HXuyVcSe9gZLBy/mRSegAXsfoDBAmmlg=="],
 
-    "@rocketh/deploy": ["@rocketh/deploy@0.19.17", "", { "dependencies": { "@rocketh/core": "0.19.12", "abitype": "^1.3.0", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.55.13" } }, "sha512-kpnixrAX70ZGOsrxOhI78AbYCH65t45Yd8oYI96cpxwdArMmzg1GyuzlwmUNlAvywu/McL6FyxCjKNZd/wFT9g=="],
+    "@rocketh/deploy": ["@rocketh/deploy@0.19.18", "", { "dependencies": { "@rocketh/core": "0.19.13", "abitype": "^1.3.0", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.55.13" } }, "sha512-peBMkDT/Gs9B9tNFBuT/HIO7aLlxRVtJ41VLjIMPFt2LImTNwHfCqgzqMfLoG2RpeyT5ySBOqj2+kxI1vREREA=="],
 
-    "@rocketh/node": ["@rocketh/node@0.19.21", "", { "dependencies": { "@rocketh/core": "0.19.12", "@types/prompts": "^2.4.9", "change-case": "^5.4.4", "commander": "^15.0.0", "eip-1193": "^0.6.5", "ldenv": "^0.6.0", "named-logs": "^0.4.1", "named-logs-console": "^0.5.1", "prompts": "^2.4.2", "tsx": "^4.23.12", "viem": "^2.55.13" }, "peerDependencies": { "rocketh": "^0.19.19" }, "bin": { "rocketh": "dist/cli.js" } }, "sha512-xSIZQlv6a6N1pqtnPsILB9a0NrwEAhWjTxXjuE6AAJAwyi8/i+9cxpwStbD9S0S4m96EhHi2rGAuLql65pWQ4g=="],
+    "@rocketh/node": ["@rocketh/node@0.19.22", "", { "dependencies": { "@rocketh/core": "0.19.13", "@types/prompts": "^2.4.9", "change-case": "^5.4.4", "commander": "^15.0.0", "eip-1193": "^0.6.5", "ldenv": "^0.6.0", "named-logs": "^0.4.1", "named-logs-console": "^0.5.1", "prompts": "^2.4.2", "tsx": "^4.23.12", "viem": "^2.55.13" }, "peerDependencies": { "rocketh": "^0.19.20" }, "bin": { "rocketh": "dist/cli.js" } }, "sha512-enDqjOyG9XDc2zVzfnod3d77N8IFJHUdYqioHRU3Q3G3fJGjRRQwxF5T8uQNAqLHDrFH/jkbhtigoekxg/M/Ng=="],
 
-    "@rocketh/proxy": ["@rocketh/proxy@0.19.23", "", { "dependencies": { "@rocketh/core": "0.19.12", "@rocketh/deploy": "0.19.17", "@rocketh/read-execute": "0.19.12", "abitype": "^1.3.0", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.55.13" } }, "sha512-DAibGzPaaFsmzpxyyecfno0eony/jXek/1Gyz1TP8sl8XIM/oX5o05O/fGQUTVdCTzHTszrhN6MTnzLEyL+qtw=="],
+    "@rocketh/proxy": ["@rocketh/proxy@0.19.24", "", { "dependencies": { "@rocketh/core": "0.19.13", "@rocketh/deploy": "0.19.18", "@rocketh/read-execute": "0.19.13", "abitype": "^1.3.0", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.55.13" } }, "sha512-6MHTWpDwJNg1peqLHLnMe/gBpLjk4GICFUrsmNmErNUuTCuPXOmg4Tt6NWojGCV2IB7BSYhbCXeH+kaHC5D4+Q=="],
 
-    "@rocketh/read-execute": ["@rocketh/read-execute@0.19.12", "", { "dependencies": { "@rocketh/core": "0.19.12", "abitype": "^1.3.0", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.55.13" } }, "sha512-OZeppbJYTAKW/PoOW1BQ/9NnjVSnnmuyw9jSdxf0SXz78wBHV3EaAaIb4xIjekG2E1u6UUv08MQPL0M2aTBVPw=="],
+    "@rocketh/read-execute": ["@rocketh/read-execute@0.19.13", "", { "dependencies": { "@rocketh/core": "0.19.13", "abitype": "^1.3.0", "eip-1193": "^0.6.5", "named-logs": "^0.4.1", "viem": "^2.55.13" } }, "sha512-Gw409mfdHYiJDyUPmYUccziAIsuDXd+HHzZ53FNp31h6jhQDhrNiKUnsvXrWxwYHG6JQsZ9YHPT05TtbIy8V1Q=="],
 
     "@scroll-tech/contracts": ["@scroll-tech/contracts@2.0.0", "", {}, "sha512-O8sVaA/bVKH/mp+bBfUjZ/vYr5mdBExCpKRLre4r9TbXTtiaY9Uo5xU8dcG3weLxyK0BZqDTP2aCNp4Q0f7SeA=="],
 
@@ -1524,7 +1524,7 @@
 
     "rlp": ["rlp@2.2.7", "", { "dependencies": { "bn.js": "^5.2.0" }, "bin": { "rlp": "bin/rlp" } }, "sha512-d5gdPmgQ0Z+AklL2NVXr/IoSjNZFfTVvQWzL/AM2AOcSzYP2xjlb0AC8YyCLc41MSNf6P6QVtjgPdmVtzb+4lQ=="],
 
-    "rocketh": ["rocketh@0.19.19", "", { "dependencies": { "@rocketh/core": "0.19.12", "abitype": "^1.3.0", "change-case": "^5.4.4", "eip-1193": "^0.6.5", "eip-1193-jsonrpc-provider": "^0.4.3", "ldenv": "^0.6.0", "named-logs": "^0.4.1" } }, "sha512-xJJ4AB8qxKWo0xnfSDJ+T1Ef/kpx7tdM77iNIhyLhKTR700PFgs3flvYQkcual7rpGTEQQhpNbCPrXf0cyUYeg=="],
+    "rocketh": ["rocketh@0.19.20", "", { "dependencies": { "@rocketh/core": "0.19.13", "abitype": "^1.3.0", "change-case": "^5.4.4", "eip-1193": "^0.6.5", "eip-1193-jsonrpc-provider": "^0.4.3", "ldenv": "^0.6.0", "named-logs": "^0.4.1" } }, "sha512-ScD5x1KJmtYPZy9FPIuQlNsidgmMb1SqtCsZ2iJhea7tGHxGCE7alg3cKv6e+LRVRlHaMZtge0ndFomq+/41fQ=="],
 
     "rpc-websockets": ["rpc-websockets@9.3.10", "", { "dependencies": { "@swc/helpers": "^0.5.11", "@types/ws": "^8.2.2", "buffer": "^6.0.3", "eventemitter3": "^5.0.1", "ws": "^8.5.0" }, "optionalDependencies": { "bufferutil": "^4.0.1", "utf-8-validate": "^6.0.0" } }, "sha512-QT5PQ6LiWhA5RCS93oWwgxU4XzQltkYm8C3aTmmKEgj0HolGRo3VbdzELw7CEV35l9T7Amha8Vnr4rCfSjVP+w=="],
 
