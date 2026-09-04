@@ -116,7 +116,8 @@
     "node": "24.18.0"
   },
   "overrides": {
-    "fast-uri": "3.1.7"
+    "fast-uri": "3.1.7",
+    "toml": "4.2.0"
   },
   "packageManager": "bun@1.4.0",
   "trustedDependencies": [
