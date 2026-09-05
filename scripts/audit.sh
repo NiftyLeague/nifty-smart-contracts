@@ -17,6 +17,10 @@ ALLOWLIST=(
   GHSA-445q-vr5w-6q77
   GHSA-4992-7rv2-5pvq
   GHSA-49q7-c7j4-3p7m
+  # stream-json 1.x nested-input DoS (GHSA-528h-pc64-c93x, local-only): the fix
+  # lands only in ESM-only 3.x, which breaks jayson 4.3.0's CJS require;
+  # dev/test RPC tooling with no production attack surface.
+  GHSA-528h-pc64-c93x
   GHSA-52f5-9888-hmc6
   GHSA-58qx-3vcg-4xpx
   GHSA-5c6j-r48x-rmvq
