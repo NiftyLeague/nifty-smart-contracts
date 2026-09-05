@@ -28,6 +28,14 @@ updates:
       npm-dependencies:
         applies-to: version-updates
         patterns: ['*']
+    ignore:
+      # TypeScript 7 cannot resolve node: builtins in this toolchain
+      # (verified); revisit when the TS/eslint toolchain supports TS 7.
+      - dependency-name: 'typescript'
+        versions: ['>=7.0.0']
+      # Held with TypeScript 5.9 above.
+      - dependency-name: '@types/node'
+        versions: ['>=23']
   - package-ecosystem: pip
     directory: /
     target-branch: main
