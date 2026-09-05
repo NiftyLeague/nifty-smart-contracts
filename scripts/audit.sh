@@ -84,6 +84,7 @@ ALLOWLIST=(
   GHSA-xx6v-rp6x-q39c
   GHSA-xxjr-mmjv-4gpg
   GHSA-5p4m-2wfm-xmqj
+  GHSA-528h-pc64-c93x
   MAL-2025-21003
 )
 
