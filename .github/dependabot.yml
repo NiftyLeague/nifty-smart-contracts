@@ -2,7 +2,7 @@ version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
-    target-branch: main
+    target-branch: staging
     schedule:
       interval: weekly
       day: sunday
@@ -19,7 +19,7 @@ updates:
         patterns: ['*']
   - package-ecosystem: npm
     directory: /
-    target-branch: main
+    target-branch: staging
     schedule:
       interval: weekly
       day: sunday
@@ -38,7 +38,7 @@ updates:
         versions: ['>=23']
   - package-ecosystem: pip
     directory: /
-    target-branch: main
+    target-branch: staging
     schedule:
       interval: weekly
       day: sunday
