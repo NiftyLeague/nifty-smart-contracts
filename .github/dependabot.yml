@@ -29,10 +29,11 @@ updates:
         applies-to: version-updates
         patterns: ['*']
     ignore:
-      # TypeScript 7 cannot resolve node: builtins in this toolchain
-      # (verified); revisit when the TS/eslint toolchain supports TS 7.
+      # TypeScript 6+ breaks this toolchain (verified: TS 6.0.3 errors
+      # on deprecated `baseUrl` in tsconfig, TS 7 drops it entirely).
+      # Revisit when the TS/eslint toolchain supports TS 6/7.
       - dependency-name: 'typescript'
-        versions: ['>=7.0.0']
+        versions: ['>=6.0.0']
       # Held with TypeScript 5.9 above.
       - dependency-name: '@types/node'
         versions: ['>=23']
