@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { ethers, network, time } from '~/hardhat'
+import { ethers } from '~/hardhat'
 import type { Signer } from 'ethers'
 import type { AllowedColorsStorage, MockERC20, NiftyDegen } from '~/types/typechain'
 
@@ -21,10 +21,8 @@ const APE_PUPIL = [110, 111, 112, 113, 114, 115, 116, 117, 118]
 const DOGE_SKIN = [29, 30, 31, 32, 33, 34, 35, 36]
 const DOGE_FUR = [82, 83, 84, 85, 86, 87, 88, 89]
 const DOGE_EYE = [101, 102, 103, 104, 105, 106, 107, 108, 109]
-const DOGE_PUPIL = [110, 111, 112, 113, 114, 115, 116, 117, 118]
 
 describe('NiftyDegen coverage', function () {
-  let owner: Signer
   let bob: Signer
   let nftl: MockERC20
   let colorsStorage: AllowedColorsStorage
@@ -32,7 +30,7 @@ describe('NiftyDegen coverage', function () {
 
   before(async () => {
     await resetLocalNetwork()
-    ;[owner, bob] = await ethers.getSigners()
+    ;[, bob] = await ethers.getSigners()
 
     nftl = await deployMockERC20()
 

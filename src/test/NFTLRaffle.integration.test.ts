@@ -370,7 +370,6 @@ describe('NFTLRaffle', function () {
       // Alice deposits
       let aliceNFTLBalanceBefore = await nftlToken.balanceOf(await alice.getAddress())
       let aliceDepositsBefore = await nftlRaffle.userDeposits(await alice.getAddress())
-      let aliceTicketCountBefore = await nftlRaffle.ticketCountByUser(await alice.getAddress())
 
       let nftlAmountToDeposit = (nftlAmountPerTicket * 2n + nftlAmountPerTicket) / 2n // x2.5
       await nftlToken.connect(alice).approve(await nftlRaffle.getAddress(), nftlAmountToDeposit)
@@ -386,7 +385,6 @@ describe('NFTLRaffle', function () {
       // Bob deposits
       let bobNFTLBalanceBefore = await nftlToken.balanceOf(await bob.getAddress())
       let bobDepositsBefore = await nftlRaffle.userDeposits(await bob.getAddress())
-      let bobTicketCountBefore = await nftlRaffle.ticketCountByUser(await bob.getAddress())
 
       nftlAmountToDeposit = (nftlAmountPerTicket * 2n + nftlAmountPerTicket) / 2n // x2.5
       await nftlToken.connect(bob).approve(await nftlRaffle.getAddress(), nftlAmountToDeposit)
@@ -402,7 +400,6 @@ describe('NFTLRaffle', function () {
       // Alice deposits
       aliceNFTLBalanceBefore = await nftlToken.balanceOf(await alice.getAddress())
       aliceDepositsBefore = await nftlRaffle.userDeposits(await alice.getAddress())
-      aliceTicketCountBefore = await nftlRaffle.ticketCountByUser(await alice.getAddress())
 
       nftlAmountToDeposit = (nftlAmountPerTicket * 2n + nftlAmountPerTicket) / 2n // x2.5
       await nftlToken.connect(alice).approve(await nftlRaffle.getAddress(), nftlAmountToDeposit) // 102.5

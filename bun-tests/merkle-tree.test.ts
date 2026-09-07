@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import { keccak256 } from 'ethers'
 import MerkleTree from '../src/scripts/merkle-distributor/helpers/merkle-tree'
 
 describe('MerkleTree', () => {
@@ -58,7 +57,6 @@ describe('MerkleTree', () => {
   it('generates a valid multi-element tree with correct proof structure', () => {
     const elements = [Buffer.from('x'), Buffer.from('y'), Buffer.from('z')]
     const tree = new MerkleTree(elements)
-    const root = tree.getHexRoot()
 
     // Each element has a proof array (proofs may be short if the tree
     // pairs a leaf with another leaf directly; only combined hashes are 32 bytes)

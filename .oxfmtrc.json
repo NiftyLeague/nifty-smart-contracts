@@ -1,0 +1,33 @@
+{
+  "semi": false,
+  "singleQuote": true,
+  "trailingComma": "es5",
+  "printWidth": 100,
+  "ignorePatterns": [
+    "CHANGELOG.md",
+    ".github/.code-foundry",
+    ".github/actions/",
+    "node_modules",
+    ".code-foundry",
+    ".vscode",
+    ".idea",
+    ".env",
+    "/.DS_Store",
+    "pnpm-lock.yaml",
+    "artifacts",
+    "artifacts/slither",
+    "generated",
+    "cache",
+    "deployments",
+    "typechain",
+    "src/types/typechain",
+    "Flattened.sol",
+    "SLITHER.md",
+    "coverage*",
+    "coverage.json",
+    ".openzeppelin",
+    "logs",
+    "*.log",
+    "npm-debug.log*"
+  ]
+}

@@ -2,8 +2,6 @@ import { describe, expect, it } from 'bun:test'
 import {
   NFTL_EMISSION_START,
   NFTL_EMISSION_END,
-  TOTAL_WINNER_TICKET_COUNT,
-  PENDING_PERIOD,
   BASE_METADATA_URI,
   BASE_DEGENS_URI,
   BASE_COMICS_URI,
