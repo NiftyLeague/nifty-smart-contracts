@@ -30,17 +30,17 @@ This command uses `hardhat clean` to clear cache and delete all artifacts. It th
 
 ### Check code format
 
-We use [Prettier](https://prettier.io/) for code formatting!
+We use [Oxfmt](https://oxc.rs/docs/guide/usage/formatter) for TypeScript code formatting!
 
 ```bash
 bun run format
 ```
 
-This will run both `bun run format:ts` and `bun run format:sol` to write all files with the necessary plugins.
+This will run `bun run format:ts` to write all TypeScript files. Solidity files are linted with Solhint (`bun run lint:sol`).
 
 ### Linting
 
-For TypeScript files we use [ESLint](https://eslint.org/) and for Solidity files we use [Solhint](https://protofire.io/projects/solhint). You can run both with:
+For TypeScript files we use [Oxlint](https://oxc.rs/docs/guide/usage/linter) and for Solidity files we use [Solhint](https://protofire.io/projects/solhint). You can run both with:
 
 ```bash
 bun run lint

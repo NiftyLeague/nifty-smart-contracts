@@ -14,7 +14,7 @@ export const MINTER_ROLE = '0x4d494e5445525f524f4c450000000000000000000000000000
 export const initMarketplaceRoles = async (
   network: NetworkName,
   contract: NiftyMarketplace,
-  deployer: Address
+  _deployer: Address
 ) => {
   console.log(`Initializing NiftyMarketplace roles...`)
   await contract.grantMinterRole(NIFTY_HOT_DEPLOYER)
@@ -35,7 +35,7 @@ export const renounceMarketplaceRole = async (
   console.log('✅ Complete')
 }
 
-export const initNFTLRoles = async (network: NetworkName, contract: NFTL, deployer: Address) => {
+export const initNFTLRoles = async (network: NetworkName, contract: NFTL, _deployer: Address) => {
   console.log(`Initializing NFTL roles...`)
   const hasAdminRole = await contract.hasRole(ADMIN_ROLE, NIFTY_LEDGER_DEPLOYER)
   if (!hasAdminRole) await contract.grantRole(ADMIN_ROLE, NIFTY_LEDGER_DEPLOYER)

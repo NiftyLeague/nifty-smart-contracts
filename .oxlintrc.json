@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": { "correctness": "error" },
+  "ignorePatterns": [
+    "node_modules/**",
+    "artifacts/**",
+    "cache/**",
+    "deployments/**",
+    "typechain/**",
+    "src/types/typechain/**"
+  ],
+  "overrides": [
+    {
+      "files": ["src/test/**/*.ts", "bun-tests/**/*.ts"],
+      "rules": { "no-unused-expressions": "off" }
+    }
+  ]
+}

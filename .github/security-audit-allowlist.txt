@@ -32,5 +32,5 @@ GHSA-wcpc-wj8m-hjx6
 GHSA-xcpc-8h2w-3j85
 GHSA-xq3m-2v4x-88gg
 # js-yaml 3.x/4.x advisory (CVE-2026-59870): fix only lands in 5.x and is
-# not backported; transitive via eslint/mocha/solhint/@chainlink.
+# not backported; transitive via mocha/solhint/@chainlink.
 GHSA-5p4m-2wfm-xmqj

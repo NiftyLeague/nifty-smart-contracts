@@ -9,7 +9,7 @@ const targetNetwork = network.name as NetworkName
 // If you want to verify on https://tenderly.co/
 export const tenderlyVerify = async ({
   contractName,
-  contractAddress,
+  contractAddress: _contractAddress,
 }: {
   contractName: string
   contractAddress: string

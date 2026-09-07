@@ -39,10 +39,6 @@ htmlcov/
 .coverage*
 .next/
 artifacts/
-generated/
-.coverage-contracts/
-artifacts/slither/
-results.sarif
 cache/
 !.github/actions/cache/
 !.github/actions/cache/action.yml
@@ -81,6 +77,8 @@ mise.local.lock
 *.code-workspace
 
 # Repository-specific rules
+.coverage-contracts/
+results.sarif
 deployments/localhost/
 deployments/hardhat/
 deployments/tenderly/

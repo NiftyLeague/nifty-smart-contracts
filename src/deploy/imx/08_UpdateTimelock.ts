@@ -1,10 +1,8 @@
 import type { HardhatRuntimeEnvironment } from 'hardhat/types'
 import type { Address, DeployFunction } from 'hardhat-deploy/types'
 import type { NiftyGovernor } from '~/types/typechain'
-import { NIFTY_LEDGER_DEPLOYER } from '~/constants/addresses'
 
 // TODO: Replace with Deployed Gnosis Safe
-const MULTI_SIG = NIFTY_LEDGER_DEPLOYER
 
 type TimelockArgs = [minDelay: number, proposers: Address[], executors: Address[], admin: Address]
 
