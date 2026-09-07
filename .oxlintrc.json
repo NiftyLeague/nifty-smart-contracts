@@ -14,10 +14,7 @@
   ],
   "overrides": [
     {
-      "files": [
-        "src/test/**/*.ts",
-        "bun-tests/**/*.ts"
-      ],
+      "files": ["src/test/**/*.ts", "bun-tests/**/*.ts"],
       "rules": {
         "no-unused-expressions": "off"
       }
