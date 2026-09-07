@@ -1,6 +1,9 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "categories": { "correctness": "error" },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
   "ignorePatterns": [
     "node_modules/**",
     "artifacts/**",
@@ -11,8 +14,13 @@
   ],
   "overrides": [
     {
-      "files": ["src/test/**/*.ts", "bun-tests/**/*.ts"],
-      "rules": { "no-unused-expressions": "off" }
+      "files": [
+        "src/test/**/*.ts",
+        "bun-tests/**/*.ts"
+      ],
+      "rules": {
+        "no-unused-expressions": "off"
+      }
     }
   ]
 }
