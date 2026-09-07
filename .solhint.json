@@ -1,6 +1,5 @@
 {
   "extends": ["solhint:recommended"],
-  "plugins": ["prettier"],
   "rules": {
     "compiler-version": ["warn", "0.8.19"],
     "func-visibility": ["warn", { "ignoreConstructors": true }],
@@ -17,7 +16,6 @@
     "not-rely-on-time": "off",
     "ordering": "warn",
     "quotes": "off",
-    "prettier/prettier": "error",
     "use-natspec": "off",
     "private-vars-leading-underscore": ["warn", { "strict": false }]
   }

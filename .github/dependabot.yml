@@ -29,22 +29,10 @@ updates:
         applies-to: version-updates
         patterns: ['*']
     ignore:
-      # TypeScript 6+ breaks this toolchain (verified: TS 6.0.3 errors
-      # on deprecated `baseUrl` in tsconfig, TS 7 drops it entirely).
-      # Revisit when the TS/eslint toolchain supports TS 6/7.
+      # TypeScript 7 cannot resolve node: builtins in this toolchain
+      # (verified); revisit when the TS toolchain supports TS 7.
       - dependency-name: 'typescript'
-        versions: ['>=6.0.0']
+        versions: ['>=7.0.0']
       # Held with TypeScript 5.9 above.
       - dependency-name: '@types/node'
         versions: ['>=23']
-  - package-ecosystem: pip
-    directory: /
-    target-branch: main
-    schedule:
-      interval: weekly
-      day: sunday
-    open-pull-requests-limit: 99
-    groups:
-      python-dependencies:
-        applies-to: version-updates
-        patterns: ['*']

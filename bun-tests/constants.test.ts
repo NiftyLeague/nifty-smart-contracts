@@ -22,7 +22,7 @@ describe('itemsSale percentages', () => {
 describe('allowedColors', () => {
   it('exposes at least the core species palettes', () => {
     const names = ['APE', 'HUMAN', 'DOGE', 'FROG', 'CAT', 'ALIEN', 'HYDRA', 'RUGMAN', 'SATOSHI']
-    for (const n of names) {
+    for (const _n of names) {
       expect(ALLOWED_COLORS.some((palette: number[]) => palette.length > 0)).toBe(true)
     }
     // ALLOWED_COLORS is the flattened accessible list of all palettes

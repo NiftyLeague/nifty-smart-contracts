@@ -24,7 +24,7 @@ const sendTx = async (
     [page: string]: number
   },
   data: Uint8Array,
-  nonce?: number
+  _nonce?: number
 ) => {
   console.log('address', address)
   console.log('values', values)

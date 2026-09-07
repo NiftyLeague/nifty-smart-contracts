@@ -5,7 +5,6 @@ import type { MockERC721, NFTLToken } from '~/types/typechain'
 import { deployMockERC721 } from './utils/contracts'
 
 describe('NFTLToken', function () {
-  let admin: Signer
   let alice: Signer
   let bob: Signer
   let nft: MockERC721
@@ -20,7 +19,7 @@ describe('NFTLToken', function () {
   }
 
   beforeEach(async () => {
-    ;[admin, alice, bob] = await ethers.getSigners()
+    ;[, alice, bob] = await ethers.getSigners()
     emissionStart = await time.latest()
     token = await deployToken(emissionStart)
     nft = await deployMockERC721()
