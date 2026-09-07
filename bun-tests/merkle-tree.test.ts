@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'bun:test'
 import MerkleTree from '../src/scripts/merkle-distributor/helpers/merkle-tree'
 
+const verifyProof = (leaf: Buffer, proof: Buffer[], root: Buffer): boolean => {
+  let pair = leaf
+  for (const item of proof) {
+    pair = MerkleTree.combinedHash(pair, item)
+  }
+  return pair.equals(root)
+}
+
 describe('MerkleTree', () => {
   it('constructs a tree from a single element', () => {
     const el = Buffer.from('hello')
@@ -67,15 +75,6 @@ describe('MerkleTree', () => {
       for (const p of proof) {
         expect(p).toMatch(/^0x[0-9a-f]+$/i)
       }
-    }
-
-    // Verify proofs manually using combinedHash
-    const verifyProof = (leaf: Buffer, proof: Buffer[], root: Buffer): boolean => {
-      let pair = leaf
-      for (const item of proof) {
-        pair = MerkleTree.combinedHash(pair, item)
-      }
-      return pair.equals(root)
     }
 
     const rootBuf = tree.getRoot()

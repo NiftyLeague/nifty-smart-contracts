@@ -5,6 +5,8 @@ import { type Signer } from 'ethers'
 import { BURN_PERCENTAGE, DAO_PERCENTAGE, TREASURY_PERCENTAGE } from '~/constants/itemsSale'
 import type { NiftyItemSale, NiftyEquipment, MockERC20 } from '~/types/typechain'
 
+const toRole = (role: string) => ethers.keccak256(ethers.toUtf8Bytes(role))
+
 describe('NiftySale', function () {
   let accounts: Signer[]
   let deployer: Signer
@@ -17,10 +19,6 @@ describe('NiftySale', function () {
   let nftl: MockERC20
 
   const ONE_ETHER = ethers.parseEther('1')
-
-  const toRole = (role: string) => {
-    return ethers.keccak256(ethers.toUtf8Bytes(role))
-  }
 
   beforeEach(async () => {
     accounts = await ethers.getSigners()
