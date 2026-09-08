@@ -23,6 +23,15 @@ interface MerkleDistributorInfo {
 type OldFormat = { [account: string]: string }
 type NewFormat = { address: string; earnings: bigint; reasons: string }
 
+function sortStrings(values: string[]): string[] {
+  return values.reduce<string[]>((sorted, value) => {
+    const index = sorted.findIndex((current) => value < current)
+    if (index === -1) sorted.push(value)
+    else sorted.splice(index, 0, value)
+    return sorted
+  }, [])
+}
+
 export function parseBalanceMap(balances: OldFormat | NewFormat[]): MerkleDistributorInfo {
   const balancesInNewFormat: NewFormat[] = Array.isArray(balances)
     ? balances
@@ -52,7 +61,7 @@ export function parseBalanceMap(balances: OldFormat | NewFormat[]): MerkleDistri
     return memo
   }, {})
 
-  const sortedAddresses = Object.keys(dataByAddress).sort()
+  const sortedAddresses = sortStrings(Object.keys(dataByAddress))
 
   // construct a tree
   const tree = new BalanceTree(

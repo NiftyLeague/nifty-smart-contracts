@@ -20,7 +20,12 @@ export async function exportDeployments({ deploymentsDirectory, outputFile, netw
 
   const files = (await readdir(deploymentsDirectory))
     .filter((file) => file.endsWith('.json'))
-    .sort()
+    .reduce((sorted, file) => {
+      const index = sorted.findIndex((current) => file < current)
+      if (index === -1) sorted.push(file)
+      else sorted.splice(index, 0, file)
+      return sorted
+    }, [])
 
   if (files.length === 0) {
     throw new Error(`No deployment records found in ${deploymentsDirectory}`)

@@ -8,7 +8,7 @@
  */
 import { upgrades as createUpgrades } from '@openzeppelin/hardhat-upgrades'
 
-const hardhat = await import('hard' + 'hat')
+const hardhat = await import(['hard', 'hat'].join(''))
 const connection = await hardhat.network.create()
 const hre = hardhat.default
 

@@ -17,9 +17,17 @@ const normalizeNpmPath = (sourceName) => {
   return path.posix.join('node_modules', packageName, packageRemainder)
 }
 
+const sortMappingsByTargetLength = (mappings) =>
+  mappings.reduce((sorted, mapping) => {
+    const index = sorted.findIndex((current) => mapping.to.length > current.to.length)
+    if (index === -1) sorted.push(mapping)
+    else sorted.splice(index, 0, mapping)
+    return sorted
+  }, [])
+
 const createSourceMappings = (remappings) =>
-  remappings
-    .map((remapping) => {
+  sortMappingsByTargetLength(
+    remappings.map((remapping) => {
       const [from, to] = remapping.split('=')
       const actualFrom = from.startsWith('project/:')
         ? path.posix.join('node_modules', from.slice('project/:'.length))
@@ -28,7 +36,7 @@ const createSourceMappings = (remappings) =>
           : normalizeNpmPath(from)
       return { from, to, actualFrom }
     })
-    .sort((left, right) => right.to.length - left.to.length)
+  )
 
 const normalizeSourceName = (sourceName, mappings) => {
   if (sourceName.startsWith('project/')) return sourceName.slice('project/'.length)

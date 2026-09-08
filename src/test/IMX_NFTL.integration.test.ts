@@ -2,12 +2,12 @@ import { expect } from 'chai'
 import { ethers } from '~/hardhat'
 import type { NFTL } from '~/types/typechain'
 
-describe('IMX - NFTL', function () {
-  async function deploy(owner: string, rootToken: string, name = 'Nifty League', symbol = 'NFTL') {
-    const factory = await ethers.getContractFactory('NFTL')
-    return (await factory.deploy(owner, rootToken, name, symbol)) as NFTL
-  }
+async function deploy(owner: string, rootToken: string, name = 'Nifty League', symbol = 'NFTL') {
+  const factory = await ethers.getContractFactory('NFTL')
+  return (await factory.deploy(owner, rootToken, name, symbol)) as NFTL
+}
 
+describe('IMX - NFTL', function () {
   it('validates constructor arguments', async function () {
     const [owner, root] = await ethers.getSigners()
     const factory = await ethers.getContractFactory('NFTL')

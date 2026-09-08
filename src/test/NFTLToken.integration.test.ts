@@ -4,6 +4,11 @@ import type { Signer } from 'ethers'
 import type { MockERC721, NFTLToken } from '~/types/typechain'
 import { deployMockERC721 } from './utils/contracts'
 
+async function deployToken(start: number) {
+  const factory = await ethers.getContractFactory('NFTLToken')
+  return (await factory.deploy(start)) as unknown as NFTLToken
+}
+
 describe('NFTLToken', function () {
   let alice: Signer
   let bob: Signer
@@ -12,11 +17,6 @@ describe('NFTLToken', function () {
   let emissionStart: number
 
   const DAY = 24 * 60 * 60
-
-  async function deployToken(start: number) {
-    const factory = await ethers.getContractFactory('NFTLToken')
-    return (await factory.deploy(start)) as unknown as NFTLToken
-  }
 
   beforeEach(async () => {
     ;[, alice, bob] = await ethers.getSigners()
