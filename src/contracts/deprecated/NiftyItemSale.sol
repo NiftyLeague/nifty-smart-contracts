@@ -129,7 +129,7 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
     if (length != _amounts.length) revert InputError('Mismatched params');
 
     // get total price and check the limit
-    uint256 totalPrice;
+    uint256 totalPrice = 0;
     uint256 itemId;
     uint256 amount;
     for (uint256 i; i < length; ++i) {
