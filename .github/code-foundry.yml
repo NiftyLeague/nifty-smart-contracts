@@ -4,9 +4,9 @@ languages: typescript,solidity
 features: all
 package_manager: bun
 runtime_repository: 0xPlayerOne/code-foundry
-runtime_ref: v1.5.1
+runtime_ref: v1.9.5
 runner: ubuntu-latest
-unit_runner: ubuntu-slim
+unit_runner: ubuntu-latest
 ci_runner: ubuntu-latest
 test_runner: ubuntu-latest
 security_runner: ubuntu-slim
@@ -22,7 +22,7 @@ release_type: node
 npm_publish: false
 license: apache-2.0
 git_workflow: direct
-merge_strategy: rebase
+merge_strategy: squash
 codeql: auto
 dependency_review: auto
 toolchain: auto
@@ -35,6 +35,11 @@ custom_workflows: preserve
 codeql_rust_shards: '["all"]'
 codeql_rust_threads: 1
 codeql_rust_max_parallel: 1
-release_merge_strategy: rebase
+release_merge_strategy: squash
 opencode_security_model:
 staging_validation_mode: fast
+performance_runner: ubuntu-latest
+performance: auto
+performance_command:
+performance_profile:
+performance_budget_file: performance-package-budgets.json
