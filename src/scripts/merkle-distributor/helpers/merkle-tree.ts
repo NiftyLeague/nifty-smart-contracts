@@ -6,9 +6,8 @@ export default class MerkleTree {
   private readonly layers: Buffer[][]
 
   constructor(elements: Buffer[]) {
-    this.elements = [...elements]
+    this.elements = MerkleTree.sortBuffers(elements)
     // Sort elements
-    this.elements.sort(Buffer.compare)
     // Deduplicate elements
     this.elements = MerkleTree.bufDedup(this.elements)
 
@@ -115,6 +114,15 @@ export default class MerkleTree {
     })
   }
 
+  private static sortBuffers(values: Buffer[]): Buffer[] {
+    return values.reduce<Buffer[]>((sorted, value) => {
+      const index = sorted.findIndex((current) => Buffer.compare(value, current) < 0)
+      if (index === -1) sorted.push(value)
+      else sorted.splice(index, 0, value)
+      return sorted
+    }, [])
+  }
+
   private static bufArrToHexArr(arr: Buffer[]): string[] {
     if (arr.some((el) => !Buffer.isBuffer(el))) {
       throw new Error('Array is not an array of buffers')
@@ -124,7 +132,7 @@ export default class MerkleTree {
   }
 
   private static sortAndConcat(...args: Buffer[]): Buffer {
-    return Buffer.concat([...args].sort(Buffer.compare))
+    return Buffer.concat(MerkleTree.sortBuffers(args))
   }
 
   // Helper function to replace ethereumjs-util's bufferToHex

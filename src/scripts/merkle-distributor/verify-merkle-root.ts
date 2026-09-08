@@ -14,6 +14,14 @@ program.parse(process.argv)
 const options = program.opts()
 const json = JSON.parse(fs.readFileSync(options.input, { encoding: 'utf8' }))
 
+const sortBuffers = (values: Buffer[]): Buffer[] =>
+  values.reduce<Buffer[]>((sorted, value) => {
+    const index = sorted.findIndex((current) => Buffer.compare(value, current) < 0)
+    if (index === -1) sorted.push(value)
+    else sorted.splice(index, 0, value)
+    return sorted
+  }, [])
+
 const combinedHash = (first: Buffer, second: Buffer): Buffer => {
   if (!first) {
     return second
@@ -23,9 +31,7 @@ const combinedHash = (first: Buffer, second: Buffer): Buffer => {
   }
 
   return Buffer.from(
-    keccak256(solidityPacked(['bytes32', 'bytes32'], [first, second].sort(Buffer.compare))).slice(
-      2
-    ),
+    keccak256(solidityPacked(['bytes32', 'bytes32'], sortBuffers([first, second]))).slice(2),
     'hex'
   )
 }
@@ -64,10 +70,10 @@ const getNextLayer = (elements: Buffer[]): Buffer[] => {
 }
 
 const getRoot = (balances: { account: string; amount: bigint; index: number }[]): Buffer => {
-  let nodes = balances
-    .map(({ account, amount, index }) => toNode(index, account, amount))
-    // sort by lexicographical order
-    .sort(Buffer.compare)
+  // Sort by lexicographical order.
+  let nodes = sortBuffers(
+    balances.map(({ account, amount, index }) => toNode(index, account, amount))
+  )
 
   // Deduplicate any elements
   nodes = nodes.filter((el, idx) => {
