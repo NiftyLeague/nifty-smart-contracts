@@ -30,28 +30,18 @@ contract BalanceManager is Initializable, OwnableUpgradeable {
   /// @dev Maintainer address
   address public maintainer;
 
-  event NFTLDeposited(address indexed by, uint256 amount);
+  event NFTLDeposited(address indexed by, uint256 indexed amount);
   event MaintainerUpdated(
     address indexed by,
     address indexed oldMaintainer,
     address indexed newMaintainer
   );
-  event NFTLWithdrawn(address indexed by, address indexed beneficiary, uint256 amount);
-  event NFTLWithdrawnByDAO(address indexed by, address indexed beneficiary, uint256 amount);
+  event NFTLWithdrawn(address indexed by, address indexed beneficiary, uint256 indexed amount);
+  event NFTLWithdrawnByDAO(address indexed by, address indexed beneficiary, uint256 indexed amount);
 
   error WithdrawError(uint256 nonce, uint256 _nonce, string message);
   error SignError(string message);
   error AddressError(string message);
-
-  function initialize(address _nftl, address _maintainer) public initializer {
-    __Ownable_init();
-
-    if (_nftl == address(0)) revert AddressError('Invalid NFTL token address');
-    if (_maintainer == address(0)) revert AddressError('Invalid maintainer address');
-
-    nftl = _nftl;
-    maintainer = _maintainer;
-  }
 
   /**
    * @notice Deposit NFTL tokens into the contract
@@ -130,5 +120,15 @@ contract BalanceManager is Initializable, OwnableUpgradeable {
   function withdrawByDAO(address _beneficiary, uint256 _amount) external onlyOwner {
     emit NFTLWithdrawnByDAO(msg.sender, _beneficiary, _amount);
     IERC20Upgradeable(nftl).safeTransfer(_beneficiary, _amount);
+  }
+
+  function initialize(address _nftl, address _maintainer) public initializer {
+    __Ownable_init();
+
+    if (_nftl == address(0)) revert AddressError('Invalid NFTL token address');
+    if (_maintainer == address(0)) revert AddressError('Invalid maintainer address');
+
+    nftl = _nftl;
+    maintainer = _maintainer;
   }
 }

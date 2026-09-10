@@ -22,7 +22,7 @@ contract MerkleDistributorWithDeadline is MerkleDistributor, Ownable {
     uint256 endTime_
   ) MerkleDistributor(token_, merkleRoot_) {
     // slither-disable-next-line timestamp
-    if (endTime_ <= block.timestamp) revert EndTimeInPast();
+    if (!(endTime_ > block.timestamp)) revert EndTimeInPast();
     endTime = endTime_;
   }
 

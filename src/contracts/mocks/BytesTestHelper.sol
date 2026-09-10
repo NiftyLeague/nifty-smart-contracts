@@ -10,22 +10,22 @@ contract BytesTestHelper {
   }
 
   function indexOf(
-    bytes memory _base,
-    string memory _value,
+    bytes calldata _base,
+    string calldata _value,
     uint256 _offset
   ) external pure returns (int256) {
     return Bytes.indexOf(_base, _value, _offset);
   }
 
   function substring(
-    bytes memory strBytes,
+    bytes calldata strBytes,
     uint256 startIndex,
     uint256 endIndex
   ) external pure returns (string memory) {
     return Bytes.substring(strBytes, startIndex, endIndex);
   }
 
-  function toUint(bytes memory b) external pure returns (uint256) {
+  function toUint(bytes calldata b) external pure returns (uint256) {
     return Bytes.toUint(b);
   }
 }

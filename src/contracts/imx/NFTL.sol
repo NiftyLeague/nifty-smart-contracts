@@ -18,11 +18,11 @@ import {IChildERC20} from '../interfaces/IChildERC20.sol';
  */
 
 contract NFTL is ERC20, ERC20Burnable, AccessControl, ERC20Permit, ERC20Votes, IChildERC20 {
-  ///  @dev The root token contract address
-  address private immutable _ROOT_TOKEN;
-
   ///  @dev The role to assign bridge token manager for minting/burning
   bytes32 public constant BRIDGE_ROLE = keccak256('BRIDGE_ROLE');
+
+  ///  @dev The root token contract address
+  address private immutable _ROOT_TOKEN;
 
   error InvalidInitialization(string message);
 

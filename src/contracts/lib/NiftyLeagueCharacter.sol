@@ -48,11 +48,14 @@ contract NiftyLeagueCharacter is ERC721, Ownable, Pausable {
     uint16 leftItem;
     uint16 rightItem;
   }
-  /// @dev Mapping of created character structs from token ID
-  mapping(uint256 tokenId => Character character) internal _characters;
-
   /// @dev Expected uint if no specific trait is selected
   uint256 internal constant _EMPTY_TRAIT = 0;
+
+  /// @dev Nifty League NFTL token address
+  address internal immutable _NFTL_ADDRESS;
+
+  /// @dev Mapping of created character structs from token ID
+  mapping(uint256 tokenId => Character character) internal _characters;
 
   /// @dev Mapping if character trait combination exist
   mapping(uint256 traitCombo => bool exists) internal _existMap;
@@ -62,9 +65,6 @@ contract NiftyLeagueCharacter is ERC721, Ownable, Pausable {
 
   /// @dev Array initialized in order to return removed trait list
   uint16[] internal _removedTraits;
-
-  /// @dev Nifty League NFTL token address
-  address internal immutable _NFTL_ADDRESS;
 
   /**
    * @notice Construct the Nifty League NFTs

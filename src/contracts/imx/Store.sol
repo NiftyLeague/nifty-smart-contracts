@@ -40,7 +40,7 @@ contract Store is
   /// @dev ItemId -> Paused
   mapping(uint256 itemId => bool paused) public isAvailable;
 
-  event NftlSpent(address indexed by, uint256 amount);
+  event NftlSpent(address indexed by, uint256 indexed amount);
   event ItemsMinted(address indexed by, uint256[] tokenIds, uint256[] values);
 
   error InvalidInput(string message);
@@ -56,19 +56,6 @@ contract Store is
   modifier withPermit(address owner, uint256 value, uint256 deadline, Signature calldata sig) {
     IGovToken(nftl).permit(owner, address(this), value, deadline, sig.v, sig.r, sig.s);
     _;
-  }
-
-  function initialize(address marketplace_, address nftl_, address treasury_) public initializer {
-    if (marketplace_ == address(0)) revert InvalidInput('Invalid comics address');
-    if (nftl_ == address(0)) revert InvalidInput('Invalid NFTL address');
-    if (treasury_ == address(0)) revert InvalidInput('Invalid Treasury address');
-    __Ownable_init();
-    __Pausable_init();
-    __ReentrancyGuard_init();
-
-    marketplace = marketplace_;
-    nftl = nftl_;
-    treasury = treasury_;
   }
 
   /**
@@ -235,6 +222,19 @@ contract Store is
         s: bytes32(sig[32:64]), // Copy 32 more bytes
         v: uint8(bytes1(sig[64:65])) // Copy last byte
       });
+  }
+
+  function initialize(address marketplace_, address nftl_, address treasury_) public initializer {
+    if (marketplace_ == address(0)) revert InvalidInput('Invalid comics address');
+    if (nftl_ == address(0)) revert InvalidInput('Invalid NFTL address');
+    if (treasury_ == address(0)) revert InvalidInput('Invalid Treasury address');
+    __Ownable_init();
+    __Pausable_init();
+    __ReentrancyGuard_init();
+
+    marketplace = marketplace_;
+    nftl = nftl_;
+    treasury = treasury_;
   }
 
   /**

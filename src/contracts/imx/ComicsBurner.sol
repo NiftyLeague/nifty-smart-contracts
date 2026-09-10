@@ -36,15 +36,6 @@ contract ComicsBurner is
     _;
   }
 
-  function initialize(address marketplace_) public initializer {
-    if (marketplace_ == address(0)) revert InvalidInput('Invalid comics address');
-    __Ownable_init();
-    __Pausable_init();
-    __ReentrancyGuard_init();
-
-    marketplace = marketplace_;
-  }
-
   /**
    * @notice Burns comic page(s) with prior approval to receive items associated with each page in return.
    * @param comicIds The list of comic IDs to burn.
@@ -105,6 +96,15 @@ contract ComicsBurner is
    */
   function unpause() external onlyOwner {
     _unpause();
+  }
+
+  function initialize(address marketplace_) public initializer {
+    if (marketplace_ == address(0)) revert InvalidInput('Invalid comics address');
+    __Ownable_init();
+    __Pausable_init();
+    __ReentrancyGuard_init();
+
+    marketplace = marketplace_;
   }
 
   /**

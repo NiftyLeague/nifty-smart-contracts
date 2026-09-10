@@ -55,10 +55,8 @@ abstract contract ERC20MetaTransactions is ERC20Permit, IERC20MetaTransactions {
       ++_nonces[userAddress];
     }
     // Append userAddress at the end to extract it from calling context
-    // slither-disable-next-line low-level-calls
-    (bool success, bytes memory returnData) = address(this).call(
-      abi.encodePacked(functionSignature, userAddress)
-    ); // solhint-disable avoid-low-level-calls
+    bytes memory callData = abi.encodePacked(functionSignature, userAddress);
+    (bool success, bytes memory returnData) = _callSelf(callData);
 
     require(success, 'Function call not successful');
     // slither-disable-next-line reentrancy-events
@@ -98,6 +96,19 @@ abstract contract ERC20MetaTransactions is ERC20Permit, IERC20MetaTransactions {
       sender = msg.sender;
     }
     return sender;
+  }
+
+  function _callSelf(
+    bytes memory callData
+  ) private returns (bool success, bytes memory returnData) {
+    assembly {
+      success := call(gas(), address(), 0, add(callData, 0x20), mload(callData), 0, 0)
+      let size := returndatasize()
+      returnData := mload(0x40)
+      mstore(0x40, add(returnData, and(add(size, 0x3f), not(0x1f))))
+      mstore(returnData, size)
+      returndatacopy(add(returnData, 0x20), 0, size)
+    }
   }
 
   /**

@@ -87,7 +87,7 @@ library Bytes {
     uint256 length = b.length;
     for (uint256 i = 0; i < length; ++i) {
       uint256 val = uint256(uint8(b[i]));
-      if (val >= 48 && val <= 57) {
+      if (val > 47 && val < 58) {
         // input is 0-9
         result = result * 10 + (val - 48);
       } else {

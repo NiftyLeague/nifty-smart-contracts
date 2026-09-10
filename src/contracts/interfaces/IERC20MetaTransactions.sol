@@ -10,8 +10,8 @@ interface IERC20MetaTransactions {
    * @dev Emitted when a meta transaction is successfully executed.
    */
   event MetaTransactionExecuted(
-    address userAddress,
-    address relayerAddress,
+    address indexed userAddress,
+    address indexed relayerAddress,
     bytes functionSignature
   );
 

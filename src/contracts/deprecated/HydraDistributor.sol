@@ -44,19 +44,6 @@ contract HydraDistributor is
     _disableInitializers();
   }
 
-  function initialize(address _niftyDegen, address _niftyWallet) public initializer {
-    __Ownable_init();
-    __Pausable_init();
-    __ReentrancyGuard_init();
-
-    if (_niftyDegen == address(0) || _niftyWallet == address(0)) {
-      revert AddressError('Zero address');
-    }
-
-    niftyDegen = IERC721Upgradeable(_niftyDegen);
-    niftyWallet = _niftyWallet;
-  }
-
   /**
    * @notice Update the NiftyDegen NFT address
    * @param _niftyDegen NiftyDegen NFT address
@@ -207,5 +194,18 @@ contract HydraDistributor is
 
   function getHydraTokenIds() external view returns (uint256[] memory tokenIds) {
     return hydraTokenIds;
+  }
+
+  function initialize(address _niftyDegen, address _niftyWallet) public initializer {
+    __Ownable_init();
+    __Pausable_init();
+    __ReentrancyGuard_init();
+
+    if (_niftyDegen == address(0) || _niftyWallet == address(0)) {
+      revert AddressError('Zero address');
+    }
+
+    niftyDegen = IERC721Upgradeable(_niftyDegen);
+    niftyWallet = _niftyWallet;
   }
 }

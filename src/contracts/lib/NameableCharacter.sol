@@ -93,9 +93,9 @@ abstract contract NameableCharacter is NiftyLeagueCharacter {
       bytes1 currentChar = byteName[i];
       if (currentChar == 0x20 && lastChar == 0x20) return false; // reject double spaces
       if (
-        !(currentChar >= 0x30 && currentChar <= 0x39) && //0-9
-        !(currentChar >= 0x41 && currentChar <= 0x5A) && //A-Z
-        !(currentChar >= 0x61 && currentChar <= 0x7A) && //a-z
+        !(currentChar > 0x2F && currentChar < 0x3A) && //0-9
+        !(currentChar > 0x40 && currentChar < 0x5B) && //A-Z
+        !(currentChar > 0x60 && currentChar < 0x7B) && //a-z
         !(currentChar == 0x20) //space
       ) return false;
       lastChar = currentChar;
@@ -124,7 +124,7 @@ abstract contract NameableCharacter is NiftyLeagueCharacter {
     uint256 length = bStr.length;
     bytes memory bLower = new bytes(length);
     for (uint256 i = 0; i < length; ++i) {
-      if ((uint8(bStr[i]) >= 65) && (uint8(bStr[i]) <= 90)) {
+      if ((uint8(bStr[i]) > 64) && (uint8(bStr[i]) < 91)) {
         bLower[i] = bytes1(uint8(bStr[i]) + 32);
       } else {
         bLower[i] = bStr[i];

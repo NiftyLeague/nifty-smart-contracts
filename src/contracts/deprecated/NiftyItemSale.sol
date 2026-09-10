@@ -48,70 +48,40 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
   event ItemPurchased(address indexed by, uint256[] itemIds, uint256[] amounts);
   event ItemPriceSet(
     address indexed by,
-    uint256 itemId,
+    uint256 indexed itemId,
     uint256 oldItemPrice,
-    uint256 newItemPrice
+    uint256 indexed newItemPrice
   );
   event ItemMaxCountSet(
     address indexed by,
-    uint256 itemId,
+    uint256 indexed itemId,
     uint256 oldItemMaxCount,
-    uint256 newItemMaxCount
+    uint256 indexed newItemMaxCount
   );
   event TokenPercentagesUpdated(
     address indexed by,
     uint256 oldBurnPercentage,
     uint256 oldTreasuryPercentage,
     uint256 oldDAOPercentage,
-    uint256 newBurnPercentage,
-    uint256 newTreasuryPercentage,
+    uint256 indexed newBurnPercentage,
+    uint256 indexed newTreasuryPercentage,
     uint256 newDAOPercentage
   );
   event ItemLimitUpdated(
     address indexed by,
-    uint256 itemId,
+    uint256 indexed itemId,
     uint256 oldLimitCount,
-    uint256 newLimitCount
+    uint256 indexed newLimitCount
   );
   event NFTLWithdraw(
     address indexed by,
-    uint256 burnAmount,
-    uint256 treasuryAmount,
+    uint256 indexed burnAmount,
+    uint256 indexed treasuryAmount,
     uint256 daoAmount
   );
 
   error AddressError(string message);
   error InputError(string message);
-
-  function initialize(
-    address _items,
-    address _nftl,
-    address _treasury,
-    address _dao,
-    uint256 _burnPercentage,
-    uint256 _treasuryPercentage,
-    uint256 _daoPercentage
-  ) public initializer {
-    __Ownable_init();
-    __ReentrancyGuard_init();
-    __Pausable_init();
-
-    if (_burnPercentage + _treasuryPercentage + _daoPercentage != 1000)
-      revert InputError('Invalid percentages');
-
-    if (_items == address(0)) revert AddressError('Invalid items address');
-    if (_nftl == address(0)) revert AddressError('Invalid nftl address');
-    if (_treasury == address(0)) revert AddressError('Invalid treasury address');
-    if (_dao == address(0)) revert AddressError('Invalid dao address');
-
-    items = _items;
-    nftl = _nftl;
-    treasury = _treasury;
-    dao = _dao;
-    burnPercentage = _burnPercentage;
-    treasuryPercentage = _treasuryPercentage;
-    daoPercentage = _daoPercentage;
-  }
 
   /**
    * @notice Purchase items
@@ -175,7 +145,7 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
 
     // set the item price
     for (uint256 i; i < length; ++i) {
-      if (_itemIds[i] <= 6) revert InputError('Token ID less than 7');
+      if (!(_itemIds[i] > 6)) revert InputError('Token ID less than 7');
       if (_nftlAmounts[i] < 10 ** 18) revert InputError('Price less than 1 NFTL');
 
       emit ItemPriceSet(msg.sender, _itemIds[i], itemPrices[_itemIds[i]], _nftlAmounts[i]);
@@ -202,7 +172,7 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
     // set the item max count
     for (uint256 i; i < length; ++i) {
       // check item ID
-      if (_itemIds[i] <= 6) revert InputError('Token ID less than 7');
+      if (!(_itemIds[i] > 6)) revert InputError('Token ID less than 7');
 
       // check if the max count is smaller than the current total supply
       // slither-disable-next-line calls-loop
@@ -295,6 +265,36 @@ contract NiftyItemSale is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pausab
    */
   function unpause() external onlyOwner {
     _unpause();
+  }
+
+  function initialize(
+    address _items,
+    address _nftl,
+    address _treasury,
+    address _dao,
+    uint256 _burnPercentage,
+    uint256 _treasuryPercentage,
+    uint256 _daoPercentage
+  ) public initializer {
+    __Ownable_init();
+    __ReentrancyGuard_init();
+    __Pausable_init();
+
+    if (_burnPercentage + _treasuryPercentage + _daoPercentage != 1000)
+      revert InputError('Invalid percentages');
+
+    if (_items == address(0)) revert AddressError('Invalid items address');
+    if (_nftl == address(0)) revert AddressError('Invalid nftl address');
+    if (_treasury == address(0)) revert AddressError('Invalid treasury address');
+    if (_dao == address(0)) revert AddressError('Invalid dao address');
+
+    items = _items;
+    nftl = _nftl;
+    treasury = _treasury;
+    dao = _dao;
+    burnPercentage = _burnPercentage;
+    treasuryPercentage = _treasuryPercentage;
+    daoPercentage = _daoPercentage;
   }
 
   /**

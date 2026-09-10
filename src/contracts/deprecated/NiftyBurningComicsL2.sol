@@ -23,7 +23,12 @@ contract NiftyBurningComicsL2 is
   mapping(uint256 tokenId => uint256 itemId) public itemIdByTokenId;
 
   event ComicsBurned(address indexed by, uint256[] tokenIds, uint256[] values);
-  event KeyMinted(address indexed by, uint256 tokenId, uint256 value, uint256 startIdForIMX);
+  event KeyMinted(
+    address indexed by,
+    uint256 indexed tokenId,
+    uint256 indexed value,
+    uint256 startIdForIMX
+  );
   event ItemMinted(
     address indexed by,
     uint256[] tokenIds,
@@ -34,18 +39,6 @@ contract NiftyBurningComicsL2 is
   error AddressError(string message);
   error InputError(uint256 length, string message);
 
-  function initialize(address _comics) public initializer {
-    if (_comics == address(0)) revert AddressError('Invalid comics address');
-    __Ownable_init();
-    __ReentrancyGuard_init();
-    __Pausable_init();
-
-    comics = _comics;
-
-    // set the current item index
-    itemIndex = 1;
-  }
-
   /**
    * @notice Burn comics and returns the items associated with its page
    * @dev User can burn all 6 comics at once to receive a key to the citadel
@@ -54,81 +47,35 @@ contract NiftyBurningComicsL2 is
   // slither-disable-start cyclomatic-complexity
   function burnComics(uint256[] calldata _values) external nonReentrant whenNotPaused {
     uint256 length = _values.length;
-    // check _values param
     if (length != 6) revert InputError(length, 'Invalid length');
 
-    // tokenIds and values to be minted
     uint256[] memory tokenIds = new uint256[](6);
     uint256[] memory tokenNumbersForItems = new uint256[](6);
     uint256[] memory tokenItemIndexs = new uint256[](6);
 
-    // get tokenIds and the number of keys to mint
     uint256 valueForKeys = type(uint256).max;
     for (uint256 i; i < length; ++i) {
-      // burning comics for keys
-      // get the min value in _values
       if (_values[i] < valueForKeys) valueForKeys = _values[i];
-
-      // set tokenIds
       tokenIds[i] = i + 1;
     }
 
-    // in case of the keys should be minted, set the number of items to be minted
     if (valueForKeys != 0) {
       for (uint256 i; i < length; ++i) {
         tokenNumbersForItems[i] = _values[i] - valueForKeys;
       }
     }
 
-    // burn comics
     // slither-disable-next-line reentrancy-benign
     INiftyLaunchComics(comics).burnBatch(msg.sender, tokenIds, _values);
     emit ComicsBurned(msg.sender, tokenIds, _values);
 
-    // mint the keys and items
     if (valueForKeys != 0) {
-      // mint the key and items
-      emit KeyMinted(msg.sender, 1, valueForKeys, itemIndex);
-
-      // set the itemId by the tokenId
-      for (uint256 i; i < valueForKeys; ++i) {
-        itemIdByTokenId[itemIndex + i] = 7; // 7: Key
-      }
-
-      // increase the itemIndex for next items
-      itemIndex += valueForKeys;
-
-      for (uint256 i; i < length; ++i) {
-        tokenItemIndexs[i] = itemIndex;
-
-        for (uint256 j; j < length; ++j) {
-          itemIdByTokenId[tokenItemIndexs[i] + j] = i + 1; // 1: Item1, 2: Item2, ..., 6 : Item6
-        }
-
-        // increase the itemIndex for next items
-        // slither-disable-next-line costly-loop
-        itemIndex += tokenNumbersForItems[i];
-      }
-
-      emit ItemMinted(msg.sender, tokenIds, tokenNumbersForItems, tokenItemIndexs);
+      _mintKeysAndItems(valueForKeys, length, tokenIds, tokenNumbersForItems, tokenItemIndexs);
     } else {
-      // mint items
-      for (uint256 i; i < length; ++i) {
-        tokenItemIndexs[i] = itemIndex;
-
-        // set the itemId by the tokenId
-        for (uint256 j; j < _values[i]; ++j) {
-          itemIdByTokenId[tokenItemIndexs[i] + j] = i + 1; // 1: Item1, 2: Item2, ..., 6 : Item6
-        }
-
-        // increase the itemIndex for next items
-        // slither-disable-next-line costly-loop
-        itemIndex += _values[i];
-      }
-
-      emit ItemMinted(msg.sender, tokenIds, _values, tokenItemIndexs);
+      _mintItems(length, _values, tokenIds, tokenItemIndexs);
     }
   }
+
   // slither-disable-end cyclomatic-complexity
 
   /**
@@ -145,5 +92,61 @@ contract NiftyBurningComicsL2 is
    */
   function unpause() external onlyOwner {
     _unpause();
+  }
+
+  function initialize(address _comics) public initializer {
+    if (_comics == address(0)) revert AddressError('Invalid comics address');
+    __Ownable_init();
+    __ReentrancyGuard_init();
+    __Pausable_init();
+
+    comics = _comics;
+
+    // set the current item index
+    itemIndex = 1;
+  }
+
+  function _mintKeysAndItems(
+    uint256 valueForKeys,
+    uint256 length,
+    uint256[] memory tokenIds,
+    uint256[] memory tokenNumbersForItems,
+    uint256[] memory tokenItemIndexs
+  ) private {
+    emit KeyMinted(msg.sender, 1, valueForKeys, itemIndex);
+
+    for (uint256 i; i < valueForKeys; ++i) {
+      itemIdByTokenId[itemIndex + i] = 7;
+    }
+    itemIndex += valueForKeys;
+
+    for (uint256 i; i < length; ++i) {
+      tokenItemIndexs[i] = itemIndex;
+      for (uint256 j; j < length; ++j) {
+        itemIdByTokenId[tokenItemIndexs[i] + j] = i + 1;
+      }
+      // slither-disable-next-line costly-loop
+      itemIndex += tokenNumbersForItems[i];
+    }
+
+    emit ItemMinted(msg.sender, tokenIds, tokenNumbersForItems, tokenItemIndexs);
+  }
+
+  function _mintItems(
+    uint256 length,
+    uint256[] calldata values,
+    uint256[] memory tokenIds,
+    uint256[] memory tokenItemIndexs
+  ) private {
+    for (uint256 i; i < length; ++i) {
+      tokenItemIndexs[i] = itemIndex;
+      for (uint256 j; j < values[i]; ++j) {
+        itemIdByTokenId[tokenItemIndexs[i] + j] = i + 1;
+      }
+      // slither-disable-next-line costly-loop
+      itemIndex += values[i];
+    }
+
+    emit ItemMinted(msg.sender, tokenIds, values, tokenItemIndexs);
   }
 }

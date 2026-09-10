@@ -32,7 +32,7 @@ contract NiftyItemL2 is
   /// @dev ItemID1 - item 1, ItemID 2 - item 2, ,,,, ItemID 6 - item6, ItemID 7 - key
   mapping(uint256 tokenId => uint256 itemId) public itemIdByTokenId;
 
-  event AssetMinted(address to, uint256 id, bytes blueprint);
+  event AssetMinted(address indexed to, uint256 indexed id, bytes blueprint);
 
   error AccessError(string message);
   error AddressError(string message);

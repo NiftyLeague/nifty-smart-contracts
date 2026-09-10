@@ -42,13 +42,17 @@ contract NFTLRaffle is
     uint256 endTicketId;
   }
 
+  /// @dev NFTL amount required for 1 ticket
+  uint256 public constant NFTL_AMOUNT_FOR_TICKET = 1000 * 10 ** 18;
+
   /// @dev Chainlink VRF params
-  address private _vrfCoordinator; // etherscan: 0x271682DEB8C4E0901D1a1550aD2e64D568E69909
   address private constant _LINK = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
   bytes32 private constant _S_KEY_HASH =
     0x8af398995b04c28e9951adb9721ef74c74f93e6a478f39e7e0777be13527e7ef;
   uint16 private constant _S_REQUEST_CONFIRMATIONS = 3;
   uint32 private constant _S_CALLBACK_GAS_LIMIT = 2500000;
+
+  address private _vrfCoordinator; // etherscan: 0x271682DEB8C4E0901D1a1550aD2e64D568E69909
   uint64 public subscriptionId;
 
   /// @dev Prize NFT (NiftyDegen) address
@@ -75,9 +79,6 @@ contract NFTLRaffle is
   /// @dev Total ticket count
   uint256 public totalTicketCount;
 
-  /// @dev NFTL amount required for 1 ticket
-  uint256 public constant NFTL_AMOUNT_FOR_TICKET = 1000 * 10 ** 18;
-
   /// @dev User list
   EnumerableSetUpgradeable.AddressSet internal _userList;
 
@@ -103,14 +104,14 @@ contract NFTLRaffle is
   uint256[] public randomWordList;
 
   event NewUser(address indexed to);
-  event TicketDistributed(address indexed to, uint256 ticketCount);
-  event UserDeposited(address indexed user, uint256 nftlAmount);
-  event RandomWordsRequested(uint256 requestId, uint256 randomCountToRequest);
+  event TicketDistributed(address indexed to, uint256 indexed ticketCount);
+  event UserDeposited(address indexed user, uint256 indexed nftlAmount);
+  event RandomWordsRequested(uint256 indexed requestId, uint256 indexed randomCountToRequest);
   event RandomWordsReceived(uint256 requestId, uint256[] randomWords);
   event WinnerSelected(
     address indexed by,
     address indexed winner,
-    uint256 ticketId,
+    uint256 indexed ticketId,
     uint256 prizeTokenId
   );
 
@@ -131,31 +132,6 @@ contract NFTLRaffle is
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
     _disableInitializers();
-  }
-
-  function initialize(
-    address _nftl,
-    uint256 _pendingPeriod,
-    uint256 _totalWinnerTicketCount,
-    address _prizeNFT,
-    address __vrfCoordinator
-  ) public initializer {
-    __Ownable_init();
-    __Pausable_init();
-    __ERC721Holder_init();
-
-    if (_nftl == address(0) || _prizeNFT == address(0) || __vrfCoordinator == address(0))
-      revert AddressError('Zero address');
-    if (_pendingPeriod <= 86400) revert InputError('1 day +');
-    if (_totalWinnerTicketCount == 0) revert InputError('Zero winner ticket count');
-
-    nftl = IERC20BurnableUpgradeable(_nftl);
-    raffleStartAt = block.timestamp + _pendingPeriod; // deprecated
-    totalWinnerTicketCount = _totalWinnerTicketCount;
-    prizeNFT = IERC721Upgradeable(_prizeNFT);
-    _vrfCoordinator = __vrfCoordinator;
-
-    _createNewSubscription();
   }
 
   function depositPrizeNFT(uint256[] calldata _prizeNFTTokenIds) external onlyOwner {
@@ -312,7 +288,7 @@ contract NFTLRaffle is
     onlyOwner
     returns (uint256 requestId)
   {
-    if (currentWinnerTicketCount >= totalWinnerTicketCount) revert InputError('Request overflow');
+    if (!(currentWinnerTicketCount < totalWinnerTicketCount)) revert InputError('Request overflow');
     if (totalWinnerTicketCount > totalTicketCount) revert InputError('Not enough depositors');
 
     if (randomWordList.length != 0) {
@@ -367,6 +343,31 @@ contract NFTLRaffle is
 
   function getRandomWordsList() external view returns (uint256[] memory wordList) {
     return randomWordList;
+  }
+
+  function initialize(
+    address _nftl,
+    uint256 _pendingPeriod,
+    uint256 _totalWinnerTicketCount,
+    address _prizeNFT,
+    address __vrfCoordinator
+  ) public initializer {
+    __Ownable_init();
+    __Pausable_init();
+    __ERC721Holder_init();
+
+    if (_nftl == address(0) || _prizeNFT == address(0) || __vrfCoordinator == address(0))
+      revert AddressError('Zero address');
+    if (!(_pendingPeriod > 86400)) revert InputError('1 day +');
+    if (_totalWinnerTicketCount == 0) revert InputError('Zero winner ticket count');
+
+    nftl = IERC20BurnableUpgradeable(_nftl);
+    raffleStartAt = block.timestamp + _pendingPeriod; // deprecated
+    totalWinnerTicketCount = _totalWinnerTicketCount;
+    prizeNFT = IERC721Upgradeable(_prizeNFT);
+    _vrfCoordinator = __vrfCoordinator;
+
+    _createNewSubscription();
   }
 
   function getUserCount() public view returns (uint256 count) {
@@ -444,27 +445,9 @@ contract NFTLRaffle is
       return false;
     }
 
-    address[] memory users = getUserList();
-    uint256 statIndexToCheck = 0;
-    uint256 endIndexToCheck = getUserCount() - 1;
-    uint256 userIndexToCheck;
-    address userToCheck;
-    address winner;
-    while (statIndexToCheck <= endIndexToCheck) {
-      userIndexToCheck = (statIndexToCheck + endIndexToCheck) / 2;
-      userToCheck = users[userIndexToCheck];
-
-      if (
-        ticketRangeByUser[userToCheck].startTicketId <= winnerTicketId &&
-        winnerTicketId <= ticketRangeByUser[userToCheck].endTicketId
-      ) {
-        winner = userToCheck;
-        break;
-      } else if (winnerTicketId < ticketRangeByUser[userToCheck].startTicketId) {
-        endIndexToCheck = userIndexToCheck - 1;
-      } else {
-        statIndexToCheck = userIndexToCheck + 1;
-      }
+    (bool userFound, address winner) = _findWinner(winnerTicketId);
+    if (!userFound) {
+      return false;
     }
 
     // transfer the prize
@@ -490,5 +473,32 @@ contract NFTLRaffle is
   function _createNewSubscription() private {
     subscriptionId = VRFCoordinatorV2Interface(_vrfCoordinator).createSubscription();
     VRFCoordinatorV2Interface(_vrfCoordinator).addConsumer(subscriptionId, address(this));
+  }
+
+  function _findWinner(
+    uint256 winnerTicketId
+  ) private view returns (bool winnerFound, address winner) {
+    address[] memory users = getUserList();
+    uint256 statIndexToCheck = 0;
+    uint256 endIndexToCheck = getUserCount() - 1;
+    uint256 userIndexToCheck;
+    address userToCheck;
+    while (!(statIndexToCheck > endIndexToCheck)) {
+      userIndexToCheck = (statIndexToCheck + endIndexToCheck) / 2;
+      userToCheck = users[userIndexToCheck];
+
+      if (
+        !(ticketRangeByUser[userToCheck].startTicketId > winnerTicketId) &&
+        !(winnerTicketId > ticketRangeByUser[userToCheck].endTicketId)
+      ) {
+        winner = userToCheck;
+        winnerFound = true;
+        break;
+      } else if (winnerTicketId < ticketRangeByUser[userToCheck].startTicketId) {
+        endIndexToCheck = userIndexToCheck - 1;
+      } else {
+        statIndexToCheck = userIndexToCheck + 1;
+      }
+    }
   }
 }

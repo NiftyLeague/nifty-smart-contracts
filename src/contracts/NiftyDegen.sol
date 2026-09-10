@@ -15,9 +15,6 @@ import {NameableCharacter, NiftyLeagueCharacter} from './lib/NameableCharacter.s
 contract NiftyDegen is NameableCharacter {
   using Counters for Counters.Counter;
 
-  /// @notice Counter for number of minted characters
-  Counters.Counter public totalSupply;
-
   /// @notice Max number of mintable characters
   uint256 public constant MAX_SUPPLY = 10000;
 
@@ -26,6 +23,9 @@ contract NiftyDegen is NameableCharacter {
 
   /// @dev Available traits storage address
   address internal immutable _STORAGE_ADDRESS;
+
+  /// @notice Counter for number of minted characters
+  Counters.Counter public totalSupply;
 
   /// @dev Mapping trait indexes to pool size of available traits
   mapping(uint256 trait => uint256 poolSize) internal _originalPoolSizes;
@@ -36,7 +36,7 @@ contract NiftyDegen is NameableCharacter {
   /// @dev Base URI used for token metadata
   string private _baseTokenUri = '';
 
-  event PriceChanged(uint256 newPrice);
+  event PriceChanged(uint256 indexed newPrice);
 
   /**
    * @notice Construct the Nifty League NFTs
@@ -70,7 +70,7 @@ contract NiftyDegen is NameableCharacter {
     uint256[2] calldata items
   ) external payable whenNotPaused {
     uint256 currentSupply = totalSupply.current();
-    require(currentSupply >= 3 || _msgSender() == owner(), 'Sale has not started');
+    require(currentSupply > 2 || _msgSender() == owner(), 'Sale has not started');
     require(msg.value == getNFTPrice(), 'Ether value incorrect');
     _validateTraits(character, head, clothing, accessories, items);
     uint256 traitCombo = _generateTraitCombo(character, head, clothing, accessories, items);
@@ -135,13 +135,13 @@ contract NiftyDegen is NameableCharacter {
     // 1 - 3 free for core team members, 9901 - 10000 free special community giveaway characters
     if (_msgSender() == owner()) return 0;
     // fallback option to override price floors only if necessary. Minimum value of 0.08 ETH
-    if (_manualMintPrice >= 80000000000000000) return _manualMintPrice;
-    if (currentSupply >= 9500) return 280000000000000000; // 9500 - 9900 0.28 ETH
-    if (currentSupply >= 8500) return 250000000000000000; // 8501 - 9500 0.25 ETH
-    if (currentSupply >= 6500) return 220000000000000000; // 6501 - 8500 0.22 ETH
-    if (currentSupply >= 4500) return 190000000000000000; // 4501 - 6500 0.18 ETH
-    if (currentSupply >= 2500) return 150000000000000000; // 2501 - 4500 0.15 ETH
-    if (currentSupply >= 1000) return 130000000000000000; // 1001 - 2500 0.13 ETH
+    if (!(_manualMintPrice < 80000000000000000)) return _manualMintPrice;
+    if (currentSupply > 9499) return 280000000000000000; // 9500 - 9900 0.28 ETH
+    if (currentSupply > 8499) return 250000000000000000; // 8501 - 9500 0.25 ETH
+    if (currentSupply > 6499) return 220000000000000000; // 6501 - 8500 0.22 ETH
+    if (currentSupply > 4499) return 190000000000000000; // 4501 - 6500 0.18 ETH
+    if (currentSupply > 2499) return 150000000000000000; // 2501 - 4500 0.15 ETH
+    if (currentSupply > 999) return 130000000000000000; // 1001 - 2500 0.13 ETH
     return 100000000000000000; // 4 - 1000 0.1 ETH
   }
 
@@ -157,7 +157,7 @@ contract NiftyDegen is NameableCharacter {
     uint256 trait
   ) public view returns (bool allowed) {
     if (trait == _EMPTY_TRAIT) return true;
-    if (trait >= 150) return isAvailableTrait(trait);
+    if (trait > 149) return isAvailableTrait(trait);
     AllowedColorsStorage colorsStorage = AllowedColorsStorage(_STORAGE_ADDRESS);
     return colorsStorage.isAllowedColor(tribe, trait);
   }
@@ -199,9 +199,9 @@ contract NiftyDegen is NameableCharacter {
     uint256 numRemoved = _removedTraits.length;
     if (
       (numRemoved < 100 && newCharId % 7 == 0) ||
-      (numRemoved >= 100 && numRemoved < 200 && newCharId % 9 == 0) ||
-      (numRemoved >= 200 && numRemoved < 300 && newCharId % 11 == 0) ||
-      (numRemoved >= 300 && numRemoved < 400 && newCharId % 13 == 0)
+      (numRemoved > 99 && numRemoved < 200 && newCharId % 9 == 0) ||
+      (numRemoved > 199 && numRemoved < 300 && newCharId % 11 == 0) ||
+      (numRemoved > 299 && numRemoved < 400 && newCharId % 13 == 0)
     ) {
       uint256 randomIndex = _rngIndex(newCharId);
       uint16 randomTrait = _unpackUint10(traitCombo >> (randomIndex * 10));
@@ -234,7 +234,7 @@ contract NiftyDegen is NameableCharacter {
   ) private view {
     uint256 tribe = char[0];
     require(
-      tribe > 0 && (tribe <= 6 || (tribe <= 9 && _msgSender() == owner())),
+      tribe > 0 && (tribe < 7 || (tribe < 10 && _msgSender() == owner())),
       'Tribe incorrect'
     );
     require(
@@ -271,6 +271,17 @@ contract NiftyDegen is NameableCharacter {
     require(_isTraitInRange(items[0], 884, 975), 'Left item incorrect');
     require(_isTraitInRange(items[1], 976, 1023), 'Right item incorrect');
 
+    _validateTraitAvailability(tribe, char, head, cloth, acc, items);
+  }
+
+  function _validateTraitAvailability(
+    uint256 tribe,
+    uint256[5] memory char,
+    uint256[3] memory head,
+    uint256[6] memory cloth,
+    uint256[6] memory acc,
+    uint256[2] memory items
+  ) private view {
     require(isAvailableAndAllowedTrait(tribe, char[1]), 'Skin color unavailable');
     require(isAvailableAndAllowedTrait(tribe, char[2]), 'Fur color unavailable');
     require(isAvailableAndAllowedTrait(tribe, char[3]), 'Eye color unavailable');
@@ -335,6 +346,6 @@ contract NiftyDegen is NameableCharacter {
     uint256 lower,
     uint256 upper
   ) private pure returns (bool inRange) {
-    return trait == _EMPTY_TRAIT || (trait >= lower && trait <= upper);
+    return trait == _EMPTY_TRAIT || (!(trait < lower) && !(trait > upper));
   }
 }
