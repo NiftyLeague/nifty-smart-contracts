@@ -9,9 +9,9 @@ export async function refreshMetadata(
 ) {
   console.log(`⚠️  Refreshing Immutable data for tokenID:`, tokenId)
   const address = await contract.getAddress()
-  const metadata = await fetch(
-    `${BASE_METADATA_URI(network)}/imx/marketplace/metadata/${tokenId}`
-  ).then((res) => res.json())
+  const metadata = await fetch(`${BASE_METADATA_URI}/imx/marketplace/metadata/${tokenId}`).then(
+    (res) => res.json()
+  )
 
   const options = {
     method: 'POST',
