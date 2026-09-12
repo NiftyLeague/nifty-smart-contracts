@@ -2,7 +2,6 @@ import { ZeroHash } from 'ethers'
 import { BASE_METADATA_URI } from '~/constants/other'
 import HOLDER_LIST from '~/data/marketplace_migration.json'
 import type { NiftyMarketplace } from '~/types/typechain'
-import { NetworkName } from '~/types'
 
 type Snapshot = {
   address: string
@@ -13,8 +12,8 @@ type Snapshot = {
 // Manual migration safe-check list
 const SKIP_ADDRESSES = HOLDER_LIST
 
-export const batchMintItems = async (network: NetworkName, contract: NiftyMarketplace) => {
-  const snapshot = await fetch(`${BASE_METADATA_URI(network)}/imx/snapshot/combined`).then(
+export const batchMintItems = async (contract: NiftyMarketplace) => {
+  const snapshot = await fetch(`${BASE_METADATA_URI}/imx/snapshot/combined`).then(
     (res) => res.json() as unknown as Snapshot
   )
   console.log(`Minting items to ${snapshot.length} holders...`)

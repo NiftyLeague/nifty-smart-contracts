@@ -7,8 +7,9 @@ export const NFTL_EMISSION_START = 1631685007
 export const NFTL_EMISSION_END = 1726293007
 
 // Metadata
-export const BASE_METADATA_URI = (network: NetworkName) =>
-  `https://${MAINNET_NETWORKS.includes(network) ? '' : 'staging.'}api.niftyleague.com`
+// The staging API host (staging.api.niftyleague.com) no longer resolves; the
+// production API serves metadata for every network (see issue #220).
+export const BASE_METADATA_URI = 'https://api.niftyleague.com'
 export const BASE_DEGENS_URI = (network: NetworkName) =>
   `https://api.niftyleague.com/${network}/degen/metadata/`
 export const BASE_COMICS_URI = `https://api.niftyleague.com/imx/comics/metadata/{id}`
