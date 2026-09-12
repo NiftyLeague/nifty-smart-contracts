@@ -69,7 +69,7 @@ const deployFunction: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
     const hasMinterRole = await contract.hasRole(MINTER_ROLE, deployer)
     if (!hasMinterRole) await contract.grantRole(MINTER_ROLE, deployer)
     // Batch mint comics & items
-    await batchMintItems(network, contract)
+    await batchMintItems(contract)
     // Revoke minter role from deployer
     await renounceMarketplaceRole(MINTER_ROLE, contract, deployer)
   } else if (REFRESH_METADATA) {

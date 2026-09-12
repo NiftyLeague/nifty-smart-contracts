@@ -25,30 +25,12 @@ describe('emission window', () => {
 })
 
 describe('BASE_METADATA_URI', () => {
-  it('returns production URL for mainnet', () => {
-    expect(BASE_METADATA_URI(NetworkName.Mainnet)).toBe('https://api.niftyleague.com')
+  it('points at the production metadata API', () => {
+    expect(BASE_METADATA_URI).toBe('https://api.niftyleague.com')
   })
 
-  it('returns production URL for IMX mainnet', () => {
-    expect(BASE_METADATA_URI(NetworkName.IMXzkEVMMainnet)).toBe('https://api.niftyleague.com')
-  })
-
-  it('returns staging URL for sepolia', () => {
-    expect(BASE_METADATA_URI(NetworkName.Sepolia)).toBe('https://staging.api.niftyleague.com')
-  })
-
-  it('returns staging URL for IMX testnet', () => {
-    expect(BASE_METADATA_URI(NetworkName.IMXzkEVMTestnet)).toBe(
-      'https://staging.api.niftyleague.com'
-    )
-  })
-
-  it('returns staging URL for hardhat (local)', () => {
-    expect(BASE_METADATA_URI(NetworkName.Hardhat)).toBe('https://staging.api.niftyleague.com')
-  })
-
-  it('returns staging URL for tenderly', () => {
-    expect(BASE_METADATA_URI(NetworkName.Tenderly)).toBe('https://staging.api.niftyleague.com')
+  it('does not reference the retired staging hostname (issue #220)', () => {
+    expect(BASE_METADATA_URI).not.toContain('staging.')
   })
 })
 
