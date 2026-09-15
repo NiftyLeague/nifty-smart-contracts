@@ -27,12 +27,20 @@ describe('NiftyGovernor', function () {
 
     const TimelockFactory = await ethers.getContractFactory('Timelock')
     timelock = (await TimelockFactory.deploy(
-      86400, [deployer.getAddress()], [deployer.getAddress()], deployer.getAddress()
+      86400,
+      [deployer.getAddress()],
+      [deployer.getAddress()],
+      deployer.getAddress()
     )) as any
 
     const NiftyGovernorFactory = await ethers.getContractFactory('NiftyGovernor')
     governor = (await NiftyGovernorFactory.deploy(
-      await token.getAddress(), await timelock.getAddress(), 1, 100, 1000, 4
+      await token.getAddress(),
+      await timelock.getAddress(),
+      1,
+      100,
+      1000,
+      4
     )) as any
   })
 
@@ -52,7 +60,7 @@ describe('NiftyGovernor', function () {
 
   describe('view functions', function () {
     it('should return proposal state as Pending', async function () {
-      const id = await propose(governor, deployer.getAddress())
+      const id = await propose(governor, await deployer.getAddress())
       expect(await governor.state(id)).to.equal(0)
     })
 
@@ -61,12 +69,12 @@ describe('NiftyGovernor', function () {
     })
 
     it('should return proposal proposer', async function () {
-      const id = await propose(governor, deployer.getAddress())
+      const id = await propose(governor, await deployer.getAddress())
       expect(await governor.proposalProposer(id)).to.equal(await deployer.getAddress())
     })
 
     it('should return proposal votes', async function () {
-      const id = await propose(governor, deployer.getAddress())
+      const id = await propose(governor, await deployer.getAddress())
       const votes = await governor.proposalVotes(id)
       expect(votes.forVotes).to.equal(0n)
       expect(votes.againstVotes).to.equal(0n)
@@ -74,19 +82,19 @@ describe('NiftyGovernor', function () {
     })
 
     it('should return proposal deadline', async function () {
-      const id = await propose(governor, deployer.getAddress())
+      const id = await propose(governor, await deployer.getAddress())
       expect(await governor.proposalDeadline(id)).to.be.gt(0)
     })
 
     it('should check if voter has voted', async function () {
-      const id = await propose(governor, deployer.getAddress())
+      const id = await propose(governor, await deployer.getAddress())
       expect(await governor.hasVoted(id, await alice.getAddress())).to.equal(false)
     })
   })
 
   describe('propose', function () {
     it('should create a proposal', async function () {
-      const id = await propose(governor, deployer.getAddress())
+      const id = await propose(governor, await deployer.getAddress())
       expect(id).to.be.gt(0)
     })
   })
@@ -95,7 +103,7 @@ describe('NiftyGovernor', function () {
     let proposalId: any
 
     beforeEach(async function () {
-      proposalId = await propose(governor, deployer.getAddress())
+      proposalId = await propose(governor, await deployer.getAddress())
       await ethers.provider.send('evm_increaseTime', [2])
       await ethers.provider.send('evm_mine')
     })
@@ -130,7 +138,7 @@ describe('NiftyGovernor', function () {
     let proposalId: any
 
     beforeEach(async function () {
-      proposalId = await propose(governor, deployer.getAddress())
+      proposalId = await propose(governor, await deployer.getAddress())
       await ethers.provider.send('evm_increaseTime', [2])
       await ethers.provider.send('evm_mine')
       await governor.connect(alice).castVote(proposalId, 1)
@@ -140,7 +148,8 @@ describe('NiftyGovernor', function () {
     })
 
     it('should queue a proposal', async function () {
-      await governor.queue([deployer.getAddress()], [0], ['0x'], ethers.keccak256('0x'))
+      await governor
+        .queue([deployer.getAddress()], [0], ['0x'], ethers.keccak256('0x'))
         .catch(() => {})
       expect(proposalId).to.be.gt(0)
     })
@@ -151,7 +160,11 @@ async function propose(gov: any, account: string): Promise<any> {
   const tx = await gov.propose([account], [0], ['0x'], ethers.keccak256('0x'))
   const receipt = await tx.wait()
   const event = receipt?.logs.find((log: any) => {
-    try { return gov.interface.parseLog(log)?.name === 'ProposalCreated' } catch { return false }
+    try {
+      return gov.interface.parseLog(log)?.name === 'ProposalCreated'
+    } catch {
+      return false
+    }
   })
   return gov.interface.parseLog(event)?.args?.[0] ?? 0
 }
