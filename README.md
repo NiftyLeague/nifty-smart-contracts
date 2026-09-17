@@ -33,10 +33,10 @@ This command uses `hardhat clean` to clear cache and delete all artifacts. It th
 We use [Oxfmt](https://oxc.rs/docs/guide/usage/formatter) for TypeScript code formatting!
 
 ```bash
-bun run format
+bun run fmt
 ```
 
-This will run `bun run format:ts` to write all TypeScript files. Solidity files are linted with Solhint (`bun run lint:sol`).
+This runs `oxfmt .` to write all TypeScript files. To only verify formatting use `bun run format:check`. Solidity files are linted with Solhint (`bun run lint:sol`).
 
 ### Linting
 
