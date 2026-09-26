@@ -1,4 +1,4 @@
-name: Code Foundry CodeQL Compatibility
+name: CodeQL Required Check
 
 on:
   pull_request:
@@ -12,21 +12,39 @@ permissions:
   security-events: write
 
 concurrency:
-  group: code-foundry-codeql-compatibility-${{ github.event_name }}-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.event.pull_request.head.ref || github.ref_name }}
+  group: codeql-required-${{ github.event_name }}-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.event.pull_request.head.ref || github.ref_name }}
   cancel-in-progress: true
 
 # The main ruleset still requires the historical `analyze` check context.
-# This caller keeps that required check backed by the current Code Foundry
-# CodeQL workflow while the primary validation workflow continues to own the
-# aggregate gate and default-branch analysis.
+# Keep this standalone so it cannot share the reusable Code Foundry CodeQL
+# concurrency group used by the primary validation workflow.
 jobs:
-  codeql:
-    name: CodeQL
-    uses: 0xPlayerOne/code-foundry/.github/workflows/codeql.yml@v1.30.0
-    with:
-      runtime-repository: 0xPlayerOne/code-foundry
-      runtime-ref: v1.30.0
-      runner: ubuntu-latest
-      rust-shards: '["all"]'
-      rust-threads: '1'
-      rust-max-parallel: 1
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3 # v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4
+        with:
+          category: /language:${{ matrix.language }}
+          ref: ${{ github.event_name == 'pull_request' && format('refs/pull/{0}/head', github.event.pull_request.number) || github.ref }}
+          sha: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          wait-for-processing: true
