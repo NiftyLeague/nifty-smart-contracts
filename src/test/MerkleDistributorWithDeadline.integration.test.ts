@@ -7,13 +7,12 @@ import { resetLocalNetwork } from './utils/network'
 
 describe('MerkleDistributorWithDeadline', function () {
   let owner: Signer
-  let bob: Signer
   let token: NFTLToken
   const ZERO_BYTES32 = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
   before(async () => {
     await resetLocalNetwork()
-    ;[owner, bob] = await ethers.getSigners()
+    ;[owner] = await ethers.getSigners()
     token = await deployNFTL()
   })
 
