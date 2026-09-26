@@ -1,0 +1,32 @@
+name: Code Foundry CodeQL Compatibility
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  packages: read
+  security-events: write
+
+concurrency:
+  group: code-foundry-codeql-compatibility-${{ github.event_name }}-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+
+# The main ruleset still requires the historical `analyze` check context.
+# This caller keeps that required check backed by the current Code Foundry
+# CodeQL workflow while the primary validation workflow continues to own the
+# aggregate gate and default-branch analysis.
+jobs:
+  codeql:
+    name: CodeQL
+    uses: 0xPlayerOne/code-foundry/.github/workflows/codeql.yml@v1.30.0
+    with:
+      runtime-repository: 0xPlayerOne/code-foundry
+      runtime-ref: v1.30.0
+      runner: ubuntu-latest
+      rust-shards: '["all"]'
+      rust-threads: '1'
+      rust-max-parallel: 1
