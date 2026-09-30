@@ -104,7 +104,7 @@
     "typescript": "^6.0.3"
   },
   "overrides": {
-    "fast-uri": "3.1.7",
+    "fast-uri": "3.1.8",
     "toml": "4.3.0"
   },
   "engines": {
