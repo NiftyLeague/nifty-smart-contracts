@@ -104,6 +104,7 @@
     "typescript": "^6.0.3"
   },
   "overrides": {
+    "axios": "1.20.0",
     "fast-uri": "3.1.8",
     "toml": "4.3.0"
   },
