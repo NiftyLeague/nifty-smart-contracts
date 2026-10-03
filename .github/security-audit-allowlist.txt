@@ -34,3 +34,15 @@ GHSA-xq3m-2v4x-88gg
 # js-yaml 3.x/4.x advisory (CVE-2026-59870): fix only lands in 5.x and is
 # not backported; transitive via mocha/solhint/@chainlink.
 GHSA-5p4m-2wfm-xmqj
+
+# http-cache-semantics advisory (GHSA-ch52-4w7c-c8xp, high): no patched
+# release exists as of 2026-10-03 - 4.2.0 is the newest npm version and the
+# advisory's patched field is null. Transitive through astro's dev server
+# cache handling; revisit when >4.2.0 publishes.
+GHSA-ch52-4w7c-c8xp
+
+# braces advisory (GHSA-vfj7-8cjw-p6xm, high): no patched release exists as
+# of 2026-10-03 - 3.0.3 is the newest npm version and the advisory's patched
+# field is null. Dev-tooling transitive (micromatch/chokidar) with a
+# build-time stack-exhaustion scenario only; revisit when >3.0.3 publishes.
+GHSA-vfj7-8cjw-p6xm
