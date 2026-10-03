@@ -40,3 +40,9 @@ GHSA-5p4m-2wfm-xmqj
 # advisory's patched field is null. Transitive through astro's dev server
 # cache handling; revisit when >4.2.0 publishes.
 GHSA-ch52-4w7c-c8xp
+
+# braces advisory (GHSA-vfj7-8cjw-p6xm, high): no patched release exists as
+# of 2026-10-03 - 3.0.3 is the newest npm version and the advisory's patched
+# field is null. Dev-tooling transitive (micromatch/chokidar) with a
+# build-time stack-exhaustion scenario only; revisit when >3.0.3 publishes.
+GHSA-vfj7-8cjw-p6xm
