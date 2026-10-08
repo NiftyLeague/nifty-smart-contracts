@@ -1,48 +1,26 @@
-# Current Hardhat/Chainlink/OpenZeppelin toolchain baseline. These advisories
-# are transitive or require coordinated upstream upgrades; revisit regularly.
-GHSA-35jp-ww65-95wh
-GHSA-3g43-6gmg-66jw
-GHSA-3h5v-q93c-6h6q
-GHSA-43fc-jf86-j433
-GHSA-5c6j-r48x-rmvq
-GHSA-66ff-xgx4-vchm
-GHSA-685m-2w69-288q
-GHSA-6chq-wfr3-2hj9
-GHSA-75px-5xx7-5xc7
-GHSA-777c-7fjr-54vf
-GHSA-93hq-5wgc-jc82
-GHSA-96hv-2xvq-fx4p
-GHSA-hfxv-24rg-xrqf
-GHSA-j5f8-grm9-p9fc
-GHSA-jr5f-v2jv-69x6
-GHSA-jvwf-75h9-cwgg
-GHSA-mh99-v99m-4gvg
-GHSA-p92q-9vqr-4j8v
-GHSA-pf86-5x62-jrwf
-GHSA-ph9p-34f9-6g65
-GHSA-pjwm-pj3p-43mv
-GHSA-pmwg-cvhr-8vh7
-GHSA-q8qp-cvcw-x6jj
-GHSA-r5fr-rjxr-66jc
-GHSA-v9p9-hfj2-hcw8
-GHSA-vjh7-7g9h-fjfh
-GHSA-vrm6-8vpv-qv8q
-GHSA-vxpw-j846-p89q
-GHSA-wcpc-wj8m-hjx6
-GHSA-xcpc-8h2w-3j85
-GHSA-xq3m-2v4x-88gg
-# js-yaml 3.x/4.x advisory (CVE-2026-59870): fix only lands in 5.x and is
-# not backported; transitive via mocha/solhint/@chainlink.
-GHSA-5p4m-2wfm-xmqj
+# Advisories ignored by the code-foundry dependency audit gate
+# (bun audit --audit-level=high --ignore <id> per line).
+#
+# Only add entries that cannot be fixed by a package.json override, and
+# re-evaluate them periodically: remove the entry once a patched release
+# exists upstream or the vulnerable path disappears.
+# Last pruned 2026-10-08: fixed advisories moved to package.json overrides
+# (protobufjs, tmp, ws, http-cache-semantics, pbkdf2); everything else no
+# longer appears in bun audit.
 
-# http-cache-semantics advisory (GHSA-ch52-4w7c-c8xp, high): no patched
-# release exists as of 2026-10-03 - 4.2.0 is the newest npm version and the
-# advisory's patched field is null. Transitive through astro's dev server
-# cache handling; revisit when >4.2.0 publishes.
-GHSA-ch52-4w7c-c8xp
-
-# braces advisory (GHSA-vfj7-8cjw-p6xm, high): no patched release exists as
-# of 2026-10-03 - 3.0.3 is the newest npm version and the advisory's patched
-# field is null. Dev-tooling transitive (micromatch/chokidar) with a
-# build-time stack-exhaustion scenario only; revisit when >3.0.3 publishes.
+# braces <=3.0.3: stack-exhaustion DoS via deeply nested patterns (high).
+# No patched release exists (3.0.3 is the newest npm version as of
+# 2026-10-08). Reachable only through micromatch inside @chainlink/contracts'
+# @changesets/cli tooling, which never runs at contract-deploy or test time.
+# Revisit when >3.0.3 publishes.
 GHSA-vfj7-8cjw-p6xm
+
+# @openzeppelin/contracts 4.7.3: GovernorCompatibilityBravo may trim proposal
+# calldata (high). The vulnerable copy is hard-pinned by
+# @arbitrum/nitro-contracts > @offchainlabs/upgrade-executor (Solidity
+# sources). It cannot be fixed with an override: a global override would
+# also downgrade our direct @openzeppelin/contracts 5.6.1 pin, and
+# @chainlink/contracts version-alias its own OZ copies on purpose. The
+# transitive Solidity is never compiled here (hardhat compiles
+# src/contracts only).
+GHSA-93hq-5wgc-jc82
