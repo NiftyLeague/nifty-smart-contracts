@@ -23,9 +23,9 @@
     "lint:ts:check": "oxlint --max-warnings=0 --deny-warnings",
     "lint:sol": "solhint \"src/contracts/**/*.sol\" --ignore-path .solhintignore",
     "lint": "bun lint:ts:check && bun lint:sol",
-    "type-check": "bun compile && tsc --noEmit",
+    "type-check": "bun compile && bun check",
     "generate:typechain": "node scripts/generate-typechain.mjs",
-    "type:check": "bun compile && tsc --noEmit",
+    "type:check": "bun compile && bun check",
     "dev": "hardhat node",
     "start": "hardhat node",
     "test": "bun test bun-tests",
@@ -112,13 +112,13 @@
     "pbkdf2": "3.1.7",
     "protobufjs": "7.6.6",
     "tmp": "0.2.7",
-    "toml": "4.3.0",
+    "toml": "5.0.1",
     "ws": "8.22.0"
   },
   "engines": {
     "node": "24.18.0"
   },
-  "packageManager": "bun@1.4.0",
+  "packageManager": "bun@1.4.4",
   "trustedDependencies": [
     "@arbitrum/nitro-contracts",
     "@axelar-network/axelarjs-sdk",
