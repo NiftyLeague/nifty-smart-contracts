@@ -3,7 +3,6 @@
     "target": "esnext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "rootDir": ".",
     "esModuleInterop": true,
