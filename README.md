@@ -4,6 +4,8 @@ This project demonstrates an advanced Hardhat use case, integrating other tools 
 
 ## Setup Guide
 
+Bun 1.4.4 is required. Type checks use `bun check` after Hardhat compilation and TypeChain generation. Formatting stays on Oxfmt.
+
 ### Install dependencies
 
 ```bash

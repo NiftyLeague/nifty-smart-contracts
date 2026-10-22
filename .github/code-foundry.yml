@@ -3,8 +3,9 @@ profile: application
 languages: typescript,solidity
 features: all
 package_manager: bun
+formatter: oxfmt
 runtime_repository: 0xPlayerOne/code-foundry
-runtime_ref: v1.47.1
+runtime_ref: v1.48.4
 runner: ubuntu-latest
 unit_runner: ubuntu-latest
 ci_runner: ubuntu-latest
@@ -46,3 +47,4 @@ required_capabilities:
 coverage_enforcement: auto
 coverage_metrics: lines
 coverage_report:
+monorepo_tool: auto
