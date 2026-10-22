@@ -5,8 +5,7 @@ features: all
 package_manager: bun
 formatter: oxfmt
 runtime_repository: 0xPlayerOne/code-foundry
-# Candidate validation only; replace with the verified normal release before readiness.
-runtime_ref: 801cb23c8000de9adf2db8744f9fab5a94af155f
+runtime_ref: v1.48.4
 runner: ubuntu-latest
 unit_runner: ubuntu-latest
 ci_runner: ubuntu-latest
