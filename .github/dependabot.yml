@@ -4,9 +4,9 @@ updates:
     directory: /
     target-branch: main
     schedule:
-      interval: weekly
+      interval: monthly # billing_paused: reduced cadence
       day: sunday
-    open-pull-requests-limit: 99
+    open-pull-requests-limit: 0 # billing_paused: version updates disabled
     ignore:
       # Code Foundry runtime pins are sync-managed (runtime_ref in
       # code-foundry.yml). Dependabot must never bump them; a stale
@@ -21,9 +21,9 @@ updates:
     directory: /
     target-branch: main
     schedule:
-      interval: weekly
+      interval: monthly # billing_paused: reduced cadence
       day: sunday
-    open-pull-requests-limit: 99
+    open-pull-requests-limit: 0 # billing_paused: version updates disabled
     groups:
       bun-dependencies:
         applies-to: version-updates
