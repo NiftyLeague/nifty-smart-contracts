@@ -4,8 +4,8 @@ languages: typescript,solidity
 features: all
 package_manager: bun
 formatter: oxfmt
-runtime_repository: 0xPlayerOne/code-foundry
-runtime_ref: v1.48.4
+runtime_repository: AndrewM-F/code-foundry
+runtime_ref: v1.54.6
 runner: ubuntu-latest
 unit_runner: ubuntu-latest
 ci_runner: ubuntu-latest
@@ -48,3 +48,5 @@ coverage_enforcement: auto
 coverage_metrics: lines
 coverage_report:
 monorepo_tool: auto
+release_qualification_receipts: false
+npm_publish_auth: auto

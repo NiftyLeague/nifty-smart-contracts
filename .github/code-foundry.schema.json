@@ -7,6 +7,28 @@
       "description": "Explicit JavaScript formatter. Omit to preserve repository scripts and the Oxfmt fallback.",
       "type": "string",
       "enum": ["oxfmt", "prettier", "bun"]
+    },
+    "release_qualification_receipts": {
+      "description": "Opt in to seven-day exact-tree qualification receipts for Release Please validation.",
+      "type": "string",
+      "enum": ["true", "false"]
+    },
+    "release_defer_publication": {
+      "type": "string",
+      "enum": ["true", "false"]
+    },
+    "release_prerelease": {
+      "type": "string",
+      "enum": ["true", "false"]
+    },
+    "build_budget_file": {
+      "description": "Opt in to the Build time ceiling: a repository-relative JSON file whose lanes.build.ceilingSeconds the CI Build must not exceed. Empty or omitted leaves the Build unbudgeted. See docs/build-budgets.md.",
+      "type": "string"
+    },
+    "npm_publish_auth": {
+      "description": "npm publisher authentication: auto preserves token users and uses OIDC when no publish token is present; oidc forces trusted publishing; token requires NPM_TOKEN.",
+      "type": "string",
+      "enum": ["auto", "oidc", "token"]
     }
   },
   "additionalProperties": true

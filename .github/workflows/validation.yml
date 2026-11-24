@@ -22,18 +22,34 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  # One planning job decides everything the orchestrator needs before any
+  # lane starts: the validation tier (with the docs-only downgrade), the idle
+  # lanes, the Security Profile, and the CodeQL language detection. Each used
+  # to queue its own runner in sequence ahead of the real work; on a saturated
+  # runner pool every extra hop costs minutes of queueing for seconds of work.
   mode:
-    name: Mode
-    # The mode classifier is only needed for ready pull requests. Main pushes
-    # use the dedicated default-branch CodeQL lane below; draft updates do not
+    name: Plan
+    # The planner is only needed for ready pull requests. Main pushes use the
+    # dedicated default-branch CodeQL lane below; draft updates do not
     # allocate a validation runner.
     if: vars.CI_BILLING_PAUSED != 'true' && github.event_name == 'pull_request' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # The scopes of the Mode, Security Profile, and CodeQL Detect jobs this
+    # job replaces: the CodeQL plan reads Code Security status, the pull
+    # request's changed files, and the repository rulesets.
     permissions:
+      actions: read
       contents: read
+      packages: read
+      security-events: write
     outputs:
       mode: ${{ steps.classify.outputs.mode }}
+      idle-lanes: ${{ steps.lanes.outputs.idle_lanes }}
+      # Empty unless the tier runs Security or CodeQL and planning succeeded;
+      # an empty plan makes each workflow profile and detect for itself.
+      security-plan: ${{ steps.plan.outputs.security_plan }}
+      codeql-plan: ${{ steps.plan.outputs.codeql_plan }}
     steps:
       # The runtime classifies policy from the consumer repository's config.
       # Keep this checkout before the isolated runtime checkout below.
@@ -45,8 +61,8 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-          repository: 0xPlayerOne/code-foundry
-          ref: v1.48.4
+          repository: AndrewM-F/code-foundry
+          ref: v1.54.6
           path: .github/.code-foundry
           sparse-checkout: |
             src/lib
@@ -61,6 +77,101 @@ jobs:
           FOUNDRY_BASE_REF: ${{ github.event.pull_request.base.ref }}
           FOUNDRY_HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: node "$RUNNER_TEMP/code-foundry/src/runtime.mjs" validation mode >> "$GITHUB_OUTPUT"
+      # Lanes without an entrypoint (no package script, configured command,
+      # or test files) are skipped by the orchestrator rather than started on
+      # a runner only to report a no-op. Detection errors keep the lane.
+      - name: Plan lanes
+        id: lanes
+        run: node "$RUNNER_TEMP/code-foundry/src/runtime.mjs" validation lanes >> "$GITHUB_OUTPUT"
+      # The steps below replace the Security Profile and CodeQL Detect jobs
+      # on the tiers that run those workflows. They mirror those jobs' steps
+      # and fail open: if any of them fails, the plans stay empty and each
+      # workflow runs its own Profile or Detect job, which reports the error.
+      - name: Detect Code Security
+        id: security
+        if: steps.classify.outputs.mode == 'audit' || steps.classify.outputs.mode == 'release'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY_VISIBILITY: ${{ github.event.repository.visibility }}
+        run: |
+          status="disabled"
+          if [ "$REPOSITORY_VISIBILITY" = "public" ]; then
+            status="enabled"
+          else
+            status="$(gh api "repos/${GITHUB_REPOSITORY}" --jq '.security_and_analysis.code_security.status // "disabled"' 2>/dev/null || printf 'disabled')"
+          fi
+          printf 'status=%s\n' "$status" >> "$GITHUB_OUTPUT"
+      - name: List pull request files
+        id: changed
+        if: steps.classify.outputs.mode == 'audit' || steps.classify.outputs.mode == 'release'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          # Newline-separated changed paths for the runtime's change
+          # detection. A failed listing leaves the file absent and the
+          # runtime fails open toward analyzing every language and shard.
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PULL_REQUEST_NUMBER/files?per_page=100" \
+            --paginate --jq '.[].filename' > "$RUNNER_TEMP/changed-files.txt" || true
+          echo "file=$RUNNER_TEMP/changed-files.txt" >> "$GITHUB_OUTPUT"
+      - name: Detect code scanning merge gate
+        id: gate
+        if: steps.classify.outputs.mode == 'audit' || steps.classify.outputs.mode == 'release'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # The code-scanning merge gate waits for results in every tracked
+          # category, so change detection must never skip an upload while it
+          # is active. Any ruleset API failure counts as an active gate: full
+          # analysis is the safe default, and the planner drops unchanged
+          # analyzers only on a positive "no gate" answer.
+          gated=false
+          if ! ids="$(gh api "repos/$GITHUB_REPOSITORY/rulesets" --paginate \
+            -q '.[] | select(.enforcement == "active") | .id')"; then
+            echo "Ruleset listing failed; treating the code-scanning merge gate as active."
+            gated=true
+          else
+            for id in $ids; do
+              if ! rule="$(gh api "repos/$GITHUB_REPOSITORY/rulesets/$id" \
+                -q 'any(.rules[]?; .type == "code_scanning")')"; then
+                echo "Ruleset $id lookup failed; treating the code-scanning merge gate as active."
+                gated=true
+                break
+              fi
+              if [ "$rule" = "true" ]; then
+                gated=true
+                break
+              fi
+            done
+          fi
+          echo "Code-scanning merge gate active: $gated"
+          echo "gated=$gated" >> "$GITHUB_OUTPUT"
+      - name: Plan security and CodeQL
+        id: plan
+        if: >-
+          (steps.classify.outputs.mode == 'audit' || steps.classify.outputs.mode == 'release') &&
+          steps.security.outcome == 'success' && steps.changed.outcome == 'success' &&
+          steps.gate.outcome == 'success'
+        continue-on-error: true
+        env:
+          REPO_FOUNDRY_PROFILE: ${{ vars.REPO_FOUNDRY_PROFILE }}
+          REPO_FOUNDRY_LANGUAGES: ${{ vars.REPO_FOUNDRY_LANGUAGES }}
+          REPO_FOUNDRY_FEATURES: ${{ vars.REPO_FOUNDRY_FEATURES }}
+          REPO_FOUNDRY_PACKAGE_MANAGER: ${{ vars.REPO_FOUNDRY_PACKAGE_MANAGER }}
+          REPO_FOUNDRY_PRIVATE: ${{ github.event.repository.private }}
+          REPO_FOUNDRY_VISIBILITY: ${{ github.event.repository.visibility }}
+          REPO_FOUNDRY_CODE_SECURITY: ${{ steps.security.outputs.status }}
+          FOUNDRY_EVENT_NAME: ${{ github.event_name }}
+          FOUNDRY_CODEQL_CHANGED_FILES_FILE: ${{ steps.changed.outputs.file }}
+          FOUNDRY_CODEQL_MERGE_GATE: ${{ steps.gate.outputs.gated }}
+        # The runtime computes both plans before writing either, so a failure
+        # never hands the orchestrator half a plan.
+        run: node "$RUNNER_TEMP/code-foundry/src/runtime.mjs" validation plan >> "$GITHUB_OUTPUT"
 
   # The stable aggregate check name is the caller job name plus the
   # orchestrator gate job name: "Validation / Gate". Keep both names fixed.
@@ -80,15 +191,17 @@ jobs:
       contents: read
       issues: read
       packages: read
+      pull-requests: read
       security-events: write
-    uses: 0xPlayerOne/code-foundry/.github/workflows/validation.yml@v1.48.4
+    uses: AndrewM-F/code-foundry/.github/workflows/validation.yml@v1.54.6
     with:
       mode: ${{ needs.mode.outputs.mode }}
-      runtime-repository: 0xPlayerOne/code-foundry
-      # Pull requests validate the proposed runtime commit. Scheduled and
-      # manually dispatched audits use a separate default-branch-pinned caller,
-      # so this caller-selected ref never runs with default-branch cache access.
-      runtime-ref: v1.48.4
+      release-qualification-receipts: ${{ github.repository == 'AndrewM-F/code-foundry' }}
+      runtime-repository: AndrewM-F/code-foundry
+      # Source PRs validate their proposed runtime commit. A Release Please PR
+      # uses its main base, keeping version-only metadata out of the runtime
+      # content identity. Scheduled audits use a separate default-branch caller.
+      runtime-ref: v1.54.6
       ci-runner: ubuntu-latest
       test-runner: ubuntu-latest
       unit-runner: ubuntu-latest
@@ -101,32 +214,33 @@ jobs:
       rust-max-parallel: 1
       # The sync renderer rewrites both values from the e2e_shards config key;
       # the defaults keep repositories without that key on one unsharded job.
+      integration-total-shards: '1'
       e2e-shard-list: '1'
       e2e-total-shards: '1'
+      idle-lanes: ${{ needs.mode.outputs.idle-lanes }}
+      security-plan: ${{ needs.mode.outputs.security-plan }}
+      codeql-plan: ${{ needs.mode.outputs.codeql-plan }}
     secrets:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
 
   # CodeQL requires a push analysis to populate default-branch code-scanning
   # alerts. Keep the full validation gate pull-request-only so main pushes do
-  # not duplicate CI, test, or security work. Release Please version merges
-  # change manifests only, so the code tree is identical to the content merge
-  # whose default-branch scan is still current; re-scanning it on every release
-  # wastes the Rust-heavy analysis budget, and the scheduled audit covers drift.
+  # not duplicate CI, test, or security work. Run CodeQL for every main push:
+  # commit subjects do not prove that a push contains only release metadata.
   default-branch-codeql:
     name: CodeQL (default branch)
     if: >-
-      vars.CI_BILLING_PAUSED != 'true' && github.event_name == 'push' &&
-      !startsWith(github.event.head_commit.message, 'chore(main): release ')
+      vars.CI_BILLING_PAUSED != 'true' && github.event_name == 'push'
     permissions:
       actions: read
       contents: read
       packages: read
       security-events: write
-    uses: 0xPlayerOne/code-foundry/.github/workflows/codeql.yml@v1.48.4
+    uses: AndrewM-F/code-foundry/.github/workflows/codeql.yml@v1.54.6
     with:
-      runtime-repository: 0xPlayerOne/code-foundry
-      runtime-ref: v1.48.4
+      runtime-repository: AndrewM-F/code-foundry
+      runtime-ref: v1.54.6
       runner: ubuntu-latest
       rust-shards: '["all"]'
       rust-threads: '1'
