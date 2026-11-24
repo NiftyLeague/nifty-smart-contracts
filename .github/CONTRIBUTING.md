@@ -21,7 +21,7 @@ Quick links: [Code of Conduct](./CODE_OF_CONDUCT.md) · [Security Policy](./SECU
 Agents must follow these rules before changing code:
 
 1. Read this file, `AGENTS.md`, and the relevant project documentation.
-2. Inspect the current branch, worktree, remotes, and existing changes before editing.
+2. Inspect the GitButler workspace (`but status`), remotes, and existing changes before editing. Use `but` for every version-control write, and do not create git worktrees unless the maintainer asks for one.
 3. Preserve user-owned changes. Never discard or overwrite unrelated work.
 4. Branch from `main` and target pull requests at `main`; do not push directly to `main`.
 5. Keep the change focused. Do not expand scope without documenting why.
@@ -220,14 +220,14 @@ Keep pull requests focused and reviewable. Include screenshots or recordings for
 
 ## Workflow and check behavior
 
-| Event                                              | Expected automation                                                                   |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Draft pull request targeting `main`                | No runner-heavy validation; run local checks before requesting review                 |
-| Ready pull request targeting `main`                | Audit validation: CI, full tests, Security, and CodeQL, ending in `Validation / Gate` |
-| Exact Release Please pull request targeting `main` | Full validation: CI, full tests, Security, and CodeQL, ending in `Validation / Gate`  |
-| Scheduled or manual validation                     | Full audit tier                                                                       |
-| Push to a working branch                           | Draft PR workflow                                                                     |
-| Push to `main`                                     | Release workflow; CodeQL skips release-only merges (audit covers drift)               |
+| Event                                    | Expected automation                                                                                  |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Draft pull request targeting `main`      | No runner-heavy validation; run local checks before requesting review                                |
+| Ready pull request targeting `main`      | Audit validation: CI, full tests, Security, and CodeQL, ending in `Validation / Gate`                |
+| Exact Release Please PR targeting `main` | Release diff, configured CodeQL, build/package check, and either a verified receipt or full CI/tests |
+| Scheduled or manual validation           | Full audit tier                                                                                      |
+| Push to a working branch                 | Draft PR workflow                                                                                    |
+| Push to `main`                           | Release workflow; CodeQL scans every push to main, all commits included                              |
 
 Draft pull requests do not start validation unless `draft_protection: false` is configured. The lightweight Draft Guard converts ordinary pull requests opened or reopened while ready back to draft; it never checks out pull-request code and it excludes Release Please version heads, whose release workflow owns their state. Marking a pull request ready for review starts the applicable validation tier, and each new commit on a ready pull request reruns that tier for the current head. Draft updates allocate no validation runner while protection is enabled. Converting a pull request to draft runs only the lightweight cancellation control.
 

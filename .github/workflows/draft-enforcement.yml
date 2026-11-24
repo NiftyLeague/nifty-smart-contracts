@@ -9,7 +9,13 @@ on:
       - opened
       - reopened
 
+# GitHub only lets a GitHub App token change a pull request's draft state
+# (convertPullRequestToDraft / markPullRequestReadyForReview) when the token can
+# also push to the repository; with pull-requests: write alone the mutation is
+# refused with "Resource not accessible by integration". contents: write is that
+# push grant. The job never checks out or runs pull-request code and pushes nothing.
 permissions:
+  contents: write
   pull-requests: write
 
 concurrency:
@@ -26,6 +32,7 @@ jobs:
       - name: Keep ordinary pull requests in draft
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT_DRAFT: ${{ github.event.pull_request.draft }}
           EVENT_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           EVENT_UPDATED_AT: ${{ github.event.pull_request.updated_at }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -35,12 +42,25 @@ jobs:
             echo '::error title=Draft guard cannot verify event freshness::The pull-request event did not include the required immutable metadata.'
             exit 1
           fi
+          if [ "$EVENT_DRAFT" != true ] && [ "$EVENT_DRAFT" != false ]; then
+            echo "::error title=Draft guard cannot verify event state::Unexpected event draft value: $EVENT_DRAFT"
+            exit 1
+          fi
 
-          read -r draft head_ref head_sha updated_at < <(
+          # A pull request opened or reopened as a draft already satisfies the
+          # guard. Any non-draft state seen now came from a later, deliberate
+          # ready_for_review, which can land within the same second as the
+          # event and so slip past the updated_at freshness check below.
+          if [ "$EVENT_DRAFT" = true ]; then
+            echo "Pull request #$PR_NUMBER was a draft when this event fired; a later ready state is a deliberate ready_for_review, leaving it unchanged."
+            exit 0
+          fi
+
+          read -r draft head_ref head_sha updated_at node_id < <(
             gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" \
-              --jq '[.draft, .head.ref, .head.sha, .updated_at] | @tsv'
+              --jq '[.draft, .head.ref, .head.sha, .updated_at, .node_id] | @tsv'
           )
-          if [ -z "$draft" ] || [ -z "$head_ref" ] || [ -z "$head_sha" ] || [ -z "$updated_at" ]; then
+          if [ -z "$draft" ] || [ -z "$head_ref" ] || [ -z "$head_sha" ] || [ -z "$updated_at" ] || [ -z "$node_id" ]; then
             echo '::error title=Draft guard cannot verify current state::The GitHub API response did not include the required pull-request metadata.'
             exit 1
           fi
@@ -70,9 +90,26 @@ jobs:
             exit 1
           fi
 
-          gh api \
-            --method PATCH \
-            "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" \
-            -F draft=true \
-            --silent >/dev/null
+          # updated_at has one-second granularity, so a ready_for_review in the
+          # same second as this event is invisible to the freshness check. Any
+          # ready_for_review at or after the event supersedes it.
+          ready_events=$(gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/timeline?per_page=100" \
+            --jq '.[] | select(.event == "ready_for_review") | .created_at')
+          while IFS= read -r ready_at; do
+            [ -n "$ready_at" ] || continue
+            if [[ "$ready_at" > "$EVENT_UPDATED_AT" || "$ready_at" == "$EVENT_UPDATED_AT" ]]; then
+              echo "Pull request #$PR_NUMBER was marked ready for review at $ready_at, superseding this $EVENT_UPDATED_AT event; leaving it unchanged."
+              exit 0
+            fi
+          done <<< "$ready_events"
+
+          result=$(gh api graphql \
+            -f query='mutation($pullRequestId: ID!) { convertPullRequestToDraft(input: {pullRequestId: $pullRequestId}) { pullRequest { id isDraft } } }' \
+            -f pullRequestId="$node_id" \
+            --jq '.data.convertPullRequestToDraft.pullRequest | [.id, .isDraft] | @tsv')
+          read -r returned_id is_draft <<< "$result"
+          if [ "$returned_id" != "$node_id" ] || [ "$is_draft" != true ]; then
+            echo '::error title=Draft guard conversion failed::GraphQL did not confirm the expected pull request is a draft.'
+            exit 1
+          fi
           echo "Converted ordinary pull request #$PR_NUMBER to draft; validation waits for ready_for_review."

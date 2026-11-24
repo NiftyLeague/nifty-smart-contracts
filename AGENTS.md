@@ -45,17 +45,24 @@ Before editing:
 1. Read this file and `.github/CONTRIBUTING.md`.
 2. Find and read any nested `AGENTS.md` that covers the files you will touch.
 3. Read the nearest README, package manifest, build configuration, and relevant tests.
-4. Inspect the current branch, worktree, remotes, and recent history:
+4. Inspect the current workspace, branches, remotes, and recent history:
 
    ```sh
-   git status --short --branch
+   but status
    git remote -v
    git log -5 --oneline
    ```
 
 5. Identify the repository's package manager, lockfile, runtime versions, test commands, deployment assumptions, and generated files.
 
-If the worktree is dirty, preserve existing changes and avoid overlapping edits until their ownership is clear.
+If there are uncommitted changes, preserve them and avoid overlapping edits until their ownership is clear.
+
+### Version control
+
+- Use GitButler (`but`) for every version-control write: branching, committing, pushing, pulling, and pull requests. Do not run `git checkout`, `git switch`, `git stash`, `git commit`, `git push`, `git pull`, or `git rebase`.
+- Work in the repository's main checkout. Run parallel work as separate GitButler branches and dependent work as stacked branches.
+- Do not create git worktrees (`git worktree add`, `but worktree new`, or an agent's worktree isolation) unless the maintainer explicitly asks for one.
+- Before the first `but push` or `but pr new` on a branch, check its upstream with `git rev-parse --abbrev-ref <branch>@{upstream}`. If it names the default branch (for example `origin/main`), run `git branch --unset-upstream <branch>` first, so the push creates `origin/<branch>` instead of targeting the default branch.
 
 <!-- /code-foundry-managed: read-before-acting -->
 

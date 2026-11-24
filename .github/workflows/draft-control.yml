@@ -21,13 +21,20 @@ jobs:
     runs-on: ubuntu-slim
     timeout-minutes: 5
     steps:
-      - name: Cancel queued and running checks for this branch
+      - name: Cancel queued and running checks for this pull request
         env:
           GH_TOKEN: ${{ github.token }}
           HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           CURRENT_RUN_ID: ${{ github.run_id }}
         run: |
           set -euo pipefail
+          if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+            echo '::error title=Draft control cannot verify pull request::The event did not include a valid pull request number.'
+            exit 1
+          fi
+          # Only runs associated with this PR may be cancelled. Branch names can
+          # be shared by multiple PRs, including heads from different forks.
           for status in queued in_progress; do
             gh api "repos/$GITHUB_REPOSITORY/actions/runs" \
               --method GET \
@@ -35,7 +42,7 @@ jobs:
               -f event=pull_request \
               -f status="$status" \
               --paginate \
-              --jq '.workflow_runs[].id' |
+              --jq ".workflow_runs[]? | select(any(.pull_requests[]?; .number == $PR_NUMBER)) | .id" |
               while read -r run_id; do
                 if [ -n "$run_id" ] && [ "$run_id" -lt "$CURRENT_RUN_ID" ]; then
                   gh api \
@@ -45,4 +52,4 @@ jobs:
                 fi
               done
           done
-          echo "CI is halted while pull request #${{ github.event.pull_request.number }} remains draft."
+          echo "CI is halted while pull request #$PR_NUMBER remains draft."
